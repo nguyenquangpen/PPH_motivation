@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
-import type { GoalStatus, Priority, TaskStatus, XpTxType, XpSourceType, NotificationType } from '@pph/shared';
+import type {
+  ActivityType, GoalStatus, Priority, TaskStatus, XpTxType, XpSourceType, NotificationType, StreakDayState,
+} from '@pph/shared';
 
 export function fmtDateTime(iso: string | null | undefined, tz: string): string {
   if (!iso) return '—';
@@ -77,3 +79,28 @@ export const NOTIF_TYPE_LABEL: Record<NotificationType, string> = {
   LEVEL_UP: 'Lên level', POOL_REWARD: 'Thưởng Pool',
 };
 export const WARNING_LABEL: Record<string, string> = { BEHIND: 'Chậm tiến độ', NEAR_DUE: 'Gần hạn' };
+
+export const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
+  CATEGORY_CREATED: 'Tạo Category', CATEGORY_UPDATED: 'Sửa Category', CATEGORY_DELETED: 'Xóa Category',
+  GOAL_CREATED: 'Tạo Goal', GOAL_UPDATED: 'Sửa Goal', GOAL_TARGET_CHANGED: 'Đổi mục tiêu Goal',
+  GOAL_STATUS_CHANGED: 'Đổi trạng thái Goal', GOAL_PROGRESS: 'Tiến độ Goal', GOAL_COMPLETED: 'Hoàn thành Goal', GOAL_DELETED: 'Xóa Goal',
+  MILESTONE_CREATED: 'Tạo Milestone', MILESTONE_UPDATED: 'Sửa Milestone', MILESTONE_COMPLETED: 'Đạt Milestone',
+  MILESTONE_REOPENED: 'Mở lại Milestone', MILESTONE_DELETED: 'Xóa Milestone',
+  TASK_CREATED: 'Tạo Task', TASK_UPDATED: 'Sửa Task', TASK_COMPLETED: 'Hoàn thành Task', TASK_UNDONE: 'Hoàn tác Task',
+  TASK_CANCELLED: 'Hủy Task', TASK_DELETED: 'Xóa Task', TASK_RESCHEDULED: 'Dời deadline Task',
+  TASK_REASON_CHANGED: 'Đổi lý do bỏ lỡ', TASK_PENALIZED: 'Phạt Task', TASK_PENALTY_REVERSED: 'Hoàn phạt Task',
+  REASON_TAG_CREATED: 'Tạo lý do bỏ lỡ', REASON_TAG_UPDATED: 'Sửa lý do bỏ lỡ', REASON_TAG_DELETED: 'Xóa lý do bỏ lỡ',
+  XP_TASK_REWARD: 'XP: Thưởng Task', XP_POOL_REWARD: 'XP: Thưởng Pool', XP_MILESTONE_REWARD: 'XP: Thưởng Milestone',
+  XP_GOAL_REWARD: 'XP: Thưởng Goal', XP_REWARD_REVERSAL: 'XP: Đảo thưởng', XP_REDEEM: 'XP: Đổi quà',
+  XP_REDEEM_REVERSAL: 'XP: Hoàn tác đổi quà', XP_PENALTY: 'XP: Phạt', XP_PENALTY_REVERSAL: 'XP: Hoàn phạt', LEVEL_UP: 'Lên level',
+  SHOP_ITEM_CREATED: 'Tạo vật phẩm', SHOP_ITEM_UPDATED: 'Sửa vật phẩm', SHOP_ITEM_DELETED: 'Xóa vật phẩm',
+  REDEMPTION_CREATED: 'Đổi thưởng', REDEMPTION_REVERSED: 'Hoàn tác đổi thưởng',
+  STREAK_FREEZE_USED: 'Dùng Streak Freeze', CHECKIN_CREATED: 'Check-in', CHECKIN_UPDATED: 'Sửa check-in',
+  SETTINGS_CHANGED: 'Đổi cài đặt',
+};
+/** Vietnamese label for an activity type; unknown types fall back to the raw code. */
+export const activityTypeLabel = (type: string): string => (ACTIVITY_TYPE_LABEL as Record<string, string>)[type] ?? type;
+
+export const STREAK_DAY_LABEL: Record<StreakDayState, string> = {
+  ACTIVE: 'Hoạt động', FREEZE: 'Dùng Freeze', EMPTY: 'Không hoạt động',
+};

@@ -12,7 +12,7 @@ import { GoalForm } from '../components/GoalForm';
 import { TaskForm } from '../components/TaskForm';
 import { Badge, Empty, ErrorText, Field, Modal, ProgressBar, QueryView, useToast } from '../components/ui';
 import {
-  daysRemainingLabel, fmtDate, fmtDateTime, fmtNum, GOAL_STATUS_LABEL, TASK_STATUS_LABEL, WARNING_LABEL,
+  activityTypeLabel, daysRemainingLabel, fmtDate, fmtDateTime, fmtNum, GOAL_STATUS_LABEL, TASK_STATUS_LABEL, WARNING_LABEL,
 } from '../lib/format';
 
 const COND_LABEL: Record<MilestoneCondition, string> = {
@@ -160,6 +160,8 @@ function GoalBody({ g }: { g: GoalDetailDto }) {
   const [addTask, setAddTask] = useState(false);
   const [actPage, setActPage] = useState(1);
   const p = g.progress;
+  const streak = useQuery({ queryKey: qk.streak, queryFn: api.streak, retry: false });
+  const goalStreak = streak.data?.goalStreaks ? (streak.data.goalStreaks.find((x) => x.goalId === g.id)?.current ?? 0) : null;
   const statuses = [...TaskStatus, ...Object.keys(g.tasksByStatus).filter((s) => !(TaskStatus as readonly string[]).includes(s))];
 
   return (
@@ -186,10 +188,11 @@ function GoalBody({ g }: { g: GoalDetailDto }) {
           <div><div className="text-xs muted">Còn lại</div><div className="font-semibold">{fmtNum(p.remainingContribution)}</div></div>
           <div><div className="text-xs muted">Vượt</div><div className="font-semibold">{fmtNum(p.overflowContribution)}</div></div>
           <div><div className="text-xs muted">Ngày đích</div><div className="font-semibold">{fmtDate(g.targetDate)}</div><div className="text-xs muted">{daysRemainingLabel(p.daysRemaining)}</div></div>
-          <div><div className="text-xs muted">Kỳ vọng</div><div className="font-semibold">{p.expectedPercent != null ? `${p.expectedPercent.toFixed(1)}%` : '—'}</div></div>
+          <div><div className="text-xs muted">Kỳ vọng</div><div className="font-semibold">{p.expectedPercent != null ? `${p.expectedPercent.toFixed(1).replace(".", ",")}%` : '—'}</div></div>
         </div>
         <div className="mt-3 flex flex-wrap gap-4 text-xs muted">
           <span>Bắt đầu: {fmtDate(g.startDate)}</span>
+          {goalStreak != null && <span>Chuỗi ngày của Goal: <strong>{goalStreak}</strong></span>}
           <span>XP thưởng: {g.goalRewardXp != null ? fmtNum(g.goalRewardXp) : 'mặc định'}{g.goalRewardGranted ? ' (đã nhận)' : ''}</span>
           {g.completedAt && <span>Hoàn thành lúc {fmtDateTime(g.completedAt, tz)} ({fmtNum(g.completedContributionSnapshot)} đóng góp)</span>}
         </div>
@@ -236,6 +239,7 @@ function GoalBody({ g }: { g: GoalDetailDto }) {
               {g.activity.map((a) => (
                 <li key={a.id} className="flex gap-3">
                   <span className="w-36 shrink-0 text-xs muted">{fmtDateTime(a.createdAt, tz)}</span>
+                  <span className="w-36 shrink-0 truncate text-xs font-medium" title={a.type}>{activityTypeLabel(a.type)}</span>
                   <span className="min-w-0">{a.message}</span>
                 </li>
               ))}

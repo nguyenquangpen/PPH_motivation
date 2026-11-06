@@ -3,7 +3,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type { ActivityItemDto } from '@pph/shared';
 import { api, type ActivityFilters } from '../api/endpoints';
 import { qk, useTimezone } from '../api/queries';
-import { fmtDateTime } from '../lib/format';
+import { activityTypeLabel, fmtDateTime } from '../lib/format';
 import { Empty, Pagination, QueryView } from './ui';
 
 function short(v: unknown): string {
@@ -16,7 +16,10 @@ function Row({ a, tz }: { a: ActivityItemDto; tz: string }) {
   return (
     <tr>
       <td className="whitespace-nowrap text-xs muted">{fmtDateTime(a.createdAt, tz)}</td>
-      <td className="truncate text-xs" title={a.type}>{a.type}</td>
+      <td className="text-xs" title={a.type}>
+        <div className="truncate font-medium">{activityTypeLabel(a.type)}</div>
+        {activityTypeLabel(a.type) !== a.type && <div className="truncate muted">{a.type}</div>}
+      </td>
       <td>
         <div>{a.message}</div>
         {(a.before != null || a.after != null) && (

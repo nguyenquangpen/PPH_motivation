@@ -1,6 +1,6 @@
 import type {
   ActivityItemDto, ActivityPageDto, CategoryDto, CheckinDto, CreateGoalInput, CreateMilestoneInput, CreateRewardItemInput,
-  CreateTaskInput, DashboardDto, GoalDetailDto, GoalDto, GoalStatus, MilestoneDto, MissedReviewAction,
+  CreateTaskInput, DashboardDto, GoalDetailDto, GoalDto, GoalStatus, MilestoneDto, MilestoneStatus, MissedReviewAction,
   NotificationDto, NotificationListDto, Page, ReasonTagDto, ReconciliationDto, RedemptionDto, RewardItemDto, Settings, StreakDto,
   TaskDto, TaskHistoryDto, TaskStatus, UpdateGoalInput, UpdateTaskInput, XpSummaryDto, XpTransactionDto,
 } from '@pph/shared';
@@ -42,6 +42,9 @@ export const api = {
   // ---------- Milestones ----------
   listMilestones: async (goalId: string) =>
     toArray(await request<MilestoneDto[] | Page<MilestoneDto>>(`/goals/${enc(goalId)}/milestones`)),
+  /** All non-deleted milestones of non-deleted goals, ordered by goal then created_at. */
+  listAllMilestones: async (f: { goalId?: string; status?: MilestoneStatus } = {}) =>
+    toArray(await request<MilestoneDto[] | Page<MilestoneDto>>('/milestones', { query: f })),
   createMilestone: (goalId: string, b: CreateMilestoneInput) =>
     request<MilestoneDto>(`/goals/${enc(goalId)}/milestones`, { method: 'POST', body: b }),
   updateMilestone: (id: string, b: Partial<CreateMilestoneInput>) =>

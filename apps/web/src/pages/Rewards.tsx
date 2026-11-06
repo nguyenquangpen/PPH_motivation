@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import { UnlockType, XpSourceType, XpTxType, type CreateRewardItemInput, type RewardItemDto } from '@pph/shared';
+import {
+  UnlockType, XpSourceType, XpTxType, type CreateRewardItemInput, type MilestoneDto, type RewardItemDto,
+} from '@pph/shared';
 import { api, type XpTxFilters } from '../api/endpoints';
 import { qk, useGoals, useInvalidate, useTimezone, XP_CHANGE } from '../api/queries';
 import { errorMessage } from '../api/client';
@@ -50,10 +52,18 @@ function ItemForm({ item, onDone }: { item?: RewardItemDto; onDone: () => void }
   const [icon, setIcon] = useState(item?.icon ?? '');
   const [unlockType, setUnlockType] = useState<UnlockType | ''>(item?.unlockType ?? '');
   const [unlockValue, setUnlockValue] = useState(item?.unlockValue ?? '');
-  const [msGoal, setMsGoal] = useState('');
   const milestones = useQuery({
-    queryKey: [...qk.milestones, msGoal], queryFn: () => api.listMilestones(msGoal), enabled: !!msGoal,
+    queryKey: [...qk.milestones, 'all'], queryFn: () => api.listAllMilestones(), enabled: unlockType === 'MILESTONE_COMPLETED',
   });
+  // Milestones grouped by goal (server already orders by goal, then created_at).
+  const goalTitle = new Map((goals.data ?? []).map((g) => [g.id, g.title]));
+  const msGroups: { goalId: string; title: string; items: MilestoneDto[] }[] = [];
+  for (const ms of milestones.data ?? []) {
+    let grp = msGroups.find((x) => x.goalId === ms.goalId);
+    if (!grp) msGroups.push((grp = { goalId: ms.goalId, title: goalTitle.get(ms.goalId) ?? 'Goal', items: [] }));
+    grp.items.push(ms);
+  }
+  const msKnown = (milestones.data ?? []).some((ms) => ms.id === unlockValue);
 
   const m = useMutation({
     mutationFn: () => {
@@ -92,20 +102,19 @@ function ItemForm({ item, onDone }: { item?: RewardItemDto; onDone: () => void }
         </Field>
       )}
       {unlockType === 'MILESTONE_COMPLETED' && (
-        <>
-          <Field label="Goal của Milestone" className="col-span-6">
-            <select value={msGoal} onChange={(e) => setMsGoal(e.target.value)}>
-              <option value="">— Chọn Goal —</option>
-              {(goals.data ?? []).map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
-            </select>
-          </Field>
-          <Field label="Milestone" className="col-span-6">
-            <select value={unlockValue} onChange={(e) => setUnlockValue(e.target.value)}>
-              <option value="">{unlockValue && !msGoal ? 'Milestone hiện tại' : '— Chọn Milestone —'}</option>
-              {(milestones.data ?? []).map((ms) => <option key={ms.id} value={ms.id}>{ms.title}</option>)}
-            </select>
-          </Field>
-        </>
+        <Field label="Milestone" className="col-span-12">
+          <select value={unlockValue} onChange={(e) => setUnlockValue(e.target.value)} disabled={milestones.isLoading}>
+            <option value="">{milestones.isLoading ? 'Đang tải…' : '— Chọn Milestone —'}</option>
+            {unlockValue && !msKnown && !milestones.isLoading && <option value={unlockValue}>Milestone hiện tại</option>}
+            {msGroups.map((grp) => (
+              <optgroup key={grp.goalId} label={grp.title}>
+                {grp.items.map((ms) => (
+                  <option key={ms.id} value={ms.id}>{ms.title}{ms.status === 'COMPLETED' ? ' ✓' : ''}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+        </Field>
       )}
       <Field label="Mô tả" className="col-span-12"><textarea rows={2} value={description} maxLength={1000} onChange={(e) => setDescription(e.target.value)} /></Field>
       <div className="col-span-12"><ErrorText error={m.error} /></div>

@@ -33,3 +33,21 @@ export type NotificationType = (typeof NotificationType)[number];
 
 export const MissedReviewAction = ['RESCHEDULE', 'CANCEL', 'KEEP'] as const;
 export type MissedReviewAction = (typeof MissedReviewAction)[number];
+
+/**
+ * Activity log types (activity_log.type). Taken from every `activity.log({ type })` call in apps/server/src;
+ * ledger logs `XP_${XpTxType}` for each XP transaction.
+ */
+export const ActivityType = [
+  'CATEGORY_CREATED', 'CATEGORY_UPDATED', 'CATEGORY_DELETED',
+  'GOAL_CREATED', 'GOAL_UPDATED', 'GOAL_TARGET_CHANGED', 'GOAL_STATUS_CHANGED', 'GOAL_PROGRESS', 'GOAL_COMPLETED', 'GOAL_DELETED',
+  'MILESTONE_CREATED', 'MILESTONE_UPDATED', 'MILESTONE_COMPLETED', 'MILESTONE_REOPENED', 'MILESTONE_DELETED',
+  'TASK_CREATED', 'TASK_UPDATED', 'TASK_COMPLETED', 'TASK_UNDONE', 'TASK_CANCELLED', 'TASK_DELETED', 'TASK_RESCHEDULED',
+  'TASK_REASON_CHANGED', 'TASK_PENALIZED', 'TASK_PENALTY_REVERSED',
+  'REASON_TAG_CREATED', 'REASON_TAG_UPDATED', 'REASON_TAG_DELETED',
+  'XP_TASK_REWARD', 'XP_POOL_REWARD', 'XP_MILESTONE_REWARD', 'XP_GOAL_REWARD', 'XP_REWARD_REVERSAL',
+  'XP_REDEEM', 'XP_REDEEM_REVERSAL', 'XP_PENALTY', 'XP_PENALTY_REVERSAL', 'LEVEL_UP',
+  'SHOP_ITEM_CREATED', 'SHOP_ITEM_UPDATED', 'SHOP_ITEM_DELETED', 'REDEMPTION_CREATED', 'REDEMPTION_REVERSED',
+  'STREAK_FREEZE_USED', 'CHECKIN_CREATED', 'CHECKIN_UPDATED', 'SETTINGS_CHANGED',
+] as const;
+export type ActivityType = (typeof ActivityType)[number];

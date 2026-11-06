@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { vi } from 'vitest';
-import { DEFAULT_SETTINGS, type DashboardDto, type TaskDto } from '@pph/shared';
+import { DEFAULT_SETTINGS, type DashboardDto, type StreakDto, type TaskDto } from '@pph/shared';
 import { ToastProvider } from '../src/components/ui';
 
 export type Call = { method: string; url: string; headers: Record<string, string>; body: unknown };
@@ -79,3 +79,18 @@ export function makeDashboard(): DashboardDto {
     achievements: [{ milestoneId: 'm-1', goalId: 'g-1', title: 'Hoàn thành giáo trình 1', completedAt: '2026-11-04T10:00:00.000Z' }],
   };
 }
+
+/** 84-day StreakDto ending 2026-11-06 (oldest → newest): last 5 days ACTIVE, day -6 FREEZE, rest EMPTY. */
+export function makeStreak(): StreakDto {
+  const end = Date.UTC(2026, 10, 6);
+  const calendar = Array.from({ length: 84 }, (_, i) => {
+    const back = 83 - i;
+    const date = new Date(end - back * 86_400_000).toISOString().slice(0, 10);
+    const state = back < 5 ? 'ACTIVE' : back === 6 ? 'FREEZE' : 'EMPTY';
+    return { date, state } as StreakDto['calendar'][number];
+  });
+  return { current: 5, longest: 12, freezesLeft: 2, calendar, goalStreaks: [{ goalId: 'g-1', current: 3 }] };
+}
+
+export const streakHandler: Handler = (c) =>
+  c.method === 'GET' && c.url === '/api/v1/streak' ? { body: makeStreak() } : undefined;

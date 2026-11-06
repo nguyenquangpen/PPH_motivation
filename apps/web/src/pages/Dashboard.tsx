@@ -6,6 +6,7 @@ import { api } from '../api/endpoints';
 import { qk, useTimezone } from '../api/queries';
 import { Badge, Empty, ProgressBar, QueryView } from '../components/ui';
 import { CompleteButton } from '../components/taskActions';
+import { StreakCalendar } from '../components/StreakCalendar';
 import {
   daysRemainingLabel, fmtDate, fmtDateTime, fmtNum, fmtXp, GOAL_STATUS_LABEL, PRIORITY_LABEL, TASK_STATUS_LABEL,
   WARNING_LABEL, XP_TYPE_LABEL,
@@ -123,6 +124,22 @@ function RewardSection({ r, tz }: { r: DashboardDto['reward']; tz: string }) {
   );
 }
 
+function StreakSection({ s }: { s: DashboardDto['streak'] }) {
+  // Calendar comes from GET /streak; the numbers stay from the dashboard payload.
+  const q = useQuery({ queryKey: qk.streak, queryFn: api.streak, retry: false });
+  return (
+    <section className="card min-w-0" aria-labelledby="streak-h">
+      <h2 id="streak-h" className="card-title">Chuỗi ngày</h2>
+      <div className="grid grid-cols-3 gap-3">
+        <Stat label="Hiện tại" value={s.current} />
+        <Stat label="Dài nhất" value={s.longest} />
+        <Stat label="Freeze còn lại" value={s.freezesLeft} />
+      </div>
+      {q.data?.calendar && <StreakCalendar calendar={q.data.calendar} />}
+    </section>
+  );
+}
+
 export function DashboardBody({ d, tz }: { d: DashboardDto; tz: string }) {
   return (
     <div className="grid grid-cols-3 gap-4">
@@ -140,14 +157,7 @@ export function DashboardBody({ d, tz }: { d: DashboardDto; tz: string }) {
       </div>
       <div className="flex min-w-0 flex-col gap-4">
         <RewardSection r={d.reward} tz={tz} />
-        <section className="card" aria-labelledby="streak-h">
-          <h2 id="streak-h" className="card-title">Chuỗi ngày</h2>
-          <div className="grid grid-cols-3 gap-3">
-            <Stat label="Hiện tại" value={d.streak.current} />
-            <Stat label="Dài nhất" value={d.streak.longest} />
-            <Stat label="Freeze còn lại" value={d.streak.freezesLeft} />
-          </div>
-        </section>
+        <StreakSection s={d.streak} />
         <section className="card" aria-labelledby="alerts-h">
           <h2 id="alerts-h" className="card-title">Cảnh báo</h2>
           <ul className="flex flex-col gap-1 text-sm">

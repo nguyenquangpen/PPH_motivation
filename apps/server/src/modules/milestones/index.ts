@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { CreateMilestoneSchema, UpdateMilestoneSchema } from '@pph/shared';
+import { CreateMilestoneSchema, MilestoneStatus, UpdateMilestoneSchema } from '@pph/shared';
 import type { HubModule } from '../../core/context.js';
 import { MilestoneService } from './service.js';
 
-/** F-12: routes /api/v1/goals/:goalId/milestones, /api/v1/milestones/:id; event handlers đánh giá điều kiện. */
+/** F-12: routes /api/v1/goals/:goalId/milestones, /api/v1/milestones?goalId=&status=, /api/v1/milestones/:id; event handlers đánh giá điều kiện. */
 export const milestonesModule: HubModule = {
   name: 'milestones',
   init(ctx) {
@@ -39,6 +39,16 @@ export const milestonesModule: HubModule = {
       const body = CreateMilestoneSchema.parse(req.body);
       reply.code(201);
       return ctx.db.transaction(() => svc().create(goalId, body))();
+    });
+    app.get('/api/v1/milestones', async (req) => {
+      const blank = (v: unknown) => (v === '' ? undefined : v);
+      const q = z
+        .object({
+          goalId: z.preprocess(blank, z.string().optional()),
+          status: z.preprocess(blank, z.enum(MilestoneStatus).optional()),
+        })
+        .parse(req.query);
+      return svc().list(q);
     });
     app.get('/api/v1/milestones/:id', async (req) => {
       const { id } = P.parse(req.params);

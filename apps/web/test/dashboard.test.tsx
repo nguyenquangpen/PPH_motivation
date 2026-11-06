@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DashboardPage } from '../src/pages/Dashboard';
-import { makeDashboard, makeTask, mockFetch, renderWithProviders, settingsHandler } from './helpers';
+import { makeDashboard, makeTask, mockFetch, renderWithProviders, settingsHandler, streakHandler } from './helpers';
 
 describe('Dashboard', () => {
   it('renders all sections from a DashboardDto', async () => {
-    mockFetch(settingsHandler, (c) => (c.url === '/api/v1/dashboard' ? { body: makeDashboard() } : undefined));
+    mockFetch(settingsHandler, streakHandler, (c) => (c.url === '/api/v1/dashboard' ? { body: makeDashboard() } : undefined));
     renderWithProviders(<DashboardPage />);
 
     expect(await screen.findByText('Viết báo cáo')).toBeInTheDocument();
@@ -24,6 +24,14 @@ describe('Dashboard', () => {
     // Streak
     const streak = screen.getByRole('heading', { name: 'Chuỗi ngày' }).closest('section')!;
     expect(within(streak).getByText('12')).toBeInTheDocument();
+    const cal = await within(streak).findByTestId('streak-calendar');
+    const days = cal.querySelectorAll('[data-state]');
+    expect(days).toHaveLength(84);
+    expect(days[83]).toHaveAttribute('data-state', 'ACTIVE');
+    expect(days[83]).toHaveAttribute('title', '06/11/2026: Hoạt động');
+    expect(days[77]).toHaveAttribute('title', '31/10/2026: Dùng Freeze');
+    expect(days[0]).toHaveAttribute('title', '15/08/2026: Không hoạt động');
+    expect(within(streak).getByText('Freeze')).toBeInTheDocument();
     // Alerts
     expect(screen.getByRole('link', { name: 'Cần review: 4' })).toHaveAttribute('href', '/tasks?missed=true');
     // Achievements
@@ -33,6 +41,7 @@ describe('Dashboard', () => {
   it('Complete button calls POST /api/v1/tasks/:id/complete with an Idempotency-Key in one click', async () => {
     const calls = mockFetch(
       settingsHandler,
+      streakHandler,
       (c) => (c.method === 'GET' && c.url === '/api/v1/dashboard' ? { body: makeDashboard() } : undefined),
       (c) => (c.method === 'POST' && c.url === '/api/v1/tasks/t-1/complete'
         ? { body: makeTask({ status: 'COMPLETED', xpReceived: 50 }) } : undefined),

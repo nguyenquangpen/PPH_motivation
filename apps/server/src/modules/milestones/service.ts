@@ -57,6 +57,24 @@ export class MilestoneService {
     return rows.map((r) => this.toDto(r));
   }
 
+  /**
+   * Milestone chưa xóa thuộc Goal chưa xóa, trên mọi Goal (lọc tùy chọn theo goalId/status).
+   * Thứ tự: theo Goal (goals.created_at), rồi created_at của Milestone.
+   */
+  list(f: { goalId?: string; status?: MilestoneStatus } = {}): MilestoneDto[] {
+    const where = ['m.deleted_at IS NULL', 'g.deleted_at IS NULL'];
+    const args: unknown[] = [];
+    if (f.goalId) { where.push('m.goal_id = ?'); args.push(f.goalId); }
+    if (f.status) { where.push('m.status = ?'); args.push(f.status); }
+    const rows = this.ctx.db
+      .prepare(
+        `SELECT m.* FROM milestones m JOIN goals g ON g.id = m.goal_id
+         WHERE ${where.join(' AND ')} ORDER BY g.created_at, g.rowid, m.created_at, m.rowid`,
+      )
+      .all(...args) as MilestoneRow[];
+    return rows.map((r) => this.toDto(r));
+  }
+
   isCompleted(milestoneId: string): boolean {
     const r = this.ctx.db.prepare('SELECT status FROM milestones WHERE id = ? AND deleted_at IS NULL').get(milestoneId) as { status: string } | undefined;
     return r?.status === 'COMPLETED';
