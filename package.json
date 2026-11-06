@@ -10,12 +10,13 @@
     "dev": "tsx scripts/dev.ts",
     "build": "npm run build -w @pph/shared && npm run build -w @pph/web",
     "start": "npm run start -w @pph/server",
-    "typecheck": "tsc -p packages/shared && tsc -p apps/server --noEmit && tsc -p apps/web --noEmit",
+    "typecheck": "tsc -p packages/shared && tsc -p apps/server && tsc -p apps/web && tsc -p e2e",
     "test": "vitest run",
     "test:bdd": "tsx scripts/test-bdd.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "playwright-core": "^1.65.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^5.1.0"

@@ -3,3 +3,4 @@ dist/
 data/
 .vitest-results.json
 *.log
+e2e/.shots/
