@@ -17,7 +17,7 @@ export function ProgressBar({ percent, overflow = 0, size = 'md', warn = false }
       >
         <div className={`${h} ${color} rounded-full transition-all`} style={{ width: `${p}%` }} />
       </div>
-      <span className="w-14 shrink-0 text-right text-xs font-semibold tabular-nums">{p.toFixed(1)}%</span>
+      <span className="w-14 shrink-0 text-right text-xs font-semibold tabular-nums">{p.toFixed(1).replace(".", ",")}%</span>
       {overflow > 0 && (
         <span className="shrink-0 rounded bg-emerald-100 px-1.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
           +{overflow} vượt mục tiêu
