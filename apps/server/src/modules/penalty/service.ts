@@ -76,7 +76,7 @@ export class PenaltyService {
 
   /** Số Task trong Missed Review queue — dùng bởi dashboard. */
   missedReviewCount(): number {
-    return this.ctx.services.tasks.list({ missed: true }).length;
+    return this.ctx.services.tasks.count({ missed: true });
   }
 
   // ---------------- Penalty (F-15) ----------------

@@ -15,10 +15,8 @@ export class DashboardService {
     const settings = s.settings.get();
 
     const dueTasks = s.tasks.list({ due: 'today' }).filter((t) => t.status !== 'CANCELLED');
-    const completedToday = s.tasks
-      .list({ status: 'COMPLETED' })
-      .filter((t) => !!t.completedAt && localDate(t.completedAt, tz) === today).length;
-    const missed = s.tasks.list({ missed: true }).length;
+    const completedToday = s.tasks.count({ completedToday: true });
+    const missed = s.tasks.count({ missed: true });
 
     const b = s.ledger.balances();
     const streak = s.streak.get();

@@ -15,7 +15,13 @@ npm install
 
 ## Chạy
 
-Hai terminal:
+Một lệnh chạy cả API và web:
+
+```bash
+npm run dev    # API http://127.0.0.1:4317 + Web http://localhost:5173
+```
+
+Hoặc chạy riêng từng phần:
 
 ```bash
 npm run start -w @pph/server   # API: http://127.0.0.1:4317 (chỉ nhận kết nối từ chính máy)

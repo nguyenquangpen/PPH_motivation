@@ -19,7 +19,9 @@ type CompletionRow = {
   contribution_entry_id: string | null; xp_transaction_id: string | null; pool_entry_id: string | null; undone_at: string | null;
 };
 
-export type TaskFilters = { status?: TaskStatus; goalId?: string; missed?: boolean; due?: 'today'; includeDeleted?: boolean };
+export type TaskFilters = {
+  status?: TaskStatus; goalId?: string; missed?: boolean; due?: 'today'; completedToday?: boolean; includeDeleted?: boolean;
+};
 
 const OPEN: TaskStatus[] = ['TODO', 'IN_PROGRESS'];
 
@@ -77,22 +79,39 @@ export class TaskService {
     return this.toDto(this.row(id));
   }
 
-  list(f: TaskFilters = {}): TaskDto[] {
+  /** WHERE dùng chung cho list()/count(). Missed và "hoàn thành hôm nay" lọc ngay trong SQL (hiệu năng Dashboard). */
+  private whereOf(f: TaskFilters): { w: string; args: unknown[] } {
     const where: string[] = [];
     const args: unknown[] = [];
     if (!f.includeDeleted) where.push('deleted_at IS NULL');
     if (f.status) { where.push('status = ?'); args.push(f.status); }
     if (f.goalId) { where.push('goal_id = ?'); args.push(f.goalId); }
-    if (f.due === 'today') {
+    if (f.due === 'today' || f.completedToday) {
       const tz = this.ctx.tz();
       const { start, end } = dayRangeUtc(localDate(this.ctx.nowIso(), tz), tz);
-      where.push('deadline >= ? AND deadline < ?');
-      args.push(start, end);
+      if (f.due === 'today') { where.push('deadline >= ? AND deadline < ?'); args.push(start, end); }
+      if (f.completedToday) { where.push("status = 'COMPLETED' AND completed_at >= ? AND completed_at < ?"); args.push(start, end); }
     }
-    const w = where.length ? `WHERE ${where.join(' AND ')}` : '';
-    let rows = this.ctx.db.prepare(`SELECT * FROM tasks ${w} ORDER BY created_at, rowid`).all(...args) as TaskRow[];
-    if (f.missed !== undefined) rows = rows.filter((r) => this.isMissed(r) === f.missed);
+    if (f.missed === true) {
+      where.push("status IN ('TODO','IN_PROGRESS') AND deadline IS NOT NULL AND deadline < ?");
+      args.push(this.ctx.nowIso());
+    } else if (f.missed === false) {
+      where.push("NOT (status IN ('TODO','IN_PROGRESS') AND deadline IS NOT NULL AND deadline < ?)");
+      args.push(this.ctx.nowIso());
+    }
+    return { w: where.length ? `WHERE ${where.join(' AND ')}` : '', args };
+  }
+
+  list(f: TaskFilters = {}): TaskDto[] {
+    const { w, args } = this.whereOf(f);
+    const rows = this.ctx.db.prepare(`SELECT * FROM tasks ${w} ORDER BY created_at, rowid`).all(...args) as TaskRow[];
     return rows.map((r) => this.toDto(r));
+  }
+
+  /** Đếm theo cùng bộ lọc với list(), không dựng DTO. */
+  count(f: TaskFilters = {}): number {
+    const { w, args } = this.whereOf(f);
+    return (this.ctx.db.prepare(`SELECT COUNT(*) c FROM tasks ${w}`).get(...args) as { c: number }).c;
   }
 
   history(id: string): TaskHistoryDto[] {
