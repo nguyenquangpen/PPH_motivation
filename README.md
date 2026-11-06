@@ -33,6 +33,23 @@ npm run dev -w @pph/web        # Web: http://localhost:5173 (proxy /api → 4317
 | `PPH_DATA_DIR` | `./data` (gốc repo) | Thư mục chứa `hub.db` và `backups/` |
 | `PPH_PORT` | `4317` | Cổng API |
 
+## Bản desktop (Windows)
+
+Hub đóng gói thành app Electron: chạy nền ở khay hệ thống, thông báo native của Windows, tùy chọn tự khởi động cùng Windows (bật/tắt trong menu khay, mặc định **tắt**).
+
+```bash
+npm run desktop:build   # build web + bundle main process → apps/desktop/.stage
+npm run desktop:start   # chạy thử (dữ liệu ở apps/desktop/.run-data, không đụng %APPDATA%)
+npm run desktop:smoke   # kiểm tra tự động: API + giao diện trong cửa sổ Electron (ẩn), tự thoát
+npm run desktop:dist    # tạo bộ cài apps/desktop/release/PPH-Setup-<version>.exe (chỉ tạo file, không chạy)
+```
+
+- Mọi cache/tải xuống của quá trình build nằm trong `apps/desktop/.cache/` (gitignored), không ghi vào cache chung của máy.
+- Bộ cài (khi bạn tự chạy): cài cho user hiện tại vào `%LOCALAPPDATA%\Programs`, tạo shortcut Desktop/Start Menu; dữ liệu ở `%APPDATA%\Personal Productivity Hub\data`, nhật ký ở `...\logs\hub.log`. Gỡ cài đặt không xóa dữ liệu.
+- Cổng mặc định `127.0.0.1:4317` (đổi bằng `PPH_PORT`). Nếu cổng bận (ví dụ `npm run dev` đang chạy), app báo lỗi và thoát.
+- Electron đang ghim ở **42.x** vì `better-sqlite3` chưa có bản build sẵn cho Electron mới hơn (biên dịch từ source thất bại do thay đổi API V8). Nâng cấp khi better-sqlite3 hỗ trợ: đổi version trong `apps/desktop/package.json`.
+- Chạy Electron từ terminal tích hợp/extension của VS Code: dùng `npm run desktop:start` (script tự bỏ biến `ELECTRON_RUN_AS_NODE` mà VS Code đặt).
+
 ## Dữ liệu & backup
 
 - Database SQLite: `data/hub.db`.
