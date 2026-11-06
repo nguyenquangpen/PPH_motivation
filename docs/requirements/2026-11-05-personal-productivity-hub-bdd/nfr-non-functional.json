@@ -83,7 +83,7 @@
     "category": "usability",
     "feature": "NFR Usability",
     "description": "Thao tác nhanh, minh bạch số liệu",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-005] Hoàn thành Task ≤ 2 thao tác",
@@ -99,7 +99,7 @@
             "Số thao tác ≤ 2 và T COMPLETED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-005] Tạo Task trên một form",
@@ -115,7 +115,7 @@
             "Task được tạo mà không cần chuyển màn hình khác"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[4.3] Truy vết số liệu",
@@ -131,7 +131,7 @@
             "Mở danh sách giao dịch có tổng bằng số hiển thị"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-011] Dark Mode (Could)",
@@ -147,7 +147,7 @@
             "Toàn bộ màn hình chuyển sang giao diện tối và đọc được"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -155,7 +155,7 @@
     "category": "compatibility",
     "feature": "NFR Compatibility",
     "description": "Laptop Windows, trình duyệt Chrome/Edge, 1366×768",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-006] Màn hình 1366×768",
@@ -172,7 +172,7 @@
             "Mọi thao tác đều truy cập được"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },

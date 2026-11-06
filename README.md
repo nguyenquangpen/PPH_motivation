@@ -43,7 +43,8 @@ npm run dev -w @pph/web        # Web: http://localhost:5173 (proxy /api → 4317
 ## Kiểm thử
 
 ```bash
-npm test             # toàn bộ test (server + web)
+npm test             # toàn bộ test: server + web + E2E trên Microsoft Edge (cần Edge cài sẵn)
+npx vitest run --project e2e   # chỉ E2E; ảnh chụp từng màn hình ở e2e/.shots/
 npm run test:bdd     # chạy test và cập nhật passes/overallPass trong các file BDD JSON
 npm run typecheck
 ```
