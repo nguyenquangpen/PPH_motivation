@@ -1,0 +1,270 @@
+[
+  {
+    "category": "performance",
+    "feature": "NFR Performance",
+    "description": "Hiệu năng trên laptop mục tiêu với quy mô dữ liệu cá nhân",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-004] Dashboard load",
+        "description": "Dashboard ≤ 2 giây p95",
+        "steps": {
+          "given": [
+            "Dữ liệu sinh sẵn 10.000 Task và 50.000 giao dịch"
+          ],
+          "when": [
+            "Tải Dashboard 20 lần"
+          ],
+          "then": [
+            "Thời gian p95 đến khi hiển thị đầy đủ ≤ 2 giây"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[PC-15] Complete/Undo latency",
+        "description": "Hoàn thành/hoàn tác phản ánh ≤ 500 ms p95",
+        "steps": {
+          "given": [
+            "Dữ liệu sinh sẵn 10.000 Task và 50.000 giao dịch"
+          ],
+          "when": [
+            "Thực hiện 50 thao tác hoàn thành và hoàn tác"
+          ],
+          "then": [
+            "p95 thời gian đến khi UI phản ánh kết quả ≤ 500 ms"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "security",
+    "feature": "NFR Security",
+    "description": "Chỉ truy cập từ localhost, không đăng nhập",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-009] Từ chối kết nối từ máy khác",
+        "description": "Giao diện và API chỉ nhận localhost",
+        "steps": {
+          "given": [
+            "Hub đang chạy trên laptop"
+          ],
+          "when": [
+            "Một thiết bị khác trong cùng mạng truy cập địa chỉ IP của laptop tới Hub"
+          ],
+          "then": [
+            "Kết nối bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-009] Truy cập từ localhost",
+        "description": "Owner dùng không cần đăng nhập",
+        "steps": {
+          "given": [
+            "Hub đang chạy trên laptop"
+          ],
+          "when": [
+            "Owner mở Hub bằng trình duyệt trên chính laptop"
+          ],
+          "then": [
+            "Dashboard hiển thị, không có màn hình đăng nhập"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "usability",
+    "feature": "NFR Usability",
+    "description": "Thao tác nhanh, minh bạch số liệu",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-005] Hoàn thành Task ≤ 2 thao tác",
+        "description": "Từ Dashboard",
+        "steps": {
+          "given": [
+            "Dashboard có Task T trong Today"
+          ],
+          "when": [
+            "Owner hoàn thành T từ Dashboard"
+          ],
+          "then": [
+            "Số thao tác ≤ 2 và T COMPLETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-005] Tạo Task trên một form",
+        "description": "Chỉ trường bắt buộc",
+        "steps": {
+          "given": [
+            "Owner ở màn hình Task"
+          ],
+          "when": [
+            "Owner tạo Task chỉ nhập title, priority, contribution, estimated_duration"
+          ],
+          "then": [
+            "Task được tạo mà không cần chuyển màn hình khác"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[4.3] Truy vết số liệu",
+        "description": "Mọi số XP/Contribution mở được giao dịch nguồn",
+        "steps": {
+          "given": [
+            "Dashboard hiển thị Spendable XP"
+          ],
+          "when": [
+            "Owner bấm vào số Spendable XP"
+          ],
+          "then": [
+            "Mở danh sách giao dịch có tổng bằng số hiển thị"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-011] Dark Mode (Could)",
+        "description": "Chuyển giao diện tối",
+        "steps": {
+          "given": [
+            "Hub ở chế độ sáng"
+          ],
+          "when": [
+            "Owner bật Dark Mode"
+          ],
+          "then": [
+            "Toàn bộ màn hình chuyển sang giao diện tối và đọc được"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "compatibility",
+    "feature": "NFR Compatibility",
+    "description": "Laptop Windows, trình duyệt Chrome/Edge, 1366×768",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-006] Màn hình 1366×768",
+        "description": "Không cuộn ngang",
+        "steps": {
+          "given": [
+            "Trình duyệt Chrome và Edge phiên bản hiện hành, cửa sổ 1366×768"
+          ],
+          "when": [
+            "Owner mở từng màn hình chính: Dashboard, Goals, Tasks, Rewards, Activity, Settings"
+          ],
+          "then": [
+            "Không màn hình nào cần cuộn ngang",
+            "Mọi thao tác đều truy cập được"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "reliability",
+    "feature": "NFR Reliability & Data",
+    "description": "Bền vững, nguyên tử, đối soát, backup",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-001] Restart không mất dữ liệu",
+        "description": "Thao tác đã báo thành công được giữ",
+        "steps": {
+          "given": [
+            "Owner vừa hoàn thành Task và đổi thưởng, cả hai đã báo thành công"
+          ],
+          "when": [
+            "Laptop bị tắt đột ngột rồi Hub khởi động lại"
+          ],
+          "then": [
+            "Task vẫn COMPLETED",
+            "Giao dịch TASK_REWARD và REDEEM vẫn tồn tại"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-002] Đối soát",
+        "description": "Tổng hợp khớp ledger, sai lệch 0",
+        "steps": {
+          "given": [
+            "Hub có lịch sử nhiều giao dịch thưởng, phạt, đổi, đảo ngược"
+          ],
+          "when": [
+            "Owner chạy 'Kiểm tra đối soát'"
+          ],
+          "then": [
+            "Lifetime, Spendable, Pool và completed_contribution từng Goal đều khớp tổng giao dịch",
+            "Kết quả hiển thị sai lệch = 0"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-003] Idempotency tổng quát",
+        "description": "N lần gửi chỉ tạo 1 giao dịch",
+        "steps": {
+          "given": [
+            "Task T IN_PROGRESS, Item I giá 100, Spendable 500"
+          ],
+          "when": [
+            "Gửi 5 lần cùng operation key cho hoàn thành T và 5 lần cùng operation key cho đổi I"
+          ],
+          "then": [
+            "Chỉ có 1 TASK_REWARD (hoặc POOL_ADD) cho T và 1 REDEEM cho I"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-008] Backup và khôi phục",
+        "description": "Backup hằng ngày, RPO ≤ 24 giờ",
+        "steps": {
+          "given": [
+            "Hub chạy liên tục 2 ngày, backup tự động đã thực hiện"
+          ],
+          "when": [
+            "Owner khôi phục từ bản backup mới nhất theo hướng dẫn"
+          ],
+          "then": [
+            "Goal, Task, giao dịch XP được khôi phục",
+            "Dữ liệu mất không quá 24 giờ"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-007] Múi giờ",
+        "description": "Ranh giới ngày theo múi giờ Owner",
+        "steps": {
+          "given": [
+            "Timezone Asia/Ho_Chi_Minh"
+          ],
+          "when": [
+            "Owner hoàn thành Task lúc 00:30 ngày 06/11 giờ địa phương (17:30 ngày 05/11 UTC)"
+          ],
+          "then": [
+            "Task được tính cho ngày 06/11 trong Today, Streak và XP hôm nay"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

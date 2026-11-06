@@ -1,0 +1,220 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-13 Streak",
+    "description": "Productivity Streak, Goal Streak, Streak Freeze theo múi giờ Owner",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-13] Ngày active",
+        "description": "Ngày có Task COMPLETED được tính",
+        "steps": {
+          "given": [
+            "Productivity Streak hiện = 0, hôm qua không active, không còn Freeze"
+          ],
+          "when": [
+            "Owner hoàn thành 1 Task hôm nay"
+          ],
+          "then": [
+            "Productivity Streak = 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Chuỗi liên tiếp",
+        "description": "3 ngày liên tiếp có Task COMPLETED",
+        "steps": {
+          "given": [
+            "Ngày 04, 05, 06/11 mỗi ngày có ít nhất 1 Task COMPLETED"
+          ],
+          "when": [
+            "Owner mở Dashboard ngày 06/11"
+          ],
+          "then": [
+            "Productivity Streak = 3"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Hôm nay chưa active không đứt chuỗi",
+        "description": "Chuỗi chỉ đứt khi hết ngày",
+        "steps": {
+          "given": [
+            "Ngày 04, 05/11 active, hôm nay 06/11 lúc 10:00 chưa có Task COMPLETED"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Productivity Streak = 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Dùng Freeze tự động",
+        "description": "Ngày không active được giữ bằng Freeze, không cộng độ dài",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Streak = 5 đến hết ngày 04/11",
+            "Ngày 05/11 không active",
+            "Tháng 11 còn 2 Freeze"
+          ],
+          "when": [
+            "Ngày 05/11 kết thúc",
+            "Owner hoàn thành Task ngày 06/11"
+          ],
+          "then": [
+            "Freeze tháng 11 còn 1",
+            "Ngày 05/11 hiển thị là Freeze trên lịch",
+            "Productivity Streak = 6"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Hết Freeze thì đứt chuỗi",
+        "description": "Không còn lượt thì chuỗi về 0",
+        "steps": {
+          "given": [
+            "Streak = 5",
+            "Tháng hiện tại còn 0 Freeze"
+          ],
+          "when": [
+            "Một ngày kết thúc không active"
+          ],
+          "then": [
+            "Productivity Streak = 0",
+            "Longest Streak giữ ≥ 5"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Reset Freeze hằng tháng",
+        "description": "Lượt Freeze về FreezesPerMonth ngày 1, không cộng dồn",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Tháng 11 còn 1 Freeze chưa dùng"
+          ],
+          "when": [
+            "Sang ngày 01/12"
+          ],
+          "then": [
+            "Freeze tháng 12 = 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Hoàn tác làm mất ngày active",
+        "description": "Streak tính lại từ dữ liệu",
+        "steps": {
+          "given": [
+            "Streak = 3 gồm hôm nay",
+            "Hôm nay chỉ có 1 Task COMPLETED T"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "Hôm nay không còn active",
+            "Productivity Streak = 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Missed không đứt chuỗi",
+        "description": "Task bị Missed không ảnh hưởng Streak",
+        "steps": {
+          "given": [
+            "Streak = 4, hôm nay có 1 Task COMPLETED",
+            "Task khác bị Missed hôm nay"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Productivity Streak = 4"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Goal Streak riêng từng Goal, không dùng Freeze",
+        "description": "Chỉ Task của Goal đó tính",
+        "steps": {
+          "given": [
+            "Goal G1 Streak = 3 đến hôm qua, G2 Streak = 0",
+            "Hôm nay Owner chỉ hoàn thành Task của G2",
+            "Còn Freeze trong tháng"
+          ],
+          "when": [
+            "Ngày hôm nay kết thúc"
+          ],
+          "then": [
+            "G2 Goal Streak = 1",
+            "G1 Goal Streak = 0",
+            "Freeze không bị dùng cho G1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Ranh giới ngày theo múi giờ",
+        "description": "Ngày tính theo múi giờ Owner, không theo UTC",
+        "steps": {
+          "given": [
+            "Timezone Asia/Ho_Chi_Minh",
+            "Không có Task COMPLETED khác trong 2 ngày 05–06/11"
+          ],
+          "when": [
+            "Owner hoàn thành Task lúc 2026-11-05 23:30 (+07:00), tức 16:30 UTC"
+          ],
+          "then": [
+            "Ngày 05/11 là active",
+            "Ngày 06/11 không bị tính active bởi Task này"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Longest Streak",
+        "description": "Lưu chuỗi dài nhất từng đạt",
+        "steps": {
+          "given": [
+            "Từng có chuỗi 10 ngày, chuỗi hiện tại 3"
+          ],
+          "when": [
+            "Owner mở phần Streak"
+          ],
+          "then": [
+            "Hiển thị Current 3, Longest 10"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-13] Lịch hoạt động",
+        "description": "Hiển thị 12 tuần gần nhất",
+        "steps": {
+          "given": [
+            "Có dữ liệu active, Freeze và ngày trống trong 12 tuần"
+          ],
+          "when": [
+            "Owner mở phần Streak"
+          ],
+          "then": [
+            "Lịch 12 tuần phân biệt ngày active, ngày Freeze và ngày trống"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

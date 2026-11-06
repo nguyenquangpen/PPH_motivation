@@ -1,0 +1,5 @@
+node_modules/
+dist/
+data/
+.vitest-results.json
+*.log

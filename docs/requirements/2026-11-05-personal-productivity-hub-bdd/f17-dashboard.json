@@ -1,0 +1,113 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-17 Dashboard",
+    "description": "Tổng quan Today, Goals, Reward, Streak, Alerts, Achievements",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-17] Today",
+        "description": "Đếm Task hôm nay, đã hoàn thành, Missed",
+        "steps": {
+          "given": [
+            "Hôm nay có 3 Task deadline hôm nay, 2 Task đã hoàn thành hôm nay, 1 Task Missed"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Today hiển thị 3 Task hôm nay, 2 đã hoàn thành, 1 Missed",
+            "Danh sách Task hôm nay có nút Complete"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-17] Goals",
+        "description": "Chỉ hiện Goal Active, Not Started, Paused",
+        "steps": {
+          "given": [
+            "Có Goal Active, Not Started, Paused, Completed, Archived mỗi loại 1"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Phần Goals hiển thị 3 Goal Active, Not Started, Paused",
+            "Mỗi Goal có thanh tiến độ, completed/target, số ngày còn lại, trạng thái"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-17] Reward",
+        "description": "Hiển thị Level, hai số dư, XP hôm nay, Pool, giao dịch gần đây",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Lifetime 2300, Spendable 800, Pool 35",
+            "Hôm nay nhận TASK_REWARD +200 và bị PENALTY −50"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Level 3, Lifetime 2300, Spendable 800",
+            "XP hôm nay = 200",
+            "Pool 35/100",
+            "5 giao dịch gần nhất"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-17] Streak",
+        "description": "Current, Longest, Freeze còn lại",
+        "steps": {
+          "given": [
+            "Current 4, Longest 10, Freeze tháng này còn 1"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Hiển thị Current 4, Longest 10, Freeze còn 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-17] Alerts",
+        "description": "Notification chưa đọc và số Task chờ review",
+        "steps": {
+          "given": [
+            "3 Notification chưa đọc, 2 Task trong Missed Review queue"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Hiển thị 3 thông báo chưa đọc và 'Cần review: 2'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-17] Achievements",
+        "description": "5 Milestone hoàn thành gần nhất",
+        "steps": {
+          "given": [
+            "Có 7 Milestone đã Completed"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Hiển thị 5 Milestone hoàn thành gần nhất, mới nhất trước"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,111 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-18 Activity History",
+    "description": "Nhật ký bất biến mọi sự kiện quan trọng, có bộ lọc và phân trang",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-18] Ghi nhận hoàn thành Task",
+        "description": "Một hoàn thành tạo các entry liên quan",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G target 1000 completed 120",
+            "Task T contribution 20 estimated 60 gắn G"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có entry 'Hoàn thành Task T'",
+            "Có entry 'Goal G: 12,0% → 14,0%'",
+            "Có entry 'Nhận +20 XP'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-18] Lọc theo Goal",
+        "description": "Chỉ hiện hoạt động của Goal đã chọn",
+        "steps": {
+          "given": [
+            "Có Activity của Goal G1 và G2"
+          ],
+          "when": [
+            "Owner lọc Activity theo G1"
+          ],
+          "then": [
+            "Chỉ hiển thị entry liên quan G1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-18] Lọc theo loại và thời gian",
+        "description": "Kết hợp bộ lọc",
+        "steps": {
+          "given": [
+            "Có entry nhiều loại trong tháng 10 và 11"
+          ],
+          "when": [
+            "Owner lọc loại 'Đổi thưởng' trong tháng 11"
+          ],
+          "then": [
+            "Chỉ hiển thị entry đổi thưởng tháng 11"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-18] Phân trang",
+        "description": "50 entry mỗi trang, mới nhất trước",
+        "steps": {
+          "given": [
+            "Có 120 entry"
+          ],
+          "when": [
+            "Owner mở Activity History"
+          ],
+          "then": [
+            "Trang 1 có 50 entry mới nhất",
+            "Có 3 trang"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-18] Bất biến",
+        "description": "Không sửa hay xóa entry",
+        "steps": {
+          "given": [
+            "Có entry bất kỳ"
+          ],
+          "when": [
+            "Owner mở chi tiết entry"
+          ],
+          "then": [
+            "Không có thao tác sửa hoặc xóa"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-18] Chi tiết before/after",
+        "description": "Entry thay đổi hiển thị giá trị trước và sau",
+        "steps": {
+          "given": [
+            "Owner vừa sửa target Goal G từ 1000 thành 1500"
+          ],
+          "when": [
+            "Owner mở chi tiết entry đó"
+          ],
+          "then": [
+            "Hiển thị before 1000, after 1500 và liên kết đến G"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

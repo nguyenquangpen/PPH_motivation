@@ -1,0 +1,221 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-07 Task XP",
+    "description": "XP = round_half_up(Contribution × Multiplier × clamp(D/RefDuration, Min, Max)); D = min(Estimated, Actual)",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-07] XP: C=100, est=120, actual=– → 200",
+        "description": "DurationFactor 2.0",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100, estimated_duration 120, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +200"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=100, est=15, actual=– → 50",
+        "description": "DurationFactor chặn dưới 0.5",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100, estimated_duration 15, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +50"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=100, est=600, actual=– → 200",
+        "description": "Khai khống thời lượng bị chặn trên 2.0",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100, estimated_duration 600, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +200"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=100, est=120, actual=45 → 75",
+        "description": "Actual nhỏ hơn Estimated được dùng",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100, estimated_duration 120, actual_duration 45, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +75"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=50, est=60, actual=90 → 50",
+        "description": "Actual lớn hơn Estimated không làm tăng XP",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 50, estimated_duration 60, actual_duration 90, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +50"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=30, est=45, actual=– → 23",
+        "description": "22,5 làm tròn nửa lên thành 23",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 30, estimated_duration 45, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +23"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] XP: C=25, est=50, actual=– → 21",
+        "description": "20,83 làm tròn thành 21",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 25, estimated_duration 50, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có giao dịch TASK_REWARD +21"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] Task nhỏ không nhận XP ngay",
+        "description": "Contribution < SmallThreshold chỉ góp Pool",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 19, estimated_duration 60, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Không có TASK_REWARD",
+            "Có POOL_ADD +19"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] Biên Task lớn",
+        "description": "Contribution = SmallThreshold là Task lớn",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 20, estimated_duration 60, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có TASK_REWARD +20",
+            "Không có POOL_ADD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] Task không gắn Goal vẫn nhận XP",
+        "description": "XP không phụ thuộc Goal",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T không gắn Goal, contribution 100, estimated 60"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có TASK_REWARD +100"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] Dùng Settings tại thời điểm hoàn thành",
+        "description": "Đổi Multiplier không hồi tố",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task A contribution 100 estimated 60 đã COMPLETED với TASK_REWARD +100",
+            "Task B contribution 100 estimated 60 IN_PROGRESS"
+          ],
+          "when": [
+            "Owner đổi Multiplier thành 2.0",
+            "Owner hoàn thành B"
+          ],
+          "then": [
+            "TASK_REWARD của A vẫn là +100",
+            "TASK_REWARD của B là +200"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-07] Hiển thị XP dự kiến",
+        "description": "Task lớn hiện XP, Task nhỏ hiện phần vào Pool",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task A contribution 100 estimated 120",
+            "Task B contribution 10 estimated 30"
+          ],
+          "when": [
+            "Owner mở danh sách Task"
+          ],
+          "then": [
+            "A hiển thị 'XP dự kiến: 200'",
+            "B hiển thị '0 XP + 10 vào Pool'"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

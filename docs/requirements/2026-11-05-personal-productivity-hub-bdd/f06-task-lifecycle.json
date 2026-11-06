@@ -1,0 +1,347 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-06 Task Lifecycle",
+    "description": "Chuyển trạng thái, hoàn thành, hoàn tác, hủy, Actual Duration",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-06] Bắt đầu Task",
+        "description": "TODO sang IN_PROGRESS",
+        "steps": {
+          "given": [
+            "Task T trạng thái TODO"
+          ],
+          "when": [
+            "Owner bắt đầu T"
+          ],
+          "then": [
+            "T trạng thái IN_PROGRESS",
+            "Lịch sử trạng thái ghi TODO → IN_PROGRESS"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành Task lớn",
+        "description": "Mọi hiệu ứng xảy ra trong một thao tác",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G target 1000 completed 0",
+            "Task T contribution 100 gắn G, estimated_duration 120, IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "T trạng thái COMPLETED, completed_at = thời điểm hoàn thành",
+            "Có CONTRIBUTION_ADD +100 cho G",
+            "Có TASK_REWARD +200",
+            "Productivity Streak hôm nay được tính",
+            "Activity ghi hoàn thành Task"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành trực tiếp từ TODO",
+        "description": "Cho phép TODO sang COMPLETED",
+        "steps": {
+          "given": [
+            "Task T trạng thái TODO"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "T trạng thái COMPLETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành lặp",
+        "description": "Cùng operation key không tạo giao dịch mới",
+        "steps": {
+          "given": [
+            "Task T lớn IN_PROGRESS"
+          ],
+          "when": [
+            "Lệnh hoàn thành T được gửi 2 lần cùng operation key"
+          ],
+          "then": [
+            "Chỉ có 1 TASK_REWARD và 1 CONTRIBUTION_ADD",
+            "Lần gửi thứ hai trả về kết quả của lần đầu"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Chuyển trạng thái không hợp lệ",
+        "description": "CANCELLED là trạng thái cuối",
+        "steps": {
+          "given": [
+            "Task T trạng thái CANCELLED"
+          ],
+          "when": [
+            "Owner cố hoàn thành T"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "T vẫn CANCELLED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn tác Task chưa hoàn thành",
+        "description": "Chỉ Task COMPLETED mới hoàn tác được",
+        "steps": {
+          "given": [
+            "Task T trạng thái TODO"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "T vẫn TODO"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn tác về IN_PROGRESS",
+        "description": "Undo đưa Task về IN_PROGRESS và đảo ngược giao dịch",
+        "steps": {
+          "given": [
+            "Task T lớn gắn Goal G đã COMPLETED, đã nhận TASK_REWARD 200 và CONTRIBUTION_ADD 100",
+            "Spendable XP 50"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "T trạng thái IN_PROGRESS, completed_at trống",
+            "Có REWARD_REVERSAL −200 tham chiếu TASK_REWARD gốc",
+            "Có CONTRIBUTION_REVERSAL −100",
+            "Spendable XP = −150"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành lại sau hoàn tác",
+        "description": "Complete → Undo → Complete cho kết quả ròng một lần",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 IN_PROGRESS, Lifetime XP 0"
+          ],
+          "when": [
+            "Owner hoàn thành T, hoàn tác T, rồi hoàn thành T lần nữa"
+          ],
+          "then": [
+            "Có 2 TASK_REWARD và 1 REWARD_REVERSAL",
+            "Lifetime XP = 200",
+            "T trạng thái COMPLETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Lỗi giữa chừng",
+        "description": "Thao tác hoàn thành là nguyên tử",
+        "steps": {
+          "given": [
+            "Task T lớn IN_PROGRESS",
+            "Lỗi xảy ra sau khi ghi Contribution nhưng trước khi ghi XP"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "T vẫn IN_PROGRESS",
+            "Không có giao dịch Contribution hay XP mới",
+            "Owner thấy thông báo lỗi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hủy trước deadline",
+        "description": "Không cần lý do, không phạt",
+        "steps": {
+          "given": [
+            "Task T TODO, deadline sau thời điểm hiện tại"
+          ],
+          "when": [
+            "Owner hủy T không chọn lý do"
+          ],
+          "then": [
+            "T trạng thái CANCELLED",
+            "Không có giao dịch PENALTY"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hủy Task Missed với lý do không miễn trừ",
+        "description": "Phạt ngay, không chờ Grace",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 đang Missed 2 giờ, chưa bị phạt"
+          ],
+          "when": [
+            "Owner hủy T với lý do 'Trì hoãn'"
+          ],
+          "then": [
+            "T trạng thái CANCELLED",
+            "Có giao dịch PENALTY −100 ngay lập tức",
+            "Lifetime XP không đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hủy Task Missed bắt buộc lý do",
+        "description": "Không chọn lý do thì không hủy được",
+        "steps": {
+          "given": [
+            "Task T đang Missed"
+          ],
+          "when": [
+            "Owner hủy T không chọn lý do"
+          ],
+          "then": [
+            "Hệ thống từ chối và yêu cầu chọn lý do",
+            "T giữ nguyên trạng thái"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hủy Task Missed với lý do miễn trừ",
+        "description": "Không phạt",
+        "steps": {
+          "given": [
+            "Task T đang Missed, chưa bị phạt"
+          ],
+          "when": [
+            "Owner hủy T với lý do 'Bất khả kháng'"
+          ],
+          "then": [
+            "T trạng thái CANCELLED",
+            "Không có giao dịch PENALTY"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hủy Task đã bị phạt",
+        "description": "Không phạt lần hai cho cùng deadline",
+        "steps": {
+          "given": [
+            "Task T Missed đã bị PENALTY −100 cho deadline hiện tại"
+          ],
+          "when": [
+            "Owner hủy T với lý do 'Trì hoãn'"
+          ],
+          "then": [
+            "T trạng thái CANCELLED",
+            "Vẫn chỉ có 1 giao dịch PENALTY chưa đảo cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành Task Missed trong Grace",
+        "description": "Nhận đủ thưởng, không phạt",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 Missed 3 giờ (Grace 24h)"
+          ],
+          "when": [
+            "Owner hoàn thành T",
+            "Thời gian trôi qua quá deadline + 24h"
+          ],
+          "then": [
+            "Có TASK_REWARD +200",
+            "Không có giao dịch PENALTY cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Hoàn thành Task đã bị phạt",
+        "description": "Nhận thưởng, phạt giữ nguyên",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 đã bị PENALTY −100"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có TASK_REWARD +200",
+            "Giao dịch PENALTY −100 vẫn hiệu lực"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Ghi Actual Duration khi hoàn thành",
+        "description": "Actual hợp lệ được lưu cùng lúc hoàn thành",
+        "steps": {
+          "given": [
+            "Task T IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T với actual_duration 45"
+          ],
+          "then": [
+            "T có actual_duration 45"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Actual Duration không hợp lệ",
+        "description": "Actual ngoài 1–1.440 bị từ chối",
+        "steps": {
+          "given": [
+            "Task T IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T với actual_duration 0"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "T vẫn IN_PROGRESS"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-06] Lịch sử trạng thái",
+        "description": "Mỗi lần chuyển trạng thái được lưu",
+        "steps": {
+          "given": [
+            "Task T TODO"
+          ],
+          "when": [
+            "Owner bắt đầu, hoàn thành, rồi hoàn tác T"
+          ],
+          "then": [
+            "Lịch sử T có 3 dòng: TODO → IN_PROGRESS, IN_PROGRESS → COMPLETED, COMPLETED → IN_PROGRESS kèm thời điểm"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

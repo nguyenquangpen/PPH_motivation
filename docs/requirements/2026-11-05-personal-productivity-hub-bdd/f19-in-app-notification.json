@@ -1,0 +1,126 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-19 In-app Notification",
+    "description": "Thông báo trong ứng dụng, chống trùng, đánh dấu đã đọc",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-19] Đánh dấu đã đọc",
+        "description": "Đọc từng cái và tất cả",
+        "steps": {
+          "given": [
+            "Có 3 Notification chưa đọc"
+          ],
+          "when": [
+            "Owner đánh dấu 1 cái đã đọc rồi chọn 'Đánh dấu tất cả đã đọc'"
+          ],
+          "then": [
+            "Sau bước 1 còn 2 chưa đọc",
+            "Sau bước 2 còn 0 chưa đọc"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Chống trùng",
+        "description": "Không tạo mới khi đã có cùng khóa chưa đọc",
+        "steps": {
+          "given": [
+            "Đã có Notification TASK_MISSED chưa đọc cho Task T với deadline hiện tại"
+          ],
+          "when": [
+            "Hệ thống kiểm tra Missed cho T lần nữa"
+          ],
+          "then": [
+            "Vẫn chỉ có 1 Notification TASK_MISSED cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Nhắc trước deadline 24 giờ",
+        "description": "TASK_DEADLINE_SOON một lần cho mỗi giá trị deadline",
+        "steps": {
+          "given": [
+            "Task T TODO deadline 2026-11-07 17:00"
+          ],
+          "when": [
+            "Thời gian đến 2026-11-06 17:00 và hệ thống kiểm tra nhiều lần sau đó"
+          ],
+          "then": [
+            "Có đúng 1 Notification TASK_DEADLINE_SOON cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Đổi deadline tạo nhắc mới",
+        "description": "Giá trị deadline mới được nhắc lại",
+        "steps": {
+          "given": [
+            "Task T đã được nhắc TASK_DEADLINE_SOON cho deadline cũ"
+          ],
+          "when": [
+            "Owner dời deadline T sang 3 ngày sau, rồi thời gian đến 24 giờ trước deadline mới"
+          ],
+          "then": [
+            "Có Notification TASK_DEADLINE_SOON thứ hai cho deadline mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Không nhắc Task đã hoàn thành",
+        "description": "Task COMPLETED không có nhắc nhở và nhắc cũ bị ẩn",
+        "steps": {
+          "given": [
+            "Task T có Notification TASK_DEADLINE_SOON chưa đọc"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Notification TASK_DEADLINE_SOON của T bị ẩn khỏi danh sách chưa đọc",
+            "T không nhận TASK_MISSED khi qua deadline"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Thông báo thành tựu",
+        "description": "Lên Level và Pool Reward có thông báo",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Lifetime 950, Pool 95"
+          ],
+          "when": [
+            "Owner hoàn thành Task nhỏ contribution 10"
+          ],
+          "then": [
+            "Có Notification POOL_REWARD",
+            "Có Notification LEVEL_UP 'Lên Level 2'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-19] Lưu trữ 90 ngày",
+        "description": "Lịch sử thông báo giữ tối thiểu 90 ngày",
+        "steps": {
+          "given": [
+            "Có Notification tạo 89 ngày trước"
+          ],
+          "when": [
+            "Owner mở lịch sử Notification"
+          ],
+          "then": [
+            "Notification 89 ngày trước vẫn hiển thị"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

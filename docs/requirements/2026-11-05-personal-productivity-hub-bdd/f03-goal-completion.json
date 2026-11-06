@@ -1,0 +1,169 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-03 Goal Completion",
+    "description": "Gợi ý khi Goal đạt 100%, Owner xác nhận hoàn thành, trao Goal Reward một lần",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-03] Gợi ý khi đạt 100%",
+        "description": "Đạt 100% tạo Notification gợi ý, chưa tự Completed",
+        "steps": {
+          "given": [
+            "Goal G Active target 1000 completed 950",
+            "Task T contribution 50 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có Notification GOAL_REACHED_100 'Goal G đã đạt mục tiêu — đánh dấu hoàn thành?'",
+            "G vẫn ở trạng thái Active",
+            "Không có giao dịch GOAL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Xác nhận hoàn thành",
+        "description": "Xác nhận chuyển Completed và trao Goal Reward mặc định",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G Active progress 100%, completed 1000, goal_reward_xp để trống",
+            "Lifetime XP 500, Spendable XP 500"
+          ],
+          "when": [
+            "Owner xác nhận hoàn thành G"
+          ],
+          "then": [
+            "G trạng thái Completed, completed_at = thời điểm xác nhận",
+            "Lưu completed_contribution tại thời điểm hoàn thành = 1000",
+            "Có giao dịch GOAL_REWARD +1000",
+            "Lifetime XP = 1500 và Spendable XP = 1500"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Goal Reward tùy chỉnh",
+        "description": "goal_reward_xp riêng của Goal được dùng thay mặc định",
+        "steps": {
+          "given": [
+            "Goal G progress 100%, goal_reward_xp = 500"
+          ],
+          "when": [
+            "Owner xác nhận hoàn thành G"
+          ],
+          "then": [
+            "Có giao dịch GOAL_REWARD +500"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Hoàn thành khi chưa đủ 100%",
+        "description": "Cần xác nhận lần hai, vẫn nhận thưởng đầy đủ",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G Active progress 40%"
+          ],
+          "when": [
+            "Owner chọn 'Đánh dấu hoàn thành' và xác nhận lần hai"
+          ],
+          "then": [
+            "G trạng thái Completed",
+            "Có giao dịch GOAL_REWARD +1000"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Xác nhận trùng",
+        "description": "Bấm xác nhận hai lần chỉ thưởng một lần",
+        "steps": {
+          "given": [
+            "Goal G progress 100% Active"
+          ],
+          "when": [
+            "Lệnh xác nhận hoàn thành G được gửi 2 lần cùng operation key"
+          ],
+          "then": [
+            "Chỉ có 1 giao dịch GOAL_REWARD cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Goal đã xóa",
+        "description": "Không xác nhận hoàn thành Goal đã xóa",
+        "steps": {
+          "given": [
+            "Goal G đã bị xóa (soft)"
+          ],
+          "when": [
+            "Owner gửi yêu cầu xác nhận hoàn thành G"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "Không có giao dịch GOAL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Hoàn tác Task sau khi Goal Completed",
+        "description": "Goal đã xác nhận Completed giữ nguyên, không đảo Goal Reward",
+        "steps": {
+          "given": [
+            "Goal G Completed với completed 1000, target 1000, đã nhận GOAL_REWARD",
+            "Task T contribution 100 gắn G COMPLETED"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "G completed_contribution = 900, progress 90,0%",
+            "G vẫn trạng thái Completed",
+            "Không có giao dịch đảo ngược GOAL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Goal Reward chỉ một lần trong vòng đời",
+        "description": "Mở lại rồi hoàn thành lại không thưởng thêm",
+        "steps": {
+          "given": [
+            "Goal G đã từng Completed và nhận GOAL_REWARD, sau đó được mở lại về Active"
+          ],
+          "when": [
+            "Owner xác nhận hoàn thành G lần nữa"
+          ],
+          "then": [
+            "G trạng thái Completed",
+            "Tổng số giao dịch GOAL_REWARD của G vẫn là 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-03] Không gợi ý lặp",
+        "description": "Tiến độ dao động quanh 100% chỉ tạo tối đa 1 Notification chưa đọc",
+        "steps": {
+          "given": [
+            "Goal G Active progress 99%"
+          ],
+          "when": [
+            "Tiến độ G lần lượt 99% → 100% → 99% → 100% do hoàn thành và hoàn tác Task, Owner chưa đọc Notification"
+          ],
+          "then": [
+            "Chỉ có 1 Notification GOAL_REACHED_100 chưa đọc cho G"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

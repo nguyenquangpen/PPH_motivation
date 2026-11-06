@@ -1,0 +1,248 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-01 Goal & Category Management",
+    "description": "Tạo, sửa, xóa (soft) Goal và Goal Category; đổi trạng thái Goal thủ công",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-01] Tạo Goal hợp lệ",
+        "description": "Goal mới có trạng thái Not Started và tiến độ 0%",
+        "steps": {
+          "given": [
+            "Category 'Education' tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal title 'Học 1000 từ vựng', category 'Education', target_contribution 1000"
+          ],
+          "then": [
+            "Goal được lưu với status 'Not Started'",
+            "Progress hiển thị 0,0% và completed_contribution 0",
+            "Activity ghi 'Tạo Goal'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Thiếu title",
+        "description": "Title rỗng hoặc chỉ khoảng trắng bị từ chối",
+        "steps": {
+          "given": [
+            "Category 'Education' tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal với title '   ' và target_contribution 1000"
+          ],
+          "then": [
+            "Hệ thống từ chối với thông báo 'Title bắt buộc'",
+            "Không có Goal nào được tạo"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Title đúng 200 ký tự",
+        "description": "Biên trên độ dài title được chấp nhận",
+        "steps": {
+          "given": [
+            "Category tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal với title dài đúng 200 ký tự"
+          ],
+          "then": [
+            "Goal được tạo thành công"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Title 201 ký tự",
+        "description": "Vượt biên trên độ dài title bị từ chối",
+        "steps": {
+          "given": [
+            "Category tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal với title dài 201 ký tự"
+          ],
+          "then": [
+            "Hệ thống từ chối, không tạo Goal"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] target_contribution ngoài phạm vi",
+        "description": "Chỉ chấp nhận 1–1.000.000",
+        "steps": {
+          "given": [
+            "Category tồn tại"
+          ],
+          "when": [
+            "Owner lần lượt tạo Goal với target_contribution 0, 1, 1000000, 1000001"
+          ],
+          "then": [
+            "Giá trị 0 bị từ chối",
+            "Giá trị 1 được chấp nhận",
+            "Giá trị 1000000 được chấp nhận",
+            "Giá trị 1000001 bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] target_date trước start_date",
+        "description": "Ngày không hợp lệ bị từ chối",
+        "steps": {
+          "given": [
+            "Category tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal với start_date 2026-12-01 và target_date 2026-11-30"
+          ],
+          "then": [
+            "Hệ thống từ chối với thông báo lỗi ngày"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] start_date bằng target_date",
+        "description": "Biên ngày bằng nhau được chấp nhận",
+        "steps": {
+          "given": [
+            "Category tồn tại"
+          ],
+          "when": [
+            "Owner tạo Goal với start_date và target_date cùng là 2026-12-01"
+          ],
+          "then": [
+            "Goal được tạo thành công"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Đổi trạng thái thủ công",
+        "description": "Owner chuyển Goal giữa các trạng thái cho phép",
+        "steps": {
+          "given": [
+            "Goal G ở trạng thái 'Active'"
+          ],
+          "when": [
+            "Owner đổi trạng thái G sang 'Paused'"
+          ],
+          "then": [
+            "G có trạng thái 'Paused'",
+            "Activity ghi 'Active → Paused'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Không đặt Completed trực tiếp",
+        "description": "Completed chỉ đạt qua luồng hoàn thành Goal (F-03)",
+        "steps": {
+          "given": [
+            "Goal G ở trạng thái 'Active'"
+          ],
+          "when": [
+            "Owner chọn đổi trạng thái G sang 'Completed' trong màn hình sửa Goal"
+          ],
+          "then": [
+            "Hệ thống từ chối và hướng dẫn dùng chức năng 'Đánh dấu hoàn thành'",
+            "G vẫn ở trạng thái 'Active'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Category mặc định",
+        "description": "Hệ thống có sẵn 8 Category seed và cho phép sửa/xóa",
+        "steps": {
+          "given": [
+            "Hub vừa được cài đặt lần đầu"
+          ],
+          "when": [
+            "Owner mở danh sách Category"
+          ],
+          "then": [
+            "Thấy Career, Education, Research, Finance, Business, Personal Development, Health, Other",
+            "Mỗi Category có thao tác Sửa và Xóa"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Category trùng tên",
+        "description": "Tên Category duy nhất, không phân biệt hoa thường",
+        "steps": {
+          "given": [
+            "Category 'Health' tồn tại"
+          ],
+          "when": [
+            "Owner tạo Category 'health'"
+          ],
+          "then": [
+            "Hệ thống từ chối do trùng tên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Xóa Category đang dùng",
+        "description": "Category có Goal chưa xóa không được xóa",
+        "steps": {
+          "given": [
+            "Category 'Research' đang được 2 Goal chưa xóa sử dụng"
+          ],
+          "when": [
+            "Owner xóa Category 'Research'"
+          ],
+          "then": [
+            "Hệ thống từ chối và báo có 2 Goal đang dùng",
+            "Category vẫn tồn tại"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Xóa Goal (soft)",
+        "description": "Xóa Goal không làm mất Task và lịch sử Contribution",
+        "steps": {
+          "given": [
+            "Goal G có 3 Task, trong đó 1 Task COMPLETED đóng góp 100"
+          ],
+          "when": [
+            "Owner xóa Goal G và xác nhận"
+          ],
+          "then": [
+            "G ẩn khỏi danh sách Goal mặc định",
+            "3 Task vẫn tồn tại và vẫn tham chiếu G",
+            "Giao dịch Contribution 100 của G vẫn tồn tại"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-01] Mở lại Goal Completed",
+        "description": "Goal Completed có thể về Active nhưng không mất Goal Reward",
+        "steps": {
+          "given": [
+            "Goal G đã Completed và đã nhận GOAL_REWARD 1000 XP"
+          ],
+          "when": [
+            "Owner đổi trạng thái G sang 'Active'"
+          ],
+          "then": [
+            "G có trạng thái 'Active'",
+            "Không có giao dịch đảo ngược GOAL_REWARD",
+            "Lifetime XP không đổi"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

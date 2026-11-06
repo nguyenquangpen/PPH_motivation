@@ -1,0 +1,166 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-10 Settings",
+    "description": "Cấu hình tham số Reward/Penalty/Streak/Preset qua UI, không hồi tố",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-10] Giá trị mặc định",
+        "description": "Lần chạy đầu có bộ mặc định cân bằng",
+        "steps": {
+          "given": [
+            "Hub vừa được cài đặt lần đầu"
+          ],
+          "when": [
+            "Owner mở Settings"
+          ],
+          "then": [
+            "Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120",
+            "Milestone XP 300, Goal XP 1000, XPPerLevel 1000",
+            "Penalty bật, 50%, Grace 24h",
+            "Freeze 2/tháng, BehindMargin 15, NearDueDays 14",
+            "Preset Major/Medium/Minor 100/50/10, Timezone Asia/Ho_Chi_Minh"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Thay đổi không hồi tố",
+        "description": "Giao dịch cũ giữ nguyên sau khi đổi tham số",
+        "steps": {
+          "given": [
+            "Đã có giao dịch POOL_REWARD +120"
+          ],
+          "when": [
+            "Owner đổi PoolRewardXP thành 200"
+          ],
+          "then": [
+            "Giao dịch cũ vẫn +120",
+            "Lần Pool đầy tiếp theo trao +200"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Ràng buộc liên trường",
+        "description": "MinFactor > MaxFactor bị từ chối toàn bộ lần lưu",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner đặt MinFactor 3.0, MaxFactor 2.0 và PoolTarget 150 rồi lưu"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "MinFactor, MaxFactor và PoolTarget giữ giá trị cũ"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Biên PenaltyPercent",
+        "description": "Chấp nhận 0–100",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner lần lượt lưu PenaltyPercent 0, 100, 101"
+          ],
+          "then": [
+            "0 được chấp nhận",
+            "100 được chấp nhận",
+            "101 bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Ghi lịch sử thay đổi",
+        "description": "Mỗi lần lưu ghi giá trị cũ và mới",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner đổi GracePeriodHours từ 24 thành 48"
+          ],
+          "then": [
+            "Activity ghi 'GracePeriodHours: 24 → 48'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Khôi phục mặc định theo nhóm",
+        "description": "Khôi phục một nhóm không ảnh hưởng nhóm khác",
+        "steps": {
+          "given": [
+            "Multiplier 2.0, PenaltyPercent 80"
+          ],
+          "when": [
+            "Owner bấm 'Khôi phục mặc định' cho nhóm XP"
+          ],
+          "then": [
+            "Multiplier = 1.0",
+            "PenaltyPercent vẫn = 80"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Múi giờ không hợp lệ",
+        "description": "Chỉ chấp nhận múi giờ IANA",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner đặt Timezone 'Mars/Base'"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "Timezone giữ nguyên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Đổi Preset không ảnh hưởng Task cũ",
+        "description": "Preset chỉ là giá trị gợi ý khi tạo Task",
+        "steps": {
+          "given": [
+            "Task T tạo bằng preset Major với contribution 100"
+          ],
+          "when": [
+            "Owner đổi preset Major thành 150"
+          ],
+          "then": [
+            "T vẫn contribution 100",
+            "Task mới chọn Major được điền 150"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-10] Đổi múi giờ không đổi lịch sử",
+        "description": "Lịch sử đã ghi giữ nguyên thời điểm tuyệt đối",
+        "steps": {
+          "given": [
+            "Task T completed_at 2026-11-05T23:30+07:00"
+          ],
+          "when": [
+            "Owner đổi Timezone sang Asia/Tokyo"
+          ],
+          "then": [
+            "completed_at của T vẫn là cùng thời điểm tuyệt đối",
+            "Activity ghi thay đổi Timezone"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

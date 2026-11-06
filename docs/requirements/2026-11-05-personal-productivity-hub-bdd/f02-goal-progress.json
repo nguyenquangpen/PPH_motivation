@@ -1,0 +1,230 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-02 Goal Progress",
+    "description": "Tiến độ Goal tính từ Contribution ledger của các Task COMPLETED",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-02] Hoàn thành Task tăng tiến độ",
+        "description": "Completed Contribution tăng đúng Contribution của Task",
+        "steps": {
+          "given": [
+            "Goal G target 1000, completed 0",
+            "Task T contribution 100 gắn G, trạng thái IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có 1 giao dịch CONTRIBUTION_ADD +100 cho G",
+            "G completed_contribution = 100",
+            "G progress = 10,0%"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Ví dụ spec 130/1000",
+        "description": "Tiến độ 13% như ví dụ trong spec",
+        "steps": {
+          "given": [
+            "Goal G target 1000",
+            "Task A contribution 100 và Task B contribution 30 gắn G đã COMPLETED",
+            "Task C contribution 200 IN_PROGRESS, Task D contribution 50 TODO"
+          ],
+          "when": [
+            "Owner mở Goal G"
+          ],
+          "then": [
+            "G completed_contribution = 130",
+            "G progress = 13,0%"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Task chưa hoàn thành không tính",
+        "description": "TODO và IN_PROGRESS không đóng góp",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 0",
+            "Task T contribution 100 gắn G"
+          ],
+          "when": [
+            "Owner chuyển T từ TODO sang IN_PROGRESS"
+          ],
+          "then": [
+            "G completed_contribution = 0",
+            "Không có giao dịch Contribution nào"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Task CANCELLED không tính",
+        "description": "Task bị hủy không đóng góp",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 0",
+            "Task T contribution 100 gắn G, TODO, không có deadline"
+          ],
+          "when": [
+            "Owner hủy T"
+          ],
+          "then": [
+            "G completed_contribution = 0"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Hoàn tác giảm tiến độ",
+        "description": "Undo tạo giao dịch đảo ngược Contribution",
+        "steps": {
+          "given": [
+            "Goal G target 1000",
+            "Task T contribution 100 gắn G đã COMPLETED, G completed 100"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "Có giao dịch CONTRIBUTION_REVERSAL −100 cho G",
+            "G completed_contribution = 0",
+            "Giao dịch CONTRIBUTION_ADD ban đầu vẫn tồn tại"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Không cộng trùng",
+        "description": "Gửi lại cùng thao tác hoàn thành chỉ tính một lần",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 0",
+            "Task T contribution 100 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Thao tác hoàn thành T được gửi 2 lần với cùng operation key"
+          ],
+          "then": [
+            "Chỉ có 1 giao dịch CONTRIBUTION_ADD",
+            "G completed_contribution = 100"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Đạt đúng 100%",
+        "description": "Biên completed = target",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 900",
+            "Task T contribution 100 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "G progress = 100,0%",
+            "overflow_contribution = 0",
+            "remaining_contribution = 0"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Vượt mục tiêu",
+        "description": "Thanh tiến độ tối đa 100%, phần vượt hiển thị riêng",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 1000",
+            "Task T contribution 120 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "G completed_contribution = 1120",
+            "Thanh tiến độ hiển thị 100%",
+            "Hiển thị nhãn '+120 vượt mục tiêu'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Làm tròn xuống 0,1",
+        "description": "Phần trăm làm tròn xuống một chữ số thập phân",
+        "steps": {
+          "given": [
+            "Goal G target 3 completed 1"
+          ],
+          "when": [
+            "Owner mở Goal G"
+          ],
+          "then": [
+            "G progress hiển thị 33,3%"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Sửa Target Contribution",
+        "description": "Giữ completed, tính lại %, ghi lịch sử, không mở lại Milestone",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 600",
+            "Milestone M của G (ngưỡng 500) đã Completed"
+          ],
+          "when": [
+            "Owner sửa target_contribution của G thành 1500"
+          ],
+          "then": [
+            "G completed_contribution vẫn = 600",
+            "G progress = 40,0%",
+            "Activity ghi 'Target 1000 → 1500, Progress 60,0% → 40,0%'",
+            "M vẫn Completed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Goal Paused vẫn nhận Contribution",
+        "description": "Contribution ghi cho Goal ở mọi trạng thái",
+        "steps": {
+          "given": [
+            "Goal G trạng thái Paused, target 1000 completed 0",
+            "Task T contribution 50 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "G completed_contribution = 50",
+            "Owner nhận XP của T như bình thường"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-02] Khóa sửa Task đã COMPLETED",
+        "description": "Không sửa Contribution của Task COMPLETED",
+        "steps": {
+          "given": [
+            "Task T contribution 100 gắn G đã COMPLETED"
+          ],
+          "when": [
+            "Owner sửa contribution của T thành 200"
+          ],
+          "then": [
+            "Hệ thống từ chối và hướng dẫn hoàn tác trước",
+            "T contribution vẫn = 100",
+            "G completed_contribution không đổi"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-09 XP Ledger, Balances & Level",
+    "description": "Giao dịch XP bất biến, hai số dư Lifetime/Spendable và Level",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-09] Thưởng tăng cả hai số dư",
+        "description": "Giao dịch reward cộng Lifetime và Spendable",
+        "steps": {
+          "given": [
+            "Lifetime 0, Spendable 0"
+          ],
+          "when": [
+            "Owner nhận TASK_REWARD +200"
+          ],
+          "then": [
+            "Lifetime = 200",
+            "Spendable = 200"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Đổi thưởng chỉ trừ Spendable",
+        "description": "REDEEM không ảnh hưởng Lifetime",
+        "steps": {
+          "given": [
+            "Lifetime 1500, Spendable 1500",
+            "Reward Item giá 300"
+          ],
+          "when": [
+            "Owner đổi Item"
+          ],
+          "then": [
+            "Lifetime = 1500",
+            "Spendable = 1200",
+            "Level vẫn = 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Phạt chỉ trừ Spendable",
+        "description": "PENALTY không ảnh hưởng Lifetime và Level",
+        "steps": {
+          "given": [
+            "Lifetime 1000, Spendable 100"
+          ],
+          "when": [
+            "Hệ thống áp dụng PENALTY −150"
+          ],
+          "then": [
+            "Lifetime = 1000",
+            "Spendable = −50",
+            "Level = 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Đảo ngược thưởng trừ cả hai",
+        "description": "REWARD_REVERSAL giảm Lifetime và Spendable",
+        "steps": {
+          "given": [
+            "Lifetime 1000, Spendable 300, có TASK_REWARD +200"
+          ],
+          "when": [
+            "Owner hoàn tác Task nguồn"
+          ],
+          "then": [
+            "Lifetime = 800",
+            "Spendable = 100",
+            "Level = 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Biên Level",
+        "description": "Level = floor(Lifetime/1000) + 1",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Lifetime XP lần lượt là 0, 999, 1000, 2500"
+          ],
+          "then": [
+            "Level lần lượt là 1, 1, 2, 3"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Thông báo lên Level",
+        "description": "Vượt mốc Level tạo Notification và Activity",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Lifetime 950"
+          ],
+          "when": [
+            "Owner nhận TASK_REWARD +100"
+          ],
+          "then": [
+            "Level = 2",
+            "Có Notification LEVEL_UP 'Lên Level 2'",
+            "Activity ghi 'Lên Level 2'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Giao dịch bất biến",
+        "description": "Không có thao tác sửa hay xóa giao dịch",
+        "steps": {
+          "given": [
+            "Có ít nhất một giao dịch XP"
+          ],
+          "when": [
+            "Owner mở Reward History"
+          ],
+          "then": [
+            "Không có thao tác sửa hoặc xóa nào cho giao dịch"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Đảo ngược tối đa một lần",
+        "description": "Một giao dịch không bị đảo hai lần",
+        "steps": {
+          "given": [
+            "TASK_REWARD R đã có REWARD_REVERSAL"
+          ],
+          "when": [
+            "Hệ thống nhận yêu cầu đảo ngược R lần nữa"
+          ],
+          "then": [
+            "Yêu cầu bị từ chối",
+            "Vẫn chỉ có 1 REWARD_REVERSAL tham chiếu R"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Thông tin giao dịch",
+        "description": "Mỗi giao dịch lưu đủ trường truy vết",
+        "steps": {
+          "given": [
+            "Owner vừa hoàn thành Task T nhận TASK_REWARD"
+          ],
+          "when": [
+            "Owner mở chi tiết giao dịch"
+          ],
+          "then": [
+            "Thấy id, type TASK_REWARD, lifetime_delta, spendable_delta, nguồn Task T, lý do, thời điểm"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-09] Lọc Reward History",
+        "description": "Lọc theo loại và khoảng thời gian",
+        "steps": {
+          "given": [
+            "Có giao dịch TASK_REWARD, REDEEM, PENALTY trong tháng 11"
+          ],
+          "when": [
+            "Owner lọc Reward History theo type PENALTY và tháng 11"
+          ],
+          "then": [
+            "Chỉ hiển thị các giao dịch PENALTY trong tháng 11"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

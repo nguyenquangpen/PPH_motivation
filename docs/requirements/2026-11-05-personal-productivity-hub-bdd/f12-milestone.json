@@ -1,0 +1,218 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-12 Milestone",
+    "description": "Milestone tự hoàn thành theo ngưỡng Contribution hoặc tập Task liên kết; mở lại khi hoàn tác",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-12] Hoàn thành theo ngưỡng",
+        "description": "Đạt ngưỡng thì Completed và nhận thưởng mặc định",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G completed 450",
+            "Milestone M của G, CONTRIBUTION_THRESHOLD 500, reward_xp trống",
+            "Task T contribution 50 gắn G IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "M trạng thái Completed, completed_at được ghi",
+            "Có MILESTONE_REWARD +300",
+            "Có Notification MILESTONE_COMPLETED",
+            "Dashboard hiển thị M trong Achievements"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Biên ngưỡng",
+        "description": "completed = threshold là đạt",
+        "steps": {
+          "given": [
+            "Goal G completed 499, Milestone M ngưỡng 500",
+            "Task T contribution 1 gắn G"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "M Completed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Thưởng tùy chỉnh",
+        "description": "reward_xp riêng được dùng",
+        "steps": {
+          "given": [
+            "Milestone M reward_xp 50 sắp đạt ngưỡng"
+          ],
+          "when": [
+            "Owner hoàn thành Task làm M đạt ngưỡng"
+          ],
+          "then": [
+            "Có MILESTONE_REWARD +50"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Hoàn thành theo tập Task",
+        "description": "Tất cả Task liên kết COMPLETED thì đạt",
+        "steps": {
+          "given": [
+            "Milestone M LINKED_TASKS với Task A COMPLETED và Task B IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành B"
+          ],
+          "then": [
+            "M Completed",
+            "Có MILESTONE_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Bỏ qua Task CANCELLED",
+        "description": "Task hủy không chặn Milestone",
+        "steps": {
+          "given": [
+            "Milestone M LINKED_TASKS với Task A COMPLETED, Task B CANCELLED, Task C IN_PROGRESS"
+          ],
+          "when": [
+            "Owner hoàn thành C"
+          ],
+          "then": [
+            "M Completed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Tập Task rỗng",
+        "description": "Không có Task liên kết thì không bao giờ tự hoàn thành",
+        "steps": {
+          "given": [
+            "Milestone M LINKED_TASKS không có Task liên kết"
+          ],
+          "when": [
+            "Owner hoàn thành một Task khác của cùng Goal"
+          ],
+          "then": [
+            "M vẫn chưa Completed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Mở lại khi hoàn tác",
+        "description": "Hoàn tác làm mất điều kiện thì mở lại và đảo thưởng",
+        "steps": {
+          "given": [
+            "Milestone M ngưỡng 500 Completed với MILESTONE_REWARD +300",
+            "Goal G completed 520",
+            "Task T contribution 50 gắn G COMPLETED"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "G completed = 470",
+            "M trạng thái Pending, completed_at trống",
+            "Có REWARD_REVERSAL −300 tham chiếu MILESTONE_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Hoàn thành lại không trùng",
+        "description": "Đạt lại sau khi mở lại thì thưởng lại, tối đa 1 thưởng hiệu lực",
+        "steps": {
+          "given": [
+            "Milestone M đã bị mở lại và Milestone Reward đã bị đảo"
+          ],
+          "when": [
+            "Owner hoàn thành Task làm M đạt điều kiện lần nữa"
+          ],
+          "then": [
+            "M Completed",
+            "Có MILESTONE_REWARD mới",
+            "Số MILESTONE_REWARD chưa bị đảo của M = 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Đổi Target không mở lại",
+        "description": "Sửa target_contribution Goal không ảnh hưởng Milestone đã đạt",
+        "steps": {
+          "given": [
+            "Milestone M ngưỡng 500 Completed, Goal G completed 600 target 1000"
+          ],
+          "when": [
+            "Owner sửa target G thành 2000"
+          ],
+          "then": [
+            "M vẫn Completed",
+            "Không có REWARD_REVERSAL"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Tạo Milestone đã thỏa điều kiện",
+        "description": "Đánh giá ngay khi tạo",
+        "steps": {
+          "given": [
+            "Goal G completed 800"
+          ],
+          "when": [
+            "Owner tạo Milestone M ngưỡng 500 cho G"
+          ],
+          "then": [
+            "M Completed ngay",
+            "Có MILESTONE_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Milestone không hợp lệ",
+        "description": "Thiếu Goal hoặc ngưỡng ≤ 0 bị từ chối",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo Milestone CONTRIBUTION_THRESHOLD với threshold 0"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-12] Không hoàn thành thủ công",
+        "description": "Không có thao tác đánh dấu Milestone hoàn thành",
+        "steps": {
+          "given": [
+            "Milestone M chưa Completed"
+          ],
+          "when": [
+            "Owner mở chi tiết M"
+          ],
+          "then": [
+            "Không có thao tác 'Đánh dấu hoàn thành' cho M"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

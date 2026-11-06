@@ -1,0 +1,124 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-16 Missed Reason Tags",
+    "description": "Owner quản lý lý do bỏ lỡ, mỗi lý do có cờ miễn trừ phạt",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-16] Tag mặc định",
+        "description": "6 tag seed với cờ miễn trừ",
+        "steps": {
+          "given": [
+            "Hub vừa được cài đặt lần đầu"
+          ],
+          "when": [
+            "Owner mở danh sách Missed Reason"
+          ],
+          "then": [
+            "Bất khả kháng (miễn), Lỗi hệ thống/đồng bộ (miễn), Goal đang Paused (miễn), Lịch quá tải/Assistant đề xuất sai (miễn), Ước lượng sai (không miễn), Trì hoãn (không miễn)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Tạo tag mới",
+        "description": "Owner thêm lý do riêng",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo tag 'Đi công tác' với cờ miễn trừ"
+          ],
+          "then": [
+            "Tag 'Đi công tác' có thể chọn khi review Missed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Tên trùng",
+        "description": "Tên tag duy nhất",
+        "steps": {
+          "given": [
+            "Tag 'Trì hoãn' tồn tại"
+          ],
+          "when": [
+            "Owner tạo tag 'Trì hoãn'"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Tên quá dài",
+        "description": "Tên tối đa 50 ký tự",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo tag tên dài 51 ký tự"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Tag hệ thống không xóa được",
+        "description": "'Goal đang Paused' là tag hệ thống",
+        "steps": {
+          "given": [
+            "Tag 'Goal đang Paused' tồn tại"
+          ],
+          "when": [
+            "Owner xóa tag 'Goal đang Paused'"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Đổi cờ miễn trừ không hồi tố",
+        "description": "Phạt đã có không thay đổi",
+        "steps": {
+          "given": [
+            "Task T bị PENALTY với tag 'Ước lượng sai' (không miễn)"
+          ],
+          "when": [
+            "Owner đổi cờ của 'Ước lượng sai' thành miễn trừ"
+          ],
+          "then": [
+            "Giao dịch PENALTY của T vẫn hiệu lực",
+            "Task Missed mới dùng tag này không bị phạt"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-16] Xóa tag đang dùng",
+        "description": "Soft delete, lịch sử giữ tag",
+        "steps": {
+          "given": [
+            "Task T đã dùng tag 'Đi công tác'"
+          ],
+          "when": [
+            "Owner xóa tag 'Đi công tác'"
+          ],
+          "then": [
+            "Tag không còn trong danh sách chọn",
+            "Lịch sử của T vẫn hiển thị 'Đi công tác'"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

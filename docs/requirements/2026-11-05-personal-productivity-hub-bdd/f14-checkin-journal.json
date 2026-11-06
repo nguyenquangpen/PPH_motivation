@@ -1,0 +1,92 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-14 Check-in Journal (Could)",
+    "description": "Nhật ký hằng ngày, tối đa 1 entry/ngày, không ảnh hưởng Streak/XP",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-14] Tạo Check-in",
+        "description": "Ghi mood và note cho hôm nay",
+        "steps": {
+          "given": [
+            "Hôm nay chưa có Check-in"
+          ],
+          "when": [
+            "Owner check-in mood 4, note 'Học tốt'"
+          ],
+          "then": [
+            "Có 1 entry hôm nay với mood 4 và note 'Học tốt'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-14] Tối đa 1 entry mỗi ngày",
+        "description": "Check-in lần hai sửa entry hiện có",
+        "steps": {
+          "given": [
+            "Hôm nay đã có Check-in mood 4"
+          ],
+          "when": [
+            "Owner check-in lại mood 2"
+          ],
+          "then": [
+            "Vẫn chỉ có 1 entry hôm nay",
+            "Entry có mood 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-14] Note quá dài",
+        "description": "Note tối đa 2.000 ký tự",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner check-in với note 2.001 ký tự"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-14] Không ảnh hưởng Streak và XP",
+        "description": "Check-in chỉ là nhật ký",
+        "steps": {
+          "given": [
+            "Productivity Streak = 0, Lifetime XP 0, hôm nay chưa có Task COMPLETED"
+          ],
+          "when": [
+            "Owner check-in"
+          ],
+          "then": [
+            "Productivity Streak vẫn = 0",
+            "Không có giao dịch XP"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-14] Không sửa ngày cũ",
+        "description": "Chỉ sửa được trong cùng ngày",
+        "steps": {
+          "given": [
+            "Entry ngày hôm qua tồn tại"
+          ],
+          "when": [
+            "Owner sửa entry hôm qua"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

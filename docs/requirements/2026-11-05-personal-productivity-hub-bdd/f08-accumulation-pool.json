@@ -1,0 +1,179 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-08 Accumulation Pool",
+    "description": "Một Pool chung tích lũy Contribution của Task nhỏ, trả Pool Reward khi đủ ngưỡng",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-08] Task nhỏ cộng vào Pool",
+        "description": "POOL_ADD bằng Contribution",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Pool = 40",
+            "Task nhỏ T contribution 10"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có POOL_ADD +10",
+            "Pool = 50",
+            "Không có POOL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Đạt đúng ngưỡng",
+        "description": "Pool 90 + 10 = 100 thì thưởng và về 0",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Pool = 90",
+            "Task nhỏ T contribution 10"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có POOL_REWARD +120 vào Lifetime và Spendable",
+            "Có POOL_PAYOUT −100",
+            "Pool = 0",
+            "Có Notification POOL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Phần dư giữ lại",
+        "description": "Pool 95 + 10 thì thưởng và còn 5",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Pool = 95",
+            "Task nhỏ T contribution 10"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có 1 POOL_REWARD +120",
+            "Pool = 5"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Vượt nhiều ngưỡng một lần",
+        "description": "Mỗi PoolTarget vượt qua trao một lần thưởng",
+        "steps": {
+          "given": [
+            "SmallThreshold = 500, PoolTarget = 100, PoolRewardXP = 120",
+            "Pool = 50",
+            "Task nhỏ T contribution 260"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có 3 giao dịch POOL_REWARD +120",
+            "Pool = 10"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Hoàn tác Task nhỏ làm Pool âm",
+        "description": "Pool được phép âm, Pool Reward đã trả không thu hồi",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task nhỏ T contribution 10 đã COMPLETED và góp vào lần POOL_REWARD vừa trả",
+            "Pool hiện = 0"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "Có POOL_DEDUCT −10",
+            "Pool = −10",
+            "Không có REWARD_REVERSAL cho POOL_REWARD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Task nhỏ không gắn Goal",
+        "description": "Pool chung cho cả Task độc lập",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Pool = 0",
+            "Task nhỏ T không gắn Goal, contribution 15"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Pool = 15"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Tắt Pool",
+        "description": "SmallThreshold = 0 thì mọi Task đều là Task lớn",
+        "steps": {
+          "given": [
+            "SmallThreshold = 0, các tham số khác mặc định",
+            "Task T contribution 5 estimated 60"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Có TASK_REWARD +5",
+            "Không có POOL_ADD"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Pool bền vững",
+        "description": "Pool không reset theo thời gian và tính lại được từ ledger",
+        "steps": {
+          "given": [
+            "Pool = 70 vào cuối tháng"
+          ],
+          "when": [
+            "Sang tháng mới và Owner khởi động lại Hub"
+          ],
+          "then": [
+            "Pool vẫn = 70",
+            "Pool bằng tổng POOL_ADD + POOL_DEDUCT + POOL_PAYOUT"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-08] Hiển thị Pool trên Dashboard",
+        "description": "Pool hiện dạng x/PoolTarget",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Pool = 35"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Phần Reward hiển thị 'Pool 35/100'"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

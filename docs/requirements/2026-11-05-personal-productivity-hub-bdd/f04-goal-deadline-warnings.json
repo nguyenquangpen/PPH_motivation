@@ -1,0 +1,162 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-04 Goal Deadline Warnings (Should)",
+    "description": "Hiển thị số ngày còn lại, cảnh báo gần hạn và chậm hơn kỳ vọng",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-04] Số ngày còn lại",
+        "description": "days_remaining theo múi giờ Owner",
+        "steps": {
+          "given": [
+            "Hôm nay là 2026-11-06",
+            "Goal G target_date 2026-11-16"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "G hiển thị 'Còn 10 ngày'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Quá hạn không đổi trạng thái",
+        "description": "Goal quá hạn không bị kết luận thất bại",
+        "steps": {
+          "given": [
+            "Hôm nay là 2026-11-06",
+            "Goal G Active target_date 2026-11-01"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "G hiển thị 'Quá hạn 5 ngày'",
+            "G vẫn trạng thái Active"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Cảnh báo chậm",
+        "description": "Progress thấp hơn Expected − 15 điểm thì cảnh báo",
+        "steps": {
+          "given": [
+            "Goal G Active start_date 2026-01-01 target_date 2026-04-11 (100 ngày)",
+            "Hôm nay 2026-02-20 (Expected 50%)",
+            "G progress 34,9%"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Có Notification GOAL_BEHIND cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Đúng biên không cảnh báo chậm",
+        "description": "Progress bằng Expected − 15 không cảnh báo",
+        "steps": {
+          "given": [
+            "Goal G Active start_date 2026-01-01 target_date 2026-04-11",
+            "Hôm nay 2026-02-20 (Expected 50%)",
+            "G progress 35,0%"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Không có Notification GOAL_BEHIND cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Cảnh báo gần hạn tại 14 ngày",
+        "description": "days_remaining = 14 thì cảnh báo",
+        "steps": {
+          "given": [
+            "Goal G Active có start_date, target_date còn 14 ngày"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Có Notification GOAL_NEAR_DUE cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Không cảnh báo gần hạn tại 15 ngày",
+        "description": "days_remaining = 15 thì không cảnh báo",
+        "steps": {
+          "given": [
+            "Goal G Active có start_date, target_date còn 15 ngày"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Không có Notification GOAL_NEAR_DUE cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Chỉ áp dụng Goal Active đủ ngày",
+        "description": "Goal Paused hoặc thiếu start_date không bị cảnh báo",
+        "steps": {
+          "given": [
+            "Goal G1 Paused còn 5 ngày đến hạn",
+            "Goal G2 Active không có start_date, còn 5 ngày"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Không có Notification cảnh báo nào cho G1 và G2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] start_date bằng target_date",
+        "description": "Expected = 100%",
+        "steps": {
+          "given": [
+            "Goal G Active start_date = target_date = hôm nay, progress 80%"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo Goal trong ngày"
+          ],
+          "then": [
+            "Có Notification GOAL_BEHIND cho G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-04] Tối đa 1 cảnh báo mỗi loại mỗi ngày",
+        "description": "Đánh giá nhiều lần trong ngày không tạo trùng",
+        "steps": {
+          "given": [
+            "Goal G thỏa điều kiện cảnh báo chậm"
+          ],
+          "when": [
+            "Hệ thống đánh giá cảnh báo G 3 lần trong cùng một ngày"
+          ],
+          "then": [
+            "Chỉ có 1 Notification GOAL_BEHIND cho G trong ngày đó"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

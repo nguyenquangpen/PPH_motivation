@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "ecc@ecc": false
+  },
+  "extraKnownMarketplaces": {
+    "ecc": {
+      "source": {
+        "source": "github",
+        "repo": "affaan-m/ECC"
+      }
+    }
+  }
+}

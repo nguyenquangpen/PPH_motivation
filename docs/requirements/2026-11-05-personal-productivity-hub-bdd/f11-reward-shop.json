@@ -1,0 +1,272 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-11 Reward Shop",
+    "description": "Owner định nghĩa phần thưởng đời thực có giá XP và đổi bằng Spendable XP",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-11] Tạo Reward Item",
+        "description": "Item hợp lệ xuất hiện trong Shop",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo Item 'Xem phim' giá 300 XP, không có điều kiện mở khóa"
+          ],
+          "then": [
+            "Item hiển thị trong Shop"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Giá XP ngoài phạm vi",
+        "description": "Giá phải từ 1 đến 1.000.000",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner lần lượt tạo Item giá 0, 1, 1000000, 1000001"
+          ],
+          "then": [
+            "0 bị từ chối",
+            "1 được chấp nhận",
+            "1000000 được chấp nhận",
+            "1000001 bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Đổi thưởng thành công",
+        "description": "Trừ Spendable, lưu snapshot",
+        "steps": {
+          "given": [
+            "Spendable 500",
+            "Item 'Xem phim' giá 300 không khóa"
+          ],
+          "when": [
+            "Owner đổi 'Xem phim'"
+          ],
+          "then": [
+            "Có giao dịch REDEEM −300 Spendable",
+            "Spendable = 200",
+            "Redemption lưu tên 'Xem phim' và giá 300",
+            "Activity ghi đổi thưởng"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Spendable bằng giá",
+        "description": "Biên đủ XP",
+        "steps": {
+          "given": [
+            "Spendable 300",
+            "Item giá 300"
+          ],
+          "when": [
+            "Owner đổi Item"
+          ],
+          "then": [
+            "Đổi thành công",
+            "Spendable = 0"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Không đủ XP",
+        "description": "Từ chối và hiện số XP còn thiếu",
+        "steps": {
+          "given": [
+            "Spendable 299",
+            "Item giá 300"
+          ],
+          "when": [
+            "Owner đổi Item"
+          ],
+          "then": [
+            "Hệ thống từ chối và hiển thị 'Còn thiếu 1 XP'",
+            "Không có giao dịch REDEEM"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Spendable âm",
+        "description": "Số dư âm không đổi được",
+        "steps": {
+          "given": [
+            "Spendable −50",
+            "Item giá 10"
+          ],
+          "when": [
+            "Owner đổi Item"
+          ],
+          "then": [
+            "Hệ thống từ chối và hiển thị 'Còn thiếu 60 XP'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Item bị khóa theo Level",
+        "description": "Chưa đạt Level không đổi được",
+        "steps": {
+          "given": [
+            "Level hiện tại 2, Spendable 5000",
+            "Item điều kiện LEVEL ≥ 3"
+          ],
+          "when": [
+            "Owner đổi Item"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "Item hiển thị 'Bị khóa: cần Level 3'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Mở khóa khi đạt Level",
+        "description": "Đạt điều kiện thì đổi được",
+        "steps": {
+          "given": [
+            "Lifetime 1990, Level 2",
+            "Item điều kiện LEVEL ≥ 3, giá 100, Spendable 1990"
+          ],
+          "when": [
+            "Owner nhận TASK_REWARD +10 rồi đổi Item"
+          ],
+          "then": [
+            "Level = 3",
+            "Đổi Item thành công"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Khóa lại khi mất điều kiện",
+        "description": "Milestone bị mở lại thì Item khóa lại",
+        "steps": {
+          "given": [
+            "Item điều kiện MILESTONE_COMPLETED(M), M đang Completed"
+          ],
+          "when": [
+            "Owner hoàn tác Task khiến M mở lại"
+          ],
+          "then": [
+            "Item hiển thị trạng thái 'Bị khóa'",
+            "Owner không đổi được Item"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Đổi lặp",
+        "description": "Cùng operation key chỉ tạo một REDEEM",
+        "steps": {
+          "given": [
+            "Spendable 1000, Item giá 300"
+          ],
+          "when": [
+            "Lệnh đổi Item gửi 2 lần cùng operation key"
+          ],
+          "then": [
+            "Chỉ có 1 giao dịch REDEEM",
+            "Spendable = 700"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Hoàn tác đổi thưởng",
+        "description": "Hoàn lại Spendable bằng giao dịch đảo ngược",
+        "steps": {
+          "given": [
+            "Redemption R giá 300 đã thực hiện, Spendable 200"
+          ],
+          "when": [
+            "Owner hoàn tác R"
+          ],
+          "then": [
+            "Có REDEEM_REVERSAL +300",
+            "Spendable = 500",
+            "R được đánh dấu đã hoàn tác"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Hoàn tác đổi thưởng hai lần",
+        "description": "Mỗi Redemption chỉ hoàn tác một lần",
+        "steps": {
+          "given": [
+            "Redemption R đã hoàn tác"
+          ],
+          "when": [
+            "Owner hoàn tác R lần nữa"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "Không có giao dịch mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Sửa giá không ảnh hưởng lịch sử",
+        "description": "Redemption cũ giữ giá cũ",
+        "steps": {
+          "given": [
+            "Đã đổi 'Xem phim' giá 300"
+          ],
+          "when": [
+            "Owner sửa giá 'Xem phim' thành 500"
+          ],
+          "then": [
+            "Lịch sử Redemption cũ vẫn hiển thị giá 300"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Item đã xóa",
+        "description": "Không đổi Item đã xóa",
+        "steps": {
+          "given": [
+            "Item I đã bị xóa (soft)"
+          ],
+          "when": [
+            "Owner gửi yêu cầu đổi I"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-11] Không giới hạn số lần đổi",
+        "description": "Cùng Item đổi nhiều lần nếu đủ XP",
+        "steps": {
+          "given": [
+            "Spendable 900, Item giá 300 không khóa"
+          ],
+          "when": [
+            "Owner đổi Item 3 lần với 3 thao tác khác nhau"
+          ],
+          "then": [
+            "Có 3 giao dịch REDEEM",
+            "Spendable = 0"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

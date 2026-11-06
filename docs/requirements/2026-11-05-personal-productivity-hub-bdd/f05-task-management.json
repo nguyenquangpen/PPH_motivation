@@ -1,0 +1,250 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-05 Task Management",
+    "description": "Tạo, sửa, xóa (soft) Task với Priority, Contribution, thời lượng, deadline",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-05] Tạo Task hợp lệ",
+        "description": "Task mới ở TODO và hiển thị XP dự kiến",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Goal G tồn tại"
+          ],
+          "when": [
+            "Owner tạo Task title 'Học 100 từ', priority HIGH, contribution 100, goal G, estimated_duration 120"
+          ],
+          "then": [
+            "Task ở trạng thái TODO",
+            "XP dự kiến hiển thị 200",
+            "Task xuất hiện trong danh sách Task"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Thiếu trường bắt buộc",
+        "description": "Thiếu priority hoặc estimated_duration bị từ chối",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo Task chỉ có title, không có priority và estimated_duration"
+          ],
+          "then": [
+            "Hệ thống từ chối và chỉ rõ trường priority và estimated_duration"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Biên Contribution",
+        "description": "Chấp nhận 0–10.000",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner lần lượt tạo Task với contribution −1, 0, 10000, 10001"
+          ],
+          "then": [
+            "−1 bị từ chối",
+            "0 được chấp nhận",
+            "10000 được chấp nhận",
+            "10001 bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Biên Estimated Duration",
+        "description": "Chấp nhận 1–1.440 phút",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner lần lượt tạo Task với estimated_duration 0, 1, 1440, 1441"
+          ],
+          "then": [
+            "0 bị từ chối",
+            "1 được chấp nhận",
+            "1440 được chấp nhận",
+            "1441 bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Preset Contribution",
+        "description": "Preset điền giá trị gợi ý và cho phép sửa",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner chọn preset 'Major' rồi sửa contribution thành 80 và lưu Task"
+          ],
+          "then": [
+            "Task được lưu với contribution 80"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Task không gắn Goal",
+        "description": "Task độc lập hợp lệ",
+        "steps": {
+          "given": [
+            "Không có điều kiện đặc biệt"
+          ],
+          "when": [
+            "Owner tạo Task hợp lệ không chọn Goal"
+          ],
+          "then": [
+            "Task được tạo với goal trống"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Goal không hợp lệ",
+        "description": "Không gắn Task vào Goal đã xóa",
+        "steps": {
+          "given": [
+            "Goal G đã bị xóa (soft)"
+          ],
+          "when": [
+            "Owner tạo Task gắn Goal G"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Milestone khác Goal",
+        "description": "Milestone phải thuộc cùng Goal với Task",
+        "steps": {
+          "given": [
+            "Goal G1 và G2",
+            "Milestone M thuộc G2"
+          ],
+          "when": [
+            "Owner tạo Task gắn G1 và Milestone M"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Priority không ảnh hưởng XP",
+        "description": "Hai Task chỉ khác Priority có cùng XP dự kiến",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)"
+          ],
+          "when": [
+            "Owner tạo Task A priority CRITICAL và Task B priority LOW, cùng contribution 50 và estimated_duration 60"
+          ],
+          "then": [
+            "XP dự kiến của A và B đều là 50"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Deadline chỉ chọn ngày",
+        "description": "Chỉ chọn ngày thì deadline là 23:59 ngày đó",
+        "steps": {
+          "given": [
+            "Múi giờ Owner Asia/Ho_Chi_Minh",
+            "Hôm nay 2026-11-06"
+          ],
+          "when": [
+            "Owner tạo Task với deadline chỉ chọn ngày 2026-11-10"
+          ],
+          "then": [
+            "Deadline của Task là 2026-11-10 23:59 (+07:00)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Deadline trong quá khứ",
+        "description": "Deadline phải sau thời điểm hiện tại",
+        "steps": {
+          "given": [
+            "Hiện tại 2026-11-06 10:00"
+          ],
+          "when": [
+            "Owner tạo Task với deadline 2026-11-06 09:00"
+          ],
+          "then": [
+            "Hệ thống từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Xóa Task chưa hoàn thành",
+        "description": "Xóa Task TODO không tạo giao dịch",
+        "steps": {
+          "given": [
+            "Task T trạng thái TODO"
+          ],
+          "when": [
+            "Owner xóa T"
+          ],
+          "then": [
+            "T ẩn khỏi danh sách mặc định",
+            "Không có giao dịch XP hay Contribution mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Xóa Task COMPLETED",
+        "description": "Xóa Task đã hoàn thành sẽ đảo ngược rồi soft delete",
+        "steps": {
+          "given": [
+            "Task T lớn contribution 100 gắn Goal G đã COMPLETED, đã nhận TASK_REWARD 200",
+            "T từng bị PENALTY 100 trước khi hoàn thành"
+          ],
+          "when": [
+            "Owner xóa T và xác nhận"
+          ],
+          "then": [
+            "Có CONTRIBUTION_REVERSAL −100 cho G và REWARD_REVERSAL −200",
+            "T bị soft delete",
+            "Giao dịch PENALTY của T vẫn giữ nguyên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-05] Hủy xác nhận xóa Task COMPLETED",
+        "description": "Không xác nhận thì không thay đổi gì",
+        "steps": {
+          "given": [
+            "Task T đã COMPLETED"
+          ],
+          "when": [
+            "Owner chọn xóa T nhưng bấm Hủy ở hộp xác nhận"
+          ],
+          "then": [
+            "T vẫn COMPLETED",
+            "Không có giao dịch mới"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

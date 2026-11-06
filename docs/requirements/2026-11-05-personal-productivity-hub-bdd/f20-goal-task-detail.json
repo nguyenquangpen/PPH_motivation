@@ -1,0 +1,66 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-20 Goal & Task Detail",
+    "description": "Màn hình chi tiết Goal và Task",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-20] Goal Detail",
+        "description": "Hiển thị đầy đủ thông tin Goal",
+        "steps": {
+          "given": [
+            "Goal G target 1000 completed 1120, có 2 Milestone và 5 Task"
+          ],
+          "when": [
+            "Owner mở chi tiết G"
+          ],
+          "then": [
+            "Hiển thị description, progress 100% kèm '+120 vượt mục tiêu', remaining 0, target date",
+            "Danh sách Milestone với trạng thái",
+            "Task liên quan nhóm theo trạng thái",
+            "Activity của G"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-20] Task Detail Task lớn",
+        "description": "Hiển thị XP dự kiến và XP thực nhận",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 actual 45 đã COMPLETED nhận 75 XP"
+          ],
+          "when": [
+            "Owner mở chi tiết T"
+          ],
+          "then": [
+            "Hiển thị mọi thuộc tính, trạng thái COMPLETED",
+            "XP thực nhận 75",
+            "Lịch sử trạng thái"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-20] Task Detail Task nhỏ Missed",
+        "description": "Hiển thị phần vào Pool và thông tin Missed",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 10 estimated 30 Missed với tag 'Trì hoãn'"
+          ],
+          "when": [
+            "Owner mở chi tiết T"
+          ],
+          "then": [
+            "Hiển thị '0 XP + 10 vào Pool'",
+            "Hiển thị trạng thái Missed và lý do 'Trì hoãn'"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

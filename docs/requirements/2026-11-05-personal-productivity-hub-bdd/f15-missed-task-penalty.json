@@ -1,0 +1,338 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-15 Missed Task & Penalty",
+    "description": "Đánh dấu Missed, review lý do, trừ Spendable XP sau Grace Period, miễn trừ và hoàn lại",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-15] Biên Missed",
+        "description": "Đúng deadline chưa Missed, quá 1 phút thì Missed",
+        "steps": {
+          "given": [
+            "Task T TODO deadline 2026-11-06 17:00"
+          ],
+          "when": [
+            "Thời gian lần lượt là 17:00 và 17:01"
+          ],
+          "then": [
+            "Lúc 17:00 T chưa Missed",
+            "Lúc 17:01 T Missed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Cảnh báo Missed",
+        "description": "Một Notification và vào hàng chờ review",
+        "steps": {
+          "given": [
+            "Task T IN_PROGRESS vừa quá deadline"
+          ],
+          "when": [
+            "Hệ thống đánh dấu T Missed"
+          ],
+          "then": [
+            "Có 1 Notification TASK_MISSED cho T",
+            "T xuất hiện trong Missed Review queue",
+            "Trạng thái T vẫn IN_PROGRESS"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Task không deadline",
+        "description": "Không bao giờ Missed",
+        "steps": {
+          "given": [
+            "Task T TODO không có deadline, tạo 30 ngày trước"
+          ],
+          "when": [
+            "Owner mở Missed Review queue"
+          ],
+          "then": [
+            "T không có trong queue"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Phạt sau Grace khi chưa có lý do",
+        "description": "Trừ ceil(50% × NominalXP) vào Spendable",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task T contribution 100 estimated 120 (NominalXP 200), Missed, chưa chọn lý do",
+            "Lifetime 1000, Spendable 300"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Có giao dịch PENALTY −100",
+            "Spendable = 200",
+            "Lifetime = 1000",
+            "Level không đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Phạt Task nhỏ",
+        "description": "Task nhỏ phạt theo XP danh nghĩa",
+        "steps": {
+          "given": [
+            "Settings đang ở giá trị mặc định (Multiplier 1.0, RefDuration 60, Min/MaxFactor 0.5/2.0, SmallThreshold 20, PoolTarget 100, PoolRewardXP 120, Milestone XP 300, Goal XP 1000, XPPerLevel 1000, Penalty bật 50%, Grace 24h, Freeze 2/tháng, múi giờ Asia/Ho_Chi_Minh)",
+            "Task nhỏ T contribution 10 estimated 30 (NominalXP 5), Missed, chưa chọn lý do"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Có giao dịch PENALTY −3"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Lý do miễn trừ trước Grace",
+        "description": "Không phạt",
+        "steps": {
+          "given": [
+            "Task T Missed",
+            "Owner chọn lý do 'Bất khả kháng' trước khi hết Grace"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Không có giao dịch PENALTY cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Lý do không miễn trừ trước Grace",
+        "description": "Phạt tại thời điểm hết Grace, không sớm hơn",
+        "steps": {
+          "given": [
+            "Task T Missed, Owner chọn lý do 'Trì hoãn' 2 giờ sau deadline"
+          ],
+          "when": [
+            "Thời gian đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Không có PENALTY trước deadline + 24 giờ",
+            "Có PENALTY tại thời điểm deadline + 24 giờ"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Hoàn phạt khi đổi sang lý do miễn trừ",
+        "description": "Đổi tag miễn trừ sau khi bị phạt thì hoàn XP",
+        "steps": {
+          "given": [
+            "Task T đã bị PENALTY −100, tag 'Trì hoãn'",
+            "Spendable 50"
+          ],
+          "when": [
+            "Owner đổi lý do của T sang 'Bất khả kháng'"
+          ],
+          "then": [
+            "Có PENALTY_REVERSAL +100",
+            "Spendable = 150"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Đổi lại lý do không miễn",
+        "description": "Phạt lại, tối đa 1 PENALTY hiệu lực",
+        "steps": {
+          "given": [
+            "Task T đã bị phạt rồi được hoàn (PENALTY_REVERSAL), tag 'Bất khả kháng', Grace đã hết"
+          ],
+          "when": [
+            "Owner đổi lý do của T sang 'Trì hoãn'"
+          ],
+          "then": [
+            "Có PENALTY mới",
+            "Số PENALTY chưa đảo của T cho deadline hiện tại = 1"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Goal Paused tự miễn",
+        "description": "Task thuộc Goal Paused không bị phạt",
+        "steps": {
+          "given": [
+            "Task T Missed, chưa chọn lý do, gắn Goal G đang Paused"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Không có PENALTY",
+            "T tự được gán lý do 'Goal đang Paused'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Penalty tắt",
+        "description": "Không phạt khi tắt XP Deduction",
+        "steps": {
+          "given": [
+            "Penalty Enabled = false",
+            "Task T Missed, chưa chọn lý do"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Không có PENALTY",
+            "T vẫn trong Missed Review queue"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Tắt Penalty không hồi tố",
+        "description": "Phạt đã có không bị hoàn khi tắt",
+        "steps": {
+          "given": [
+            "Task T đã bị PENALTY −100"
+          ],
+          "when": [
+            "Owner tắt Penalty Enabled"
+          ],
+          "then": [
+            "Giao dịch PENALTY −100 vẫn hiệu lực"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Grace = 0",
+        "description": "Đánh giá ngay khi Missed",
+        "steps": {
+          "given": [
+            "GracePeriodHours = 0, các tham số khác mặc định",
+            "Task T NominalXP 100, chưa chọn lý do"
+          ],
+          "when": [
+            "T vừa quá deadline"
+          ],
+          "then": [
+            "Có PENALTY −50 ngay khi T Missed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Dời deadline",
+        "description": "Dời sang tương lai thì hết Missed",
+        "steps": {
+          "given": [
+            "Task T Missed, hiện tại 2026-11-06 10:00"
+          ],
+          "when": [
+            "Owner chọn lý do 'Ước lượng sai' và dời deadline sang 2026-11-08 17:00"
+          ],
+          "then": [
+            "T không còn Missed",
+            "T rời Missed Review queue",
+            "Không có PENALTY cho deadline cũ khi Grace cũ hết"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Dời deadline về quá khứ",
+        "description": "Giá trị mới ≤ now bị từ chối",
+        "steps": {
+          "given": [
+            "Task T Missed, hiện tại 2026-11-06 10:00"
+          ],
+          "when": [
+            "Owner dời deadline sang 2026-11-06 09:00"
+          ],
+          "then": [
+            "Hệ thống từ chối",
+            "T vẫn Missed"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Bỏ lỡ lại sau khi dời",
+        "description": "Mỗi giá trị deadline có thể bị phạt một lần",
+        "steps": {
+          "given": [
+            "Task T đã bị PENALTY cho deadline 1, sau đó được dời sang deadline 2"
+          ],
+          "when": [
+            "T quá deadline 2 + 24 giờ mà chưa có lý do"
+          ],
+          "then": [
+            "Có PENALTY thứ hai gắn với deadline 2",
+            "PENALTY của deadline 1 giữ nguyên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Đánh giá bù khi khởi động lại",
+        "description": "Laptop tắt lúc đến hạn đánh giá vẫn phạt đúng một lần",
+        "steps": {
+          "given": [
+            "Task T Missed, chưa chọn lý do",
+            "Hub không chạy từ trước deadline + 24 giờ đến 2 ngày sau"
+          ],
+          "when": [
+            "Owner khởi động lại Hub"
+          ],
+          "then": [
+            "Có đúng 1 PENALTY cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] Đánh giá lặp",
+        "description": "Chạy đánh giá hai lần không phạt trùng",
+        "steps": {
+          "given": [
+            "Task T đủ điều kiện bị phạt"
+          ],
+          "when": [
+            "Tiến trình đánh giá phạt chạy 2 lần cho T"
+          ],
+          "then": [
+            "Chỉ có 1 PENALTY cho T"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-15] NominalXP bằng 0",
+        "description": "Phạt 0 không tạo giao dịch nhưng ghi Activity",
+        "steps": {
+          "given": [
+            "Task T contribution 0, Missed, chưa chọn lý do"
+          ],
+          "when": [
+            "Đến deadline + 24 giờ"
+          ],
+          "then": [
+            "Không có giao dịch PENALTY",
+            "Activity ghi T bị đánh giá phạt 0 XP"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]
