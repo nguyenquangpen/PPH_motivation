@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-06 Task Lifecycle",
     "description": "Chuyển trạng thái, hoàn thành, hoàn tác, hủy, Actual Duration",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-06] Bắt đầu Task",
@@ -20,7 +20,7 @@
             "Lịch sử trạng thái ghi TODO → IN_PROGRESS"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành Task lớn",
@@ -42,7 +42,7 @@
             "Activity ghi hoàn thành Task"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành trực tiếp từ TODO",
@@ -58,7 +58,7 @@
             "T trạng thái COMPLETED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành lặp",
@@ -75,7 +75,7 @@
             "Lần gửi thứ hai trả về kết quả của lần đầu"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Chuyển trạng thái không hợp lệ",
@@ -92,7 +92,7 @@
             "T vẫn CANCELLED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn tác Task chưa hoàn thành",
@@ -109,7 +109,7 @@
             "T vẫn TODO"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn tác về IN_PROGRESS",
@@ -129,7 +129,7 @@
             "Spendable XP = −150"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành lại sau hoàn tác",
@@ -148,7 +148,7 @@
             "T trạng thái COMPLETED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Lỗi giữa chừng",
@@ -167,7 +167,7 @@
             "Owner thấy thông báo lỗi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hủy trước deadline",
@@ -184,7 +184,7 @@
             "Không có giao dịch PENALTY"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hủy Task Missed với lý do không miễn trừ",
@@ -203,7 +203,7 @@
             "Lifetime XP không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hủy Task Missed bắt buộc lý do",
@@ -220,7 +220,7 @@
             "T giữ nguyên trạng thái"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hủy Task Missed với lý do miễn trừ",
@@ -237,7 +237,7 @@
             "Không có giao dịch PENALTY"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hủy Task đã bị phạt",
@@ -254,7 +254,7 @@
             "Vẫn chỉ có 1 giao dịch PENALTY chưa đảo cho T"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành Task Missed trong Grace",
@@ -273,7 +273,7 @@
             "Không có giao dịch PENALTY cho T"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Hoàn thành Task đã bị phạt",
@@ -291,7 +291,7 @@
             "Giao dịch PENALTY −100 vẫn hiệu lực"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Ghi Actual Duration khi hoàn thành",
@@ -307,7 +307,7 @@
             "T có actual_duration 45"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Actual Duration không hợp lệ",
@@ -324,7 +324,7 @@
             "T vẫn IN_PROGRESS"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-06] Lịch sử trạng thái",
@@ -340,7 +340,7 @@
             "Lịch sử T có 3 dòng: TODO → IN_PROGRESS, IN_PROGRESS → COMPLETED, COMPLETED → IN_PROGRESS kèm thời điểm"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-20 Goal & Task Detail",
     "description": "Màn hình chi tiết Goal và Task",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-20] Goal Detail",
@@ -22,7 +22,7 @@
             "Activity của G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-20] Task Detail Task lớn",
@@ -41,7 +41,7 @@
             "Lịch sử trạng thái"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-20] Task Detail Task nhỏ Missed",
@@ -59,7 +59,7 @@
             "Hiển thị trạng thái Missed và lý do 'Trì hoãn'"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

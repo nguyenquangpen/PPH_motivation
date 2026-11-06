@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-07 Task XP",
     "description": "XP = round_half_up(Contribution × Multiplier × clamp(D/RefDuration, Min, Max)); D = min(Estimated, Actual)",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-07] XP: C=100, est=120, actual=– → 200",
@@ -20,7 +20,7 @@
             "Có giao dịch TASK_REWARD +200"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=100, est=15, actual=– → 50",
@@ -37,7 +37,7 @@
             "Có giao dịch TASK_REWARD +50"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=100, est=600, actual=– → 200",
@@ -54,7 +54,7 @@
             "Có giao dịch TASK_REWARD +200"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=100, est=120, actual=45 → 75",
@@ -71,7 +71,7 @@
             "Có giao dịch TASK_REWARD +75"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=50, est=60, actual=90 → 50",
@@ -88,7 +88,7 @@
             "Có giao dịch TASK_REWARD +50"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=30, est=45, actual=– → 23",
@@ -105,7 +105,7 @@
             "Có giao dịch TASK_REWARD +23"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] XP: C=25, est=50, actual=– → 21",
@@ -122,7 +122,7 @@
             "Có giao dịch TASK_REWARD +21"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] Task nhỏ không nhận XP ngay",
@@ -140,7 +140,7 @@
             "Có POOL_ADD +19"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] Biên Task lớn",
@@ -158,7 +158,7 @@
             "Không có POOL_ADD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] Task không gắn Goal vẫn nhận XP",
@@ -175,7 +175,7 @@
             "Có TASK_REWARD +100"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] Dùng Settings tại thời điểm hoàn thành",
@@ -195,7 +195,7 @@
             "TASK_REWARD của B là +200"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-07] Hiển thị XP dự kiến",
@@ -214,7 +214,7 @@
             "B hiển thị '0 XP + 10 vào Pool'"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

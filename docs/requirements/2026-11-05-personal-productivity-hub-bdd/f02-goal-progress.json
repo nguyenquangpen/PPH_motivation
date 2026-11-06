@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-02 Goal Progress",
     "description": "Tiến độ Goal tính từ Contribution ledger của các Task COMPLETED",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-02] Hoàn thành Task tăng tiến độ",
@@ -22,7 +22,7 @@
             "G progress = 10,0%"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Ví dụ spec 130/1000",
@@ -41,7 +41,7 @@
             "G progress = 13,0%"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Task chưa hoàn thành không tính",
@@ -59,7 +59,7 @@
             "Không có giao dịch Contribution nào"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Task CANCELLED không tính",
@@ -76,7 +76,7 @@
             "G completed_contribution = 0"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Hoàn tác giảm tiến độ",
@@ -95,7 +95,7 @@
             "Giao dịch CONTRIBUTION_ADD ban đầu vẫn tồn tại"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Không cộng trùng",
@@ -113,7 +113,7 @@
             "G completed_contribution = 100"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Đạt đúng 100%",
@@ -132,7 +132,7 @@
             "remaining_contribution = 0"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Vượt mục tiêu",
@@ -151,7 +151,7 @@
             "Hiển thị nhãn '+120 vượt mục tiêu'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Làm tròn xuống 0,1",
@@ -167,7 +167,7 @@
             "G progress hiển thị 33,3%"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Sửa Target Contribution",
@@ -187,7 +187,7 @@
             "M vẫn Completed"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Goal Paused vẫn nhận Contribution",
@@ -205,7 +205,7 @@
             "Owner nhận XP của T như bình thường"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-02] Khóa sửa Task đã COMPLETED",
@@ -223,7 +223,7 @@
             "G completed_contribution không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

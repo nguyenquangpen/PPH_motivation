@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-17 Dashboard",
     "description": "Tổng quan Today, Goals, Reward, Streak, Alerts, Achievements",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-17] Today",
@@ -20,7 +20,7 @@
             "Danh sách Task hôm nay có nút Complete"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-17] Goals",
@@ -37,7 +37,7 @@
             "Mỗi Goal có thanh tiến độ, completed/target, số ngày còn lại, trạng thái"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-17] Reward",
@@ -58,7 +58,7 @@
             "5 giao dịch gần nhất"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-17] Streak",
@@ -74,7 +74,7 @@
             "Hiển thị Current 4, Longest 10, Freeze còn 1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-17] Alerts",
@@ -90,7 +90,7 @@
             "Hiển thị 3 thông báo chưa đọc và 'Cần review: 2'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-17] Achievements",
@@ -106,7 +106,7 @@
             "Hiển thị 5 Milestone hoàn thành gần nhất, mới nhất trước"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

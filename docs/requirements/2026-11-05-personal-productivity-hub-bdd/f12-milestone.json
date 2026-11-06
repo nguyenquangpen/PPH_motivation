@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-12 Milestone",
     "description": "Milestone tự hoàn thành theo ngưỡng Contribution hoặc tập Task liên kết; mở lại khi hoàn tác",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-12] Hoàn thành theo ngưỡng",
@@ -25,7 +25,7 @@
             "Dashboard hiển thị M trong Achievements"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Biên ngưỡng",
@@ -42,7 +42,7 @@
             "M Completed"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Thưởng tùy chỉnh",
@@ -58,7 +58,7 @@
             "Có MILESTONE_REWARD +50"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Hoàn thành theo tập Task",
@@ -75,7 +75,7 @@
             "Có MILESTONE_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Bỏ qua Task CANCELLED",
@@ -91,7 +91,7 @@
             "M Completed"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Tập Task rỗng",
@@ -107,7 +107,7 @@
             "M vẫn chưa Completed"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Mở lại khi hoàn tác",
@@ -127,7 +127,7 @@
             "Có REWARD_REVERSAL −300 tham chiếu MILESTONE_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Hoàn thành lại không trùng",
@@ -145,7 +145,7 @@
             "Số MILESTONE_REWARD chưa bị đảo của M = 1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Đổi Target không mở lại",
@@ -162,7 +162,7 @@
             "Không có REWARD_REVERSAL"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Tạo Milestone đã thỏa điều kiện",
@@ -179,7 +179,7 @@
             "Có MILESTONE_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Milestone không hợp lệ",
@@ -195,7 +195,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-12] Không hoàn thành thủ công",
@@ -211,7 +211,7 @@
             "Không có thao tác 'Đánh dấu hoàn thành' cho M"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

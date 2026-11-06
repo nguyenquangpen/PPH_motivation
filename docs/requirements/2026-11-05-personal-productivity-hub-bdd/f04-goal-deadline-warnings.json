@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-04 Goal Deadline Warnings (Should)",
     "description": "Hiển thị số ngày còn lại, cảnh báo gần hạn và chậm hơn kỳ vọng",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-04] Số ngày còn lại",
@@ -20,7 +20,7 @@
             "G hiển thị 'Còn 10 ngày'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Quá hạn không đổi trạng thái",
@@ -38,7 +38,7 @@
             "G vẫn trạng thái Active"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Cảnh báo chậm",
@@ -56,7 +56,7 @@
             "Có Notification GOAL_BEHIND cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Đúng biên không cảnh báo chậm",
@@ -74,7 +74,7 @@
             "Không có Notification GOAL_BEHIND cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Cảnh báo gần hạn tại 14 ngày",
@@ -90,7 +90,7 @@
             "Có Notification GOAL_NEAR_DUE cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Không cảnh báo gần hạn tại 15 ngày",
@@ -106,7 +106,7 @@
             "Không có Notification GOAL_NEAR_DUE cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Chỉ áp dụng Goal Active đủ ngày",
@@ -123,7 +123,7 @@
             "Không có Notification cảnh báo nào cho G1 và G2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] start_date bằng target_date",
@@ -139,7 +139,7 @@
             "Có Notification GOAL_BEHIND cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-04] Tối đa 1 cảnh báo mỗi loại mỗi ngày",
@@ -155,7 +155,7 @@
             "Chỉ có 1 Notification GOAL_BEHIND cho G trong ngày đó"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

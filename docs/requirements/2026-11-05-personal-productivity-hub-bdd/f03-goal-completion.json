@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-03 Goal Completion",
     "description": "Gợi ý khi Goal đạt 100%, Owner xác nhận hoàn thành, trao Goal Reward một lần",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-03] Gợi ý khi đạt 100%",
@@ -22,7 +22,7 @@
             "Không có giao dịch GOAL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Xác nhận hoàn thành",
@@ -43,7 +43,7 @@
             "Lifetime XP = 1500 và Spendable XP = 1500"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Goal Reward tùy chỉnh",
@@ -59,7 +59,7 @@
             "Có giao dịch GOAL_REWARD +500"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Hoàn thành khi chưa đủ 100%",
@@ -77,7 +77,7 @@
             "Có giao dịch GOAL_REWARD +1000"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Xác nhận trùng",
@@ -93,7 +93,7 @@
             "Chỉ có 1 giao dịch GOAL_REWARD cho G"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Goal đã xóa",
@@ -110,7 +110,7 @@
             "Không có giao dịch GOAL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Hoàn tác Task sau khi Goal Completed",
@@ -129,7 +129,7 @@
             "Không có giao dịch đảo ngược GOAL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Goal Reward chỉ một lần trong vòng đời",
@@ -146,7 +146,7 @@
             "Tổng số giao dịch GOAL_REWARD của G vẫn là 1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-03] Không gợi ý lặp",
@@ -162,7 +162,7 @@
             "Chỉ có 1 Notification GOAL_REACHED_100 chưa đọc cho G"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

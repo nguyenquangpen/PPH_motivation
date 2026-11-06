@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-10 Settings",
     "description": "Cấu hình tham số Reward/Penalty/Streak/Preset qua UI, không hồi tố",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-10] Giá trị mặc định",
@@ -23,7 +23,7 @@
             "Preset Major/Medium/Minor 100/50/10, Timezone Asia/Ho_Chi_Minh"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Thay đổi không hồi tố",
@@ -40,7 +40,7 @@
             "Lần Pool đầy tiếp theo trao +200"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Ràng buộc liên trường",
@@ -57,7 +57,7 @@
             "MinFactor, MaxFactor và PoolTarget giữ giá trị cũ"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Biên PenaltyPercent",
@@ -75,7 +75,7 @@
             "101 bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Ghi lịch sử thay đổi",
@@ -91,7 +91,7 @@
             "Activity ghi 'GracePeriodHours: 24 → 48'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Khôi phục mặc định theo nhóm",
@@ -108,7 +108,7 @@
             "PenaltyPercent vẫn = 80"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Múi giờ không hợp lệ",
@@ -125,7 +125,7 @@
             "Timezone giữ nguyên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Đổi Preset không ảnh hưởng Task cũ",
@@ -142,7 +142,7 @@
             "Task mới chọn Major được điền 150"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-10] Đổi múi giờ không đổi lịch sử",
@@ -159,7 +159,7 @@
             "Activity ghi thay đổi Timezone"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }
