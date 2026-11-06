@@ -1,4 +1,4 @@
-import type { TaskStatus } from '@pph/shared';
+import type { NotificationType, TaskStatus } from '@pph/shared';
 
 /** Danh sách event domain. Handler chạy đồng bộ trong cùng transaction với nơi phát. */
 export type DomainEvents = {
@@ -20,6 +20,9 @@ export type DomainEvents = {
     levelBefore: number; levelAfter: number;
   };
   'settings.changed': { key: string; before: unknown; after: unknown };
+  'notification.created': {
+    id: string; type: NotificationType; objectType: string | null; objectId: string | null; title: string; body: string | null;
+  };
 };
 
 type Handler<K extends keyof DomainEvents> = (payload: DomainEvents[K]) => void;

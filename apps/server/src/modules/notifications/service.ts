@@ -37,6 +37,9 @@ export class NotificationService {
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(id, input.type, input.objectType ?? null, input.objectId ?? null, input.dedupeKey, input.title, input.body ?? null, this.ctx.nowIso());
+    this.ctx.events.emit('notification.created', {
+      id, type: input.type, objectType: input.objectType ?? null, objectId: input.objectId ?? null, title: input.title, body: input.body ?? null,
+    });
     return id;
   }
 
