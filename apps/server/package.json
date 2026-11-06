@@ -1,0 +1,21 @@
+{
+  "name": "@pph/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts"
+  },
+  "dependencies": {
+    "@pph/shared": "*",
+    "better-sqlite3": "^12.4.1",
+    "fastify": "^5.2.0",
+    "luxon": "^3.5.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/luxon": "^3.4.2"
+  }
+}

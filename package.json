@@ -1,0 +1,20 @@
+{
+  "name": "personal-productivity-hub",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @pph/server & npm run dev -w @pph/web",
+    "build": "npm run build -w @pph/shared && npm run build -w @pph/web",
+    "start": "npm run start -w @pph/server",
+    "typecheck": "tsc -p packages/shared && tsc -p apps/server --noEmit && tsc -p apps/web --noEmit",
+    "test": "vitest run",
+    "test:bdd": "tsx scripts/test-bdd.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
