@@ -4,7 +4,7 @@
   "type": "module",
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
-    "dev": "npm run dev -w @pph/server & npm run dev -w @pph/web",
+    "dev": "npm run dev -w @pph/web",
     "build": "npm run build -w @pph/shared && npm run build -w @pph/web",
     "start": "npm run start -w @pph/server",
     "typecheck": "tsc -p packages/shared && tsc -p apps/server --noEmit && tsc -p apps/web --noEmit",
