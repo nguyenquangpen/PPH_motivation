@@ -1,0 +1,20 @@
+export type ErrorBody = { error: { code: string; message: string; details?: Record<string, unknown> } };
+
+export const ErrorCode = {
+  VALIDATION: 'VALIDATION',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  DUPLICATE_NAME: 'DUPLICATE_NAME',
+  IN_USE: 'IN_USE',
+  TASK_INVALID_TRANSITION: 'TASK_INVALID_TRANSITION',
+  TASK_LOCKED: 'TASK_LOCKED',
+  REASON_REQUIRED: 'REASON_REQUIRED',
+  GOAL_COMPLETE_VIA_ENDPOINT: 'GOAL_COMPLETE_VIA_ENDPOINT',
+  CONFIRM_REQUIRED: 'CONFIRM_REQUIRED',
+  INSUFFICIENT_XP: 'INSUFFICIENT_XP',
+  ITEM_LOCKED: 'ITEM_LOCKED',
+  ALREADY_REVERSED: 'ALREADY_REVERSED',
+  SYSTEM_TAG: 'SYSTEM_TAG',
+  FORBIDDEN: 'FORBIDDEN',
+} as const;
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
