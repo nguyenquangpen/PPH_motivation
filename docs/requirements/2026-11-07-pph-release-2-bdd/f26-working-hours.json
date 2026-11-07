@@ -1,0 +1,93 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-26 Working Hours",
+    "description": "Giờ làm việc theo từng thứ",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-26] Mặc định",
+        "description": "Mọi ngày 08:00–22:00",
+        "steps": {
+          "given": [
+            "Hub mới cài"
+          ],
+          "when": [
+            "Owner mở Settings > Giờ làm việc"
+          ],
+          "then": [
+            "Mỗi thứ có 1 khung 08:00–22:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-26] Nhiều khung một ngày",
+        "description": "Lưu nhiều khung",
+        "steps": {
+          "given": [
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh"
+          ],
+          "when": [
+            "Owner đặt Thứ Hai: 06:00–07:30 và 19:00–23:00"
+          ],
+          "then": [
+            "Thứ Hai có 2 khung đó",
+            "Activity ghi thay đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-26] Ngày nghỉ",
+        "description": "Không có khung = capacity 0",
+        "steps": {
+          "given": [
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh"
+          ],
+          "when": [
+            "Owner xóa mọi khung Chủ Nhật"
+          ],
+          "then": [
+            "Chủ Nhật không có khung",
+            "Gợi ý lịch không đề xuất giờ nào vào Chủ Nhật"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-26] Khung không hợp lệ",
+        "description": "start ≥ end hoặc chồng nhau bị từ chối toàn bộ",
+        "steps": {
+          "given": [
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh"
+          ],
+          "when": [
+            "Owner lưu Thứ Ba: 19:00–18:00 và Thứ Tư: 09:00–12:00, 11:00–13:00"
+          ],
+          "then": [
+            "Hệ thống từ chối (400)",
+            "Giờ làm việc giữ nguyên như trước"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-26] Biên 24:00",
+        "description": "End được phép là 24:00",
+        "steps": {
+          "given": [
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh"
+          ],
+          "when": [
+            "Owner đặt Thứ Sáu: 20:00–24:00"
+          ],
+          "then": [
+            "Được chấp nhận"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

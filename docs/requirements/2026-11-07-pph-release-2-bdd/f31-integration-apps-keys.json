@@ -1,0 +1,131 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-31 Integration Apps & API Keys",
+    "description": "Đăng ký app, API key, danh sách, lịch sử",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-31] Đăng ký app",
+        "description": "Tên và app_id hợp lệ",
+        "steps": {
+          "given": [
+            "Chưa có app nào"
+          ],
+          "when": [
+            "Owner đăng ký app 'Japanese Learning App', app_id 'japanese-learning-app'"
+          ],
+          "then": [
+            "App xuất hiện trong danh sách với trạng thái 'Chưa có dữ liệu'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] app_id không hợp lệ hoặc trùng",
+        "description": "Từ chối",
+        "steps": {
+          "given": [
+            "Đã có app_id 'japanese-learning-app'"
+          ],
+          "when": [
+            "Owner đăng ký app_id 'Japanese App!' và app_id 'japanese-learning-app'"
+          ],
+          "then": [
+            "Cả hai bị từ chối"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] Key hiển thị một lần",
+        "description": "Lưu băm + 4 ký tự cuối",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Owner tạo key 'Laptop', rồi mở lại danh sách key"
+          ],
+          "then": [
+            "Lúc tạo: hiển thị toàn bộ key kèm cảnh báo không xem lại được",
+            "Danh sách sau đó chỉ hiển thị tên 'Laptop' và 4 ký tự cuối",
+            "Database không chứa key dạng gốc"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] Nhiều key",
+        "description": "Một app có nhiều key, thu hồi riêng",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "App có key K1 và K2"
+          ],
+          "when": [
+            "Owner thu hồi K1"
+          ],
+          "then": [
+            "Request bằng K1 bị 401",
+            "Request bằng K2 vẫn được nhận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] Xóa app",
+        "description": "Thu hồi mọi key, giữ lịch sử",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "App đã có 10 sự kiện"
+          ],
+          "when": [
+            "Owner xóa app"
+          ],
+          "then": [
+            "Mọi key của app bị 401",
+            "10 sự kiện vẫn xem được trong lịch sử"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] Danh sách app",
+        "description": "Thông tin trạng thái",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "App có 50 sự kiện, 2 FAILED, sự kiện hoạt động gần nhất 2 giờ trước, heartbeat 5 phút trước"
+          ],
+          "when": [
+            "Owner mở Integrations"
+          ],
+          "then": [
+            "Hiển thị trạng thái 'Đang hoạt động', hoạt động gần nhất, heartbeat gần nhất, tổng 50, lỗi 2"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-31] Lịch sử sự kiện có lọc",
+        "description": "Lọc và xem chi tiết",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Có sự kiện PROCESSED, IGNORED, FAILED"
+          ],
+          "when": [
+            "Owner lọc trạng thái FAILED và mở một sự kiện"
+          ],
+          "then": [
+            "Chỉ hiển thị sự kiện FAILED",
+            "Chi tiết hiển thị payload và lý do lỗi"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

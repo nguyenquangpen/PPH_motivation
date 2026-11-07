@@ -1,0 +1,114 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-33 External App Inactivity (Should)",
+    "description": "Cảnh báo app ngoài lâu không hoạt động",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-33] Quá 3 ngày",
+        "description": "DAILY mặc định",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Sự kiện hoạt động gần nhất cách đây 3 ngày 1 giờ"
+          ],
+          "when": [
+            "Scheduler chạy"
+          ],
+          "then": [
+            "Có Notification 'Bạn chưa ghi nhận hoạt động từ Japanese Learning App trong 3 ngày'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-33] Chưa tới ngưỡng",
+        "description": "Dưới 3 ngày không cảnh báo",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Sự kiện hoạt động gần nhất cách đây 2 ngày 23 giờ"
+          ],
+          "when": [
+            "Scheduler chạy"
+          ],
+          "then": [
+            "Không có Notification EXTERNAL_APP_INACTIVE"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-33] Heartbeat không tính",
+        "description": "Chỉ sự kiện hoạt động",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Hoạt động gần nhất 4 ngày trước, heartbeat 10 phút trước"
+          ],
+          "when": [
+            "Scheduler chạy"
+          ],
+          "then": [
+            "Có Notification EXTERNAL_APP_INACTIVE"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-33] Một lần mỗi đợt",
+        "description": "Không lặp lại cho đến khi có hoạt động mới",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Đã có Notification inactivity cho đợt hiện tại"
+          ],
+          "when": [
+            "Scheduler chạy thêm 2 ngày, sau đó app gửi sự kiện, rồi lại im 3 ngày"
+          ],
+          "then": [
+            "Trong 2 ngày đầu không có Notification mới",
+            "Sau đợt im lặng mới có thêm đúng 1 Notification"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-33] Tần suất WEEKLY và NONE",
+        "description": "Ngưỡng theo tần suất",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Hoạt động gần nhất 5 ngày trước"
+          ],
+          "when": [
+            "Owner đặt tần suất WEEKLY rồi NONE, Scheduler chạy sau mỗi lần"
+          ],
+          "then": [
+            "WEEKLY: không cảnh báo (ngưỡng 10 ngày)",
+            "NONE: không cảnh báo"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-33] App chưa từng hoạt động",
+        "description": "Không cảnh báo",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "App chưa gửi sự kiện hoạt động nào"
+          ],
+          "when": [
+            "Scheduler chạy"
+          ],
+          "then": [
+            "Không có Notification EXTERNAL_APP_INACTIVE"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

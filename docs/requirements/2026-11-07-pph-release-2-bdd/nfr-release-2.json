@@ -1,0 +1,128 @@
+[
+  {
+    "category": "performance",
+    "feature": "NFR-R2 Performance",
+    "description": "Độ trễ đồng bộ và tiếp nhận sự kiện",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-R2] Đẩy lên Google ≤ 60 giây",
+        "description": "Có mạng",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống"
+          ],
+          "when": [
+            "Owner tạo 20 phiên liên tiếp"
+          ],
+          "then": [
+            "Mỗi Event xuất hiện trên Calendar giả lập ≤ 60 giây sau khi tạo phiên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-R2] Đọc từ Google ≤ 5 phút",
+        "description": "Hub đang chạy",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P có Event E"
+          ],
+          "when": [
+            "Owner đổi giờ E trên Google"
+          ],
+          "then": [
+            "≤ 5 phút sau phiên P có giờ mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-R2] Tiếp nhận sự kiện",
+        "description": "≤ 200 ms p95, xử lý ≤ 5 giây",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20"
+          ],
+          "when": [
+            "App gửi 100 sự kiện liên tiếp"
+          ],
+          "then": [
+            "p95 thời gian phản hồi ≤ 200 ms",
+            "Mọi sự kiện PROCESSED ≤ 5 giây sau khi nhận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[NFR-R2] UI không chờ Google",
+        "description": "Google chậm 30 giây",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Calendar giả lập trễ 30 giây mỗi request"
+          ],
+          "when": [
+            "Owner tạo Task có phiên và hoàn thành một Task khác"
+          ],
+          "then": [
+            "Cả hai thao tác phản hồi nhanh như khi chưa kết nối (≤ 500 ms)"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "reliability",
+    "feature": "NFR-R2 Reliability",
+    "description": "Không trùng, không mất",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-R2] Không trùng Event",
+        "description": "Mọi chuỗi retry/khởi động lại",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống"
+          ],
+          "when": [
+            "Chạy kịch bản: tạo 10 phiên, mất mạng, sửa 5 phiên, mất phản hồi giữa chừng, khởi động lại Hub 2 lần, có mạng lại"
+          ],
+          "then": [
+            "Mỗi phiên còn lại có đúng 1 Event trên Google",
+            "Không có Event mồ côi của Hub"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  },
+  {
+    "category": "security",
+    "feature": "NFR-R2 Security",
+    "description": "Token và API key",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[NFR-R2] Bí mật không lộ",
+        "description": "Token Google mã hóa, API key băm",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Kiểm tra database, log, mọi response API, file backup"
+          ],
+          "then": [
+            "Không nơi nào chứa token Google hoặc API key dạng gốc"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

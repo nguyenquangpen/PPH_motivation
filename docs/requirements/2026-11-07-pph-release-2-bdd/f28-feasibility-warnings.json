@@ -1,0 +1,214 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-28 Feasibility Warnings",
+    "description": "Thiếu thời gian, Task lớn chưa đủ giờ, ngày quá tải",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-28] Thiếu thời gian",
+        "description": "Ví dụ spec §7.4",
+        "steps": {
+          "given": [
+            "Task T estimated 120, có phiên 30 phút"
+          ],
+          "when": [
+            "Owner mở Task T"
+          ],
+          "then": [
+            "Cảnh báo 'Ước tính 120 phút · Đã xếp 30 phút · Thiếu 90 phút'",
+            "Cảnh báo cũng xuất hiện trên Dashboard"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Biên thiếu 15 phút",
+        "description": "Thiếu 15 (12,5%) cảnh báo, thiếu 14 không",
+        "steps": {
+          "given": [
+            "Task A estimated 120 có phiên 105 phút",
+            "Task B estimated 120 có phiên 106 phút"
+          ],
+          "when": [
+            "Owner mở danh sách Task"
+          ],
+          "then": [
+            "A có cảnh báo thiếu thời gian",
+            "B không có"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Biên phần trăm",
+        "description": "Thiếu 20/300 (6,7%) không cảnh báo",
+        "steps": {
+          "given": [
+            "Task T estimated 300 có phiên 280 phút"
+          ],
+          "when": [
+            "Owner mở Task T"
+          ],
+          "then": [
+            "Không có cảnh báo thiếu thời gian"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Chưa có phiên",
+        "description": "Không cảnh báo thiếu thời gian",
+        "steps": {
+          "given": [
+            "Task T estimated 120, Contribution 10, không có phiên"
+          ],
+          "when": [
+            "Owner mở Task T"
+          ],
+          "then": [
+            "Không có cảnh báo thiếu thời gian"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Task lớn chưa đủ giờ (Should)",
+        "description": "Contribution ≥ Major, Deadline ≤ 7 ngày",
+        "steps": {
+          "given": [
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)",
+            "Task T Contribution 100, estimated 180, Deadline sau 3 ngày, không có phiên"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Dashboard cảnh báo T chưa được xếp đủ thời gian"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Ngày quá tải",
+        "description": "load > capacity",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Thứ Ba giờ làm việc 19:00–23:00 (240 phút)",
+            "Giờ bận 19:00–21:00 (120 phút)",
+            "Các phiên Task Thứ Ba tổng 150 phút"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Thứ Ba được đánh dấu quá tải (270 > 240)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Biên quá tải",
+        "description": "load = capacity không quá tải",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Thứ Ba giờ làm việc 240 phút, giờ bận 120 phút, phiên Task 120 phút"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Thứ Ba không bị đánh dấu quá tải"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Ngày nghỉ có phiên",
+        "description": "capacity 0 mà có phiên → quá tải",
+        "steps": {
+          "given": [
+            "Chủ Nhật không có giờ làm việc",
+            "Có phiên Task Chủ Nhật 60 phút"
+          ],
+          "when": [
+            "Owner mở Dashboard"
+          ],
+          "then": [
+            "Chủ Nhật được đánh dấu quá tải"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Cảnh báo khi xếp vào ngày quá tải",
+        "description": "Báo ngay lúc tạo phiên",
+        "steps": {
+          "given": [
+            "Thứ Ba đang quá tải"
+          ],
+          "when": [
+            "Owner thêm phiên cho Task vào Thứ Ba"
+          ],
+          "then": [
+            "Phiên được lưu",
+            "Màn hình hiển thị cảnh báo Thứ Ba quá tải"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Chấp nhận lịch",
+        "description": "Ẩn đến khi lịch thay đổi",
+        "steps": {
+          "given": [
+            "Task T có cảnh báo thiếu thời gian"
+          ],
+          "when": [
+            "Owner bấm 'Chấp nhận lịch này', sau đó thêm một phiên 10 phút cho T"
+          ],
+          "then": [
+            "Sau khi chấp nhận: cảnh báo của T bị ẩn",
+            "Sau khi thêm phiên: cảnh báo hiện lại (nếu vẫn thiếu)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Không thông báo đẩy",
+        "description": "Cảnh báo chỉ hiển thị",
+        "steps": {
+          "given": [
+            "Task T có cảnh báo thiếu thời gian, Thứ Ba quá tải"
+          ],
+          "when": [
+            "Scheduler chạy"
+          ],
+          "then": [
+            "Không có Notification mới nào cho các cảnh báo này",
+            "Không phiên nào bị tự thay đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-28] Ngưỡng cấu hình được",
+        "description": "Đổi ngưỡng có hiệu lực ngay",
+        "steps": {
+          "given": [
+            "Task T estimated 120 có phiên 110 phút (thiếu 10)"
+          ],
+          "when": [
+            "Owner đặt insufficientMinMinutes = 10, insufficientMinPercent = 5"
+          ],
+          "then": [
+            "T có cảnh báo thiếu thời gian"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

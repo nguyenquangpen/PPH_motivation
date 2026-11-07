@@ -1,0 +1,213 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-30 Integration Event API",
+    "description": "Tiếp nhận sự kiện theo hợp đồng v1",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-30] Nhận sự kiện mới",
+        "description": "Lưu trước, trả 202",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "App gửi sự kiện vocabulary.learned hợp lệ với event_id E1"
+          ],
+          "then": [
+            "Phản hồi 202 {success:true, event_id:E1, status:'accepted'}",
+            "Sự kiện E1 được lưu trước khi xử lý nghiệp vụ"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Trùng y hệt",
+        "description": "200 duplicate, không xử lý lại",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "E1 đã được nhận và xử lý"
+          ],
+          "when": [
+            "App gửi lại đúng sự kiện E1"
+          ],
+          "then": [
+            "Phản hồi 200 status 'duplicate'",
+            "Contribution/XP không thay đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Trùng id khác nội dung",
+        "description": "409",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "E1 đã được nhận với count 20"
+          ],
+          "when": [
+            "App gửi E1 với count 30"
+          ],
+          "then": [
+            "Phản hồi 409 CONFLICT"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Thiếu hoặc sai key",
+        "description": "401",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi sự kiện không có header Authorization, rồi với key sai"
+          ],
+          "then": [
+            "Cả hai phản hồi 401 UNAUTHORIZED",
+            "Không sự kiện nào được lưu"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] app_id không khớp key",
+        "description": "403",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi sự kiện với key K nhưng source.app_id 'other-app'"
+          ],
+          "then": [
+            "Phản hồi 403 FORBIDDEN"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Envelope sai",
+        "description": "400 kèm chi tiết",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi lần lượt: event_id không phải UUID; schema_version 2; occurred_at không có offset; thiếu subject"
+          ],
+          "then": [
+            "Mỗi request phản hồi 400 VALIDATION kèm trường lỗi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] data sai đặc tả",
+        "description": "400 cho loại đã định nghĩa",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi vocabulary.learned với data.count = 0"
+          ],
+          "then": [
+            "Phản hồi 400"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] occurred_at ở tương lai",
+        "description": "Quá now + 5 phút → 400",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Hiện tại 10:00"
+          ],
+          "when": [
+            "Gửi sự kiện occurred_at 10:04 và một sự kiện occurred_at 10:06"
+          ],
+          "then": [
+            "10:04 được nhận (202)",
+            "10:06 bị từ chối (400)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Body quá lớn",
+        "description": "> 64 KB → 413",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi sự kiện có body 70 KB"
+          ],
+          "then": [
+            "Phản hồi 413"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Loại sự kiện mới",
+        "description": "Đúng mẫu → nhận",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Gửi event_type 'kanji.mastered' hợp lệ"
+          ],
+          "then": [
+            "Phản hồi 202",
+            "Sự kiện được lưu và xử lý theo F-32"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Heartbeat",
+        "description": "Cập nhật heartbeat, không tính hoạt động",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "App gửi external_app.heartbeat"
+          ],
+          "then": [
+            "Phản hồi 202",
+            "Heartbeat gần nhất của app được cập nhật",
+            "Hoạt động gần nhất của app không đổi",
+            "Heartbeat không hiện trong lịch sử sự kiện mặc định"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-30] Key bị thu hồi",
+        "description": "401 ngay lập tức",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ"
+          ],
+          "when": [
+            "Owner thu hồi K, app gửi sự kiện ngay sau đó"
+          ],
+          "then": [
+            "Phản hồi 401"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

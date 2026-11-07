@@ -1,0 +1,189 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-24 Pull changes from Google (Google wins)",
+    "description": "Đọc thay đổi Event của Hub",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-24] Đổi giờ trên Google",
+        "description": "Phiên trong Hub nhận giờ mới",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P 19:00–20:00 có Event E"
+          ],
+          "when": [
+            "Owner kéo E sang 21:00–22:00 trên Google, rồi Hub đọc thay đổi"
+          ],
+          "then": [
+            "P có giờ 21:00–22:00",
+            "Activity 'Giờ cập nhật từ Google Calendar: 19:00–20:00 → 21:00–22:00'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Google thắng thay đổi chưa đẩy",
+        "description": "Thay đổi của Hub chưa đẩy bị bỏ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P 19:00–20:00 có Event E",
+            "Google giả lập tạm mất mạng"
+          ],
+          "when": [
+            "Owner đổi P sang 20:00–21:00 trong Hub; Owner kéo E sang 18:00–19:00 trên Google; mạng có lại và Hub đọc thay đổi"
+          ],
+          "then": [
+            "P có giờ 18:00–19:00",
+            "E có giờ 18:00–19:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Bỏ qua ràng buộc chồng phiên",
+        "description": "Giờ từ Google được nhận kể cả chồng phiên khác",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có phiên P1 19:00–20:00 và P2 21:00–22:00"
+          ],
+          "when": [
+            "Owner kéo Event của P2 sang 19:30–20:30 trên Google, Hub đọc thay đổi"
+          ],
+          "then": [
+            "P2 có giờ 19:30–20:30"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Xóa Event trên Google",
+        "description": "Task giữ, phiên bị gỡ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có phiên P với Event E"
+          ],
+          "when": [
+            "Owner xóa E trên Google, Hub đọc thay đổi"
+          ],
+          "then": [
+            "T vẫn tồn tại, không đổi trạng thái",
+            "P bị gỡ khỏi T, mapping DETACHED",
+            "Notification 'Lịch của Task T đã bị xóa trên Google Calendar'",
+            "Không có Event mới nào được tạo"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Đổi thành sự kiện cả ngày",
+        "description": "Xử lý như bị xóa",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P có Event E"
+          ],
+          "when": [
+            "Owner đổi E thành sự kiện cả ngày trên Google, Hub đọc thay đổi"
+          ],
+          "then": [
+            "P bị gỡ, có Notification CALENDAR_EVENT_DELETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Chuyển sang lịch khác",
+        "description": "Xử lý như bị xóa",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P có Event E trên primary"
+          ],
+          "when": [
+            "Owner chuyển E sang lịch 'Gia đình', Hub đọc thay đổi"
+          ],
+          "then": [
+            "P bị gỡ, có Notification CALENDAR_EVENT_DELETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Sửa tiêu đề trên Google",
+        "description": "Không đồng bộ về; Hub ghi lại khi đẩy",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T 'Viết báo cáo' có Event E"
+          ],
+          "when": [
+            "Owner đổi tiêu đề E thành 'abc' trên Google, Hub đọc thay đổi, rồi Owner đổi Priority của T"
+          ],
+          "then": [
+            "Tiêu đề T vẫn 'Viết báo cáo'",
+            "Sau khi T thay đổi, tiêu đề E là 'Viết báo cáo'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Event kết thúc không hoàn thành Task",
+        "description": "Spec §6.3 Case 4",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T TODO có phiên đã kết thúc 1 giờ trước"
+          ],
+          "when": [
+            "Hub đọc thay đổi"
+          ],
+          "then": [
+            "T vẫn TODO"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Task đã xong vẫn nhận giờ",
+        "description": "Cập nhật lịch sử, không đổi trạng thái",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T COMPLETED có Event '✓ …'"
+          ],
+          "when": [
+            "Owner đổi giờ Event trên Google, Hub đọc thay đổi"
+          ],
+          "then": [
+            "Phiên của T nhận giờ mới",
+            "T vẫn COMPLETED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-24] Nhịp đọc thay đổi",
+        "description": "Khởi động, mỗi 5 phút, khi focus (≤ 1 lần/phút)",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống"
+          ],
+          "when": [
+            "Hub khởi động, chạy 10 phút, cửa sổ được focus 3 lần trong cùng 1 phút"
+          ],
+          "then": [
+            "Có lần đọc khi khởi động",
+            "Có lần đọc ở phút 5 và 10",
+            "3 lần focus trong 1 phút chỉ gây tối đa 1 lần đọc"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

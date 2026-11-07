@@ -1,0 +1,296 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-23 Push Hub → Google",
+    "description": "Đẩy phiên/Task lên lịch primary",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-23] Tạo phiên tạo Event",
+        "description": "Event xuất hiện ≤ 60 giây",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T 'Viết báo cáo', Goal 'Nghiên cứu', Priority HIGH, Contribution 100"
+          ],
+          "when": [
+            "Owner thêm phiên ngày mai 19:00–20:00"
+          ],
+          "then": [
+            "≤ 60 giây sau có 1 Event 19:00–20:00 trên primary",
+            "Tiêu đề 'Viết báo cáo'",
+            "Mô tả chứa Goal, Priority, Contribution và 'Quản lý bởi Productivity Hub'",
+            "Mapping SYNCED"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Sửa giờ phiên",
+        "description": "Cập nhật Event, không tạo mới",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P có Event E 19:00–20:00"
+          ],
+          "when": [
+            "Owner đổi P sang 20:00–21:00"
+          ],
+          "then": [
+            "E có giờ 20:00–21:00",
+            "Tổng số Event của Hub không đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Xóa phiên",
+        "description": "Xóa Event tương ứng",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên P có Event E"
+          ],
+          "when": [
+            "Owner xóa P"
+          ],
+          "then": [
+            "E bị xóa khỏi Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Đổi tiêu đề Task",
+        "description": "Mọi Event của Task cập nhật tiêu đề",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có 2 phiên đã đồng bộ"
+          ],
+          "when": [
+            "Owner đổi tiêu đề T thành 'Báo cáo v2'"
+          ],
+          "then": [
+            "Cả 2 Event có tiêu đề 'Báo cáo v2'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Hoàn thành Task",
+        "description": "Giữ Event, thêm ✓",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có Event 'Viết báo cáo'"
+          ],
+          "when": [
+            "Owner hoàn thành T"
+          ],
+          "then": [
+            "Event còn trên Google với tiêu đề '✓ Viết báo cáo'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Hoàn tác Task",
+        "description": "Bỏ ✓",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T COMPLETED, Event '✓ Viết báo cáo'"
+          ],
+          "when": [
+            "Owner hoàn tác T"
+          ],
+          "then": [
+            "Tiêu đề Event là 'Viết báo cáo'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Hủy hoặc xóa Task",
+        "description": "Xóa mọi Event của Task",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task A và Task B mỗi Task có 2 Event"
+          ],
+          "when": [
+            "Owner hủy A và xóa B"
+          ],
+          "then": [
+            "4 Event của A và B bị xóa khỏi Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Không chờ Google",
+        "description": "Thao tác trong Hub không bị chặn",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập phản hồi chậm 30 giây"
+          ],
+          "when": [
+            "Owner thêm phiên cho Task"
+          ],
+          "then": [
+            "Thao tác trong Hub hoàn tất ngay như khi chưa kết nối",
+            "Event được tạo sau khi Google phản hồi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Gộp thay đổi liên tiếp",
+        "description": "Chỉ đẩy trạng thái cuối",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập tạm mất mạng"
+          ],
+          "when": [
+            "Owner tạo phiên 19:00–20:00 rồi đổi sang 21:00–22:00, sau đó Google có mạng lại"
+          ],
+          "then": [
+            "Có đúng 1 Event 21:00–22:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Hàng đợi bền qua khởi động lại",
+        "description": "Thay đổi chưa đẩy không mất",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập mất mạng",
+            "Owner thêm phiên P"
+          ],
+          "when": [
+            "Hub khởi động lại, sau đó Google có mạng lại"
+          ],
+          "then": [
+            "Event cho P được tạo đúng 1 lần"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Retry lỗi tạm thời",
+        "description": "429/5xx/mạng → thử lại tăng dần",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập trả 503 cho 3 lần đầu"
+          ],
+          "when": [
+            "Owner thêm phiên P"
+          ],
+          "then": [
+            "Event cho P được tạo sau các lần thử lại",
+            "Mapping SYNCED",
+            "Không có Notification CALENDAR_SYNC_ERROR"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Lỗi kéo dài",
+        "description": "Lỗi liên tục ≥ 30 phút → ERROR + 1 thông báo",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập trả 503 liên tục"
+          ],
+          "when": [
+            "Owner thêm phiên P và 45 phút trôi qua"
+          ],
+          "then": [
+            "Trạng thái ERROR",
+            "Có đúng 1 Notification CALENDAR_SYNC_ERROR",
+            "Các chức năng khác của Hub vẫn hoạt động"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Không trùng khi mất phản hồi",
+        "description": "Google đã tạo Event nhưng Hub không nhận phản hồi",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập tạo Event rồi làm mất phản hồi của lần đầu"
+          ],
+          "when": [
+            "Owner thêm phiên P và Hub thử lại"
+          ],
+          "then": [
+            "Trên Google chỉ có 1 Event cho P"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Phiên quá khứ không đẩy",
+        "description": "Không tạo Event cho quá khứ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)"
+          ],
+          "when": [
+            "Owner thêm phiên hôm qua 19:00–20:00"
+          ],
+          "then": [
+            "Không có Event mới trên Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Không đụng Event của Owner",
+        "description": "Chỉ quản lý Event của Hub",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Primary có Event 'Họp nhóm' do Owner tạo",
+            "Task T có Event của Hub"
+          ],
+          "when": [
+            "Owner xóa T"
+          ],
+          "then": [
+            "Event 'Họp nhóm' còn nguyên",
+            "Event của T bị xóa"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-23] Cập nhật Event đã bị xóa trên Google",
+        "description": "Google báo không tồn tại → xử lý như bị xóa",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Event E của phiên P đã bị xóa trên Google nhưng Hub chưa đọc thay đổi"
+          ],
+          "when": [
+            "Owner đổi giờ P"
+          ],
+          "then": [
+            "P bị gỡ khỏi Task, mapping DETACHED",
+            "Có Notification CALENDAR_EVENT_DELETED",
+            "Không tạo lại Event"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]
