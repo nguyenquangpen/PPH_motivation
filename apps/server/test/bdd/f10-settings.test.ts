@@ -8,7 +8,8 @@ describe('F-10 Settings', () => {
   scenario('[F-10] Giá trị mặc định', async () => {
     const t = createTestApp();
     const res = await t.api.get('/api/v1/settings');
-    expect(res.body).toEqual({
+    // Release 2 thêm khóa scheduling (kiểm tra ở F-26/F-28)
+    expect(res.body).toMatchObject({
       multiplier: 1.0, refDuration: 60, minFactor: 0.5, maxFactor: 2.0, smallThreshold: 20, poolTarget: 100, poolRewardXp: 120,
       defaultMilestoneXp: 300, defaultGoalXp: 1000, xpPerLevel: 1000, penaltyEnabled: true, penaltyPercent: 50, gracePeriodHours: 24,
       freezesPerMonth: 2, behindMargin: 15, nearDueDays: 14, presetMajor: 100, presetMedium: 50, presetMinor: 10,

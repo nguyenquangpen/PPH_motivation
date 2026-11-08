@@ -18,7 +18,7 @@ describe('F-16 Missed Reason Tags', () => {
       ['Ước lượng sai', false],
       ['Trì hoãn', false],
     ]);
-    expect(res.body.filter((x: { isSystem: boolean }) => x.isSystem).map((x: { name: string }) => x.name)).toEqual(['Goal đang Paused']);
+    expect(res.body.filter((x: { isSystem: boolean }) => x.isSystem).map((x: { name: string }) => x.name)).toEqual(['Goal đang Paused', 'Lịch quá tải/Assistant đề xuất sai']); // Release 2 F-29: thêm tag hệ thống
   });
 
   scenario('[F-16] Tạo tag mới', async () => {

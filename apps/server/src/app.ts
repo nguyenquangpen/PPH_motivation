@@ -1,7 +1,7 @@
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { ErrorCode } from '@pph/shared';
-import type { AppContext, Services } from './core/context.js';
+import type { AppContext, AppOptions, Services } from './core/context.js';
 import type { Clock } from './core/clock.js';
 import type { DB } from './core/db.js';
 import { DomainError } from './core/errors.js';
@@ -12,13 +12,14 @@ import { MODULES } from './modules/index.js';
 
 const LOOPBACK = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
 
-export function buildContext(db: DB, clock: Clock): AppContext {
+export function buildContext(db: DB, clock: Clock, options: AppOptions = {}): AppContext {
   const ctx: AppContext = {
     db,
     clock,
     events: new EventBus(),
     scheduler: new Scheduler(db),
     services: {} as Services,
+    options,
     nowIso: () => clock.now().toISOString(),
     tz: () => ctx.services.settings.get().timezone,
   };
@@ -28,8 +29,8 @@ export function buildContext(db: DB, clock: Clock): AppContext {
   return ctx;
 }
 
-export function buildApp(db: DB, clock: Clock): { app: FastifyInstance; ctx: AppContext } {
-  const ctx = buildContext(db, clock);
+export function buildApp(db: DB, clock: Clock, options: AppOptions = {}): { app: FastifyInstance; ctx: AppContext } {
+  const ctx = buildContext(db, clock, options);
   const app = Fastify({ logger: false });
 
   // NFR-009: chỉ chấp nhận kết nối từ chính laptop

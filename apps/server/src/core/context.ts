@@ -15,6 +15,11 @@ import type { ShopService } from '../modules/shop/service.js';
 import type { PenaltyService } from '../modules/penalty/service.js';
 import type { StreakService } from '../modules/streak/service.js';
 import type { DashboardService } from '../modules/dashboard/service.js';
+import type { SessionService } from '../modules/sessions/service.js';
+import type { SchedulingService } from '../modules/scheduling/service.js';
+import type { CalendarService } from '../modules/calendar/service.js';
+import type { IntegrationService } from '../modules/integrations/service.js';
+import type { CalendarProvider, SecretStore } from '../modules/calendar/provider.js';
 
 export interface Services {
   settings: SettingsService;
@@ -29,6 +34,19 @@ export interface Services {
   penalty: PenaltyService;
   streak: StreakService;
   dashboard: DashboardService;
+  // Release 2
+  sessions: SessionService;
+  scheduling: SchedulingService;
+  calendar: CalendarService;
+  integrations: IntegrationService;
+}
+
+/** Phụ thuộc tiêm vào khi dựng app (test truyền FakeCalendarProvider + secret store trong bộ nhớ). */
+export interface AppOptions {
+  calendarProvider?: CalendarProvider;
+  secretStore?: SecretStore;
+  /** Thư mục dữ liệu (để module tự tạo file key khi cần); undefined khi DB :memory: */
+  dataDir?: string;
 }
 
 export interface AppContext {
@@ -37,6 +55,7 @@ export interface AppContext {
   events: EventBus;
   scheduler: Scheduler;
   services: Services;
+  options: AppOptions;
   /** Thời điểm hiện tại, ISO UTC */
   nowIso(): string;
   /** Timezone Owner hiện tại (từ Settings) */

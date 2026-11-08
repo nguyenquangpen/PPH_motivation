@@ -23,6 +23,9 @@ export type HubOptions = {
   clock?: Clock;
   /** Gọi SAU khi transaction tạo notification đã commit (dùng cho toast của hệ điều hành). */
   onNotification?: (n: HubNotification) => void;
+  /** Release 2: tiêm provider lịch / secret store (Electron dùng safeStorage). */
+  calendarProvider?: import('./modules/calendar/provider.js').CalendarProvider;
+  secretStore?: import('./modules/calendar/provider.js').SecretStore;
   log?: (msg: string) => void;
 };
 
@@ -62,7 +65,7 @@ function serveWeb(app: FastifyInstance, webDist: string): void {
 export async function startHub(opts: HubOptions): Promise<Hub> {
   const log = opts.log ?? ((m: string) => console.log(m));
   const db = openDb(join(opts.dataDir, 'hub.db'), { migrationsDir: opts.migrationsDir });
-  const { app, ctx } = buildApp(db, opts.clock ?? new SystemClock());
+  const { app, ctx } = buildApp(db, opts.clock ?? new SystemClock(), { dataDir: opts.dataDir, calendarProvider: opts.calendarProvider, secretStore: opts.secretStore });
   const backupDir = join(opts.dataDir, 'backups');
 
   if (opts.onNotification) {

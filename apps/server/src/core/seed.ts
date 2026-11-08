@@ -7,7 +7,7 @@ const TAGS: { name: string; exempt: boolean; system?: string }[] = [
   { name: 'Bất khả kháng', exempt: true },
   { name: 'Lỗi hệ thống/đồng bộ', exempt: true },
   { name: 'Goal đang Paused', exempt: true, system: 'GOAL_PAUSED' },
-  { name: 'Lịch quá tải/Assistant đề xuất sai', exempt: true },
+  { name: 'Lịch quá tải/Assistant đề xuất sai', exempt: true, system: 'SCHEDULE_INFEASIBLE' },
   { name: 'Ước lượng sai', exempt: false },
   { name: 'Trì hoãn', exempt: false },
 ];

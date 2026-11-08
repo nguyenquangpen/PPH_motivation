@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { it } from 'vitest';
 import type { Settings, TaskDto } from '@pph/shared';
 import { buildApp } from '../src/app.js';
+import type { AppOptions } from '../src/core/context.js';
 import { FixedClock } from '../src/core/clock.js';
 import { openDb } from '../src/core/db.js';
 import { newId } from '../src/core/ids.js';
@@ -28,10 +29,10 @@ export const DEFAULT_NOW = '2026-11-06T03:00:00.000Z'; // 10:00 Asia/Ho_Chi_Minh
 
 export type Res<T = any> = { status: number; body: T };
 
-export function createTestApp(nowIso: string = DEFAULT_NOW) {
+export function createTestApp(nowIso: string = DEFAULT_NOW, options: AppOptions = {}) {
   const db = openDb(':memory:');
   const clock = new FixedClock(nowIso);
-  const { app, ctx } = buildApp(db, clock);
+  const { app, ctx } = buildApp(db, clock, options);
 
   const call = async <T = any>(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', url: string, body?: unknown,
     headers: Record<string, string> = {}, remoteAddress?: string): Promise<Res<T>> => {

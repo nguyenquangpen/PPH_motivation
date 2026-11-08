@@ -13,7 +13,7 @@ export const XpTxType = [
 ] as const;
 export type XpTxType = (typeof XpTxType)[number];
 
-export const XpSourceType = ['TASK', 'POOL', 'MILESTONE', 'GOAL', 'REDEMPTION'] as const;
+export const XpSourceType = ['TASK', 'POOL', 'MILESTONE', 'GOAL', 'REDEMPTION', 'INTEGRATION_EVENT'] as const;
 export type XpSourceType = (typeof XpSourceType)[number];
 
 export const MilestoneCondition = ['CONTRIBUTION_THRESHOLD', 'LINKED_TASKS'] as const;
@@ -27,7 +27,7 @@ export type UnlockType = (typeof UnlockType)[number];
 
 export const NotificationType = [
   'TASK_MISSED', 'TASK_DEADLINE_SOON', 'GOAL_REACHED_100', 'GOAL_BEHIND', 'GOAL_NEAR_DUE',
-  'MILESTONE_COMPLETED', 'LEVEL_UP', 'POOL_REWARD',
+  'MILESTONE_COMPLETED', 'LEVEL_UP', 'POOL_REWARD', 'CALENDAR_SYNC_ERROR', 'CALENDAR_EVENT_DELETED', 'EXTERNAL_APP_INACTIVE',
 ] as const;
 export type NotificationType = (typeof NotificationType)[number];
 

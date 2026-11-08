@@ -204,7 +204,7 @@ export class LedgerService {
   }
 
   /** POOL_ADD rồi trả POOL_REWARD cho mỗi PoolTarget vượt qua (F-08). Trả id entry ADD. */
-  poolAdd(taskId: string, amount: number): string {
+  poolAdd(taskId: string | null, amount: number): string {
     const id = newId();
     const now = this.ctx.nowIso();
     this.ctx.db.prepare('INSERT INTO pool_ledger (id, type, amount, task_id, created_at) VALUES (?, ?, ?, ?, ?)').run(id, 'ADD', amount, taskId, now);
@@ -218,7 +218,7 @@ export class LedgerService {
     return id;
   }
 
-  poolDeduct(taskId: string, amount: number): string {
+  poolDeduct(taskId: string | null, amount: number): string {
     const id = newId();
     this.ctx.db
       .prepare('INSERT INTO pool_ledger (id, type, amount, task_id, created_at) VALUES (?, ?, ?, ?, ?)')

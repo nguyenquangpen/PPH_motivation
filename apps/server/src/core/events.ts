@@ -20,6 +20,11 @@ export type DomainEvents = {
     levelBefore: number; levelAfter: number;
   };
   'settings.changed': { key: string; before: unknown; after: unknown };
+  /** Release 2: tiêu đề/Goal/Priority/Contribution của Task đổi (để cập nhật Event trên Google) */
+  'task.content_changed': { taskId: string };
+  /** Release 2: phiên làm việc thay đổi. op: CREATE | UPDATE | DELETE */
+  'session.changed': { sessionId: string; taskId: string; op: 'CREATE' | 'UPDATE' | 'DELETE' };
+  'integration.event_processed': { eventId: string; goalId: string | null; contribution: number };
   'notification.created': {
     id: string; type: NotificationType; objectType: string | null; objectId: string | null; title: string; body: string | null;
   };

@@ -7,3 +7,4 @@ export * from './dto/xp.js';
 export * from './dto/goals.js';
 export * from './dto/shop.js';
 export * from './dto/misc.js';
+export * from './dto/release2.js';

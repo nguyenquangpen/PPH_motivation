@@ -29,7 +29,14 @@ export class StreakService {
          WHERE c.undone_at IS NULL AND t.status = 'COMPLETED' AND t.deleted_at IS NULL`,
       )
       .all() as { completed_at: string; goal_id: string | null }[];
-    return rows.map((r) => ({ date: localDate(r.completed_at, tz), goalId: r.goal_id }));
+    // Release 2: sự kiện app ngoài đã xử lý cũng là "hoạt động", tính theo occurred_at (F-32)
+    const events = this.ctx.db
+      .prepare("SELECT occurred_at, goal_id FROM integration_events WHERE status = 'PROCESSED' AND is_activity = 1")
+      .all() as { occurred_at: string; goal_id: string | null }[];
+    return [
+      ...rows.map((r) => ({ date: localDate(r.completed_at, tz), goalId: r.goal_id })),
+      ...events.map((r) => ({ date: localDate(r.occurred_at, tz), goalId: r.goal_id })),
+    ];
   }
 
   /** Tập ngày active (Productivity). */

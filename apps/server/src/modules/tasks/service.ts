@@ -185,6 +185,9 @@ export class TaskService {
     });
     if (next.deadline !== r.deadline) this.ctx.events.emit('task.deadline_changed', { taskId: id, before: r.deadline, after: next.deadline });
     if (linksChanged) this.ctx.events.emit('task.links_changed', { taskId: id, goalId: next.goal_id });
+    if (next.title !== r.title || next.goal_id !== r.goal_id || next.priority !== r.priority || next.contribution !== r.contribution) {
+      this.ctx.events.emit('task.content_changed', { taskId: id });
+    }
     return this.get(id);
   }
 

@@ -130,8 +130,17 @@ export class PenaltyService {
       if (sys) this.ctx.services.tasks.setReasonTag(t.id, sys);
       return;
     }
+    if (this.exemptForInfeasibleSchedule(t.id)) return;
     if (this.isExempt(t.missed_reason_tag_id)) return;
     this.applyPenalty(t, deadline);
+  }
+
+  /** Release 2 / F-29: lịch không khả thi → tự gán tag hệ thống SCHEDULE_INFEASIBLE và miễn phạt. */
+  private exemptForInfeasibleSchedule(taskId: string): boolean {
+    if (!this.ctx.services.scheduling.isInfeasible(taskId)) return false;
+    const sys = this.systemTagId('SCHEDULE_INFEASIBLE');
+    if (sys) this.ctx.services.tasks.setReasonTag(taskId, sys);
+    return true;
   }
 
   /** Event task.cancelled: Missed + tag không miễn → phạt ngay (không chờ Grace). */
@@ -139,6 +148,7 @@ export class PenaltyService {
     if (!p.wasMissed || !p.deadline) return;
     const t = this.ctx.services.tasks.row(p.taskId, { includeDeleted: true });
     if (!this.evaluation(t.id, p.deadline)) this.insertEvaluation(t.id, p.deadline);
+    if (this.ctx.services.settings.get().penaltyEnabled && this.exemptForInfeasibleSchedule(t.id)) return;
     if (!this.shouldPenalize(t, p.reasonTagId)) return;
     if (this.activePenaltyId(t.id, p.deadline)) return;
     this.applyPenalty(t, p.deadline);

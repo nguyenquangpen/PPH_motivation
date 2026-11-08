@@ -4,6 +4,7 @@ import { DomainError, validation } from '../../core/errors.js';
 import { isValidZone } from '../../core/time.js';
 
 const pascal = (k: string) => k.charAt(0).toUpperCase() + k.slice(1);
+const show = (v: unknown) => (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v));
 
 export class SettingsService {
   private cache: Settings | null = null;
@@ -36,12 +37,12 @@ export class SettingsService {
       'INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at',
     );
     for (const key of Object.keys(parsed.data) as (keyof Settings)[]) {
-      if (before[key] === next[key]) continue;
+      if (JSON.stringify(before[key]) === JSON.stringify(next[key])) continue;
       upsert.run(key, JSON.stringify(next[key]), now);
       this.cache = null;
       this.ctx.services.activity.log({
         type: 'SETTINGS_CHANGED',
-        message: `${pascal(key)}: ${String(before[key])} → ${String(next[key])}`,
+        message: `${pascal(key)}: ${show(before[key])} → ${show(next[key])}`,
         before: { [key]: before[key] },
         after: { [key]: next[key] },
       });
