@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-13 Streak",
     "description": "Productivity Streak, Goal Streak, Streak Freeze theo múi giờ Owner",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-13] Ngày active",
@@ -19,7 +19,7 @@
             "Productivity Streak = 1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Chuỗi liên tiếp",
@@ -35,7 +35,7 @@
             "Productivity Streak = 3"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Hôm nay chưa active không đứt chuỗi",
@@ -51,7 +51,7 @@
             "Productivity Streak = 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Dùng Freeze tự động",
@@ -73,7 +73,7 @@
             "Productivity Streak = 6"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Hết Freeze thì đứt chuỗi",
@@ -91,7 +91,7 @@
             "Longest Streak giữ ≥ 5"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Reset Freeze hằng tháng",
@@ -108,7 +108,7 @@
             "Freeze tháng 12 = 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Hoàn tác làm mất ngày active",
@@ -126,7 +126,7 @@
             "Productivity Streak = 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Missed không đứt chuỗi",
@@ -143,7 +143,7 @@
             "Productivity Streak = 4"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Goal Streak riêng từng Goal, không dùng Freeze",
@@ -163,7 +163,7 @@
             "Freeze không bị dùng cho G1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Ranh giới ngày theo múi giờ",
@@ -181,7 +181,7 @@
             "Ngày 06/11 không bị tính active bởi Task này"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Longest Streak",
@@ -197,7 +197,7 @@
             "Hiển thị Current 3, Longest 10"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-13] Lịch hoạt động",
@@ -213,7 +213,7 @@
             "Lịch 12 tuần phân biệt ngày active, ngày Freeze và ngày trống"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-09 XP Ledger, Balances & Level",
     "description": "Giao dịch XP bất biến, hai số dư Lifetime/Spendable và Level",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-09] Thưởng tăng cả hai số dư",
@@ -20,7 +20,7 @@
             "Spendable = 200"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Đổi thưởng chỉ trừ Spendable",
@@ -39,7 +39,7 @@
             "Level vẫn = 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Phạt chỉ trừ Spendable",
@@ -57,7 +57,7 @@
             "Level = 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Đảo ngược thưởng trừ cả hai",
@@ -75,7 +75,7 @@
             "Level = 1"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Biên Level",
@@ -91,7 +91,7 @@
             "Level lần lượt là 1, 1, 2, 3"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Thông báo lên Level",
@@ -110,7 +110,7 @@
             "Activity ghi 'Lên Level 2'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Giao dịch bất biến",
@@ -126,7 +126,7 @@
             "Không có thao tác sửa hoặc xóa nào cho giao dịch"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Đảo ngược tối đa một lần",
@@ -143,7 +143,7 @@
             "Vẫn chỉ có 1 REWARD_REVERSAL tham chiếu R"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Thông tin giao dịch",
@@ -159,7 +159,7 @@
             "Thấy id, type TASK_REWARD, lifetime_delta, spendable_delta, nguồn Task T, lý do, thời điểm"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-09] Lọc Reward History",
@@ -175,7 +175,7 @@
             "Chỉ hiển thị các giao dịch PENALTY trong tháng 11"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

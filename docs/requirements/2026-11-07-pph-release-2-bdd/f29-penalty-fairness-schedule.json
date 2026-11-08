@@ -1,0 +1,125 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-29 Penalty Fairness for Infeasible Schedules",
+    "description": "Không phạt khi lịch không khả thi",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-29] Thiếu thời gian → miễn phạt",
+        "description": "Tự gán lý do hệ thống",
+        "steps": {
+          "given": [
+            "Penalty bật, Grace 24h",
+            "Task T estimated 120 có phiên 30 phút (cảnh báo thiếu thời gian), Deadline đã qua 25 giờ, chưa có lý do"
+          ],
+          "when": [
+            "Scheduler đánh giá phạt"
+          ],
+          "then": [
+            "Không có giao dịch PENALTY cho T",
+            "T có lý do 'Lịch quá tải/Assistant đề xuất sai'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Ngày quá tải → miễn phạt",
+        "description": "Phiên nằm trong ngày quá tải",
+        "steps": {
+          "given": [
+            "Task T có phiên đủ thời gian nhưng nằm trong một ngày quá tải, đã quá Deadline + Grace"
+          ],
+          "when": [
+            "Scheduler đánh giá phạt"
+          ],
+          "then": [
+            "Không phạt, T được gán lý do hệ thống"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Đã chấp nhận vẫn miễn",
+        "description": "Chấp nhận lịch không làm mất miễn trừ",
+        "steps": {
+          "given": [
+            "Task T có cảnh báo thiếu thời gian đã được 'Chấp nhận', quá Deadline + Grace"
+          ],
+          "when": [
+            "Scheduler đánh giá phạt"
+          ],
+          "then": [
+            "Không phạt"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Hủy Task Missed có lịch không khả thi",
+        "description": "Không phạt khi hủy",
+        "steps": {
+          "given": [
+            "Task T đang Missed, có cảnh báo thiếu thời gian"
+          ],
+          "when": [
+            "Owner hủy T với lý do 'Trì hoãn'"
+          ],
+          "then": [
+            "Không có giao dịch PENALTY",
+            "Lý do của T là 'Lịch quá tải/Assistant đề xuất sai'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Không có phiên → quy tắc cũ",
+        "description": "Task không xếp lịch vẫn bị phạt bình thường",
+        "steps": {
+          "given": [
+            "Task T không có phiên, Contribution 100, estimated 120, quá Deadline + Grace, chưa có lý do"
+          ],
+          "when": [
+            "Scheduler đánh giá phạt"
+          ],
+          "then": [
+            "Có PENALTY −100"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Lịch đủ, ngày không quá tải → phạt",
+        "description": "Không miễn khi lịch khả thi",
+        "steps": {
+          "given": [
+            "Task T có phiên đủ thời gian, không ngày nào quá tải, quá Deadline + Grace, chưa có lý do"
+          ],
+          "when": [
+            "Scheduler đánh giá phạt"
+          ],
+          "then": [
+            "Có giao dịch PENALTY"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-29] Tag hệ thống",
+        "description": "Không xóa được",
+        "steps": {
+          "given": [
+            "Tag 'Lịch quá tải/Assistant đề xuất sai'"
+          ],
+          "when": [
+            "Owner xóa tag đó"
+          ],
+          "then": [
+            "Hệ thống từ chối (422 SYSTEM_TAG)"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

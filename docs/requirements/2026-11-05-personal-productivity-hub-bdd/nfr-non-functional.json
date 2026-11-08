@@ -3,7 +3,7 @@
     "category": "performance",
     "feature": "NFR Performance",
     "description": "Hiệu năng trên laptop mục tiêu với quy mô dữ liệu cá nhân",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-004] Dashboard load",
@@ -19,7 +19,7 @@
             "Thời gian p95 đến khi hiển thị đầy đủ ≤ 2 giây"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[PC-15] Complete/Undo latency",
@@ -35,7 +35,7 @@
             "p95 thời gian đến khi UI phản ánh kết quả ≤ 500 ms"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -43,7 +43,7 @@
     "category": "security",
     "feature": "NFR Security",
     "description": "Chỉ truy cập từ localhost, không đăng nhập",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-009] Từ chối kết nối từ máy khác",
@@ -59,7 +59,7 @@
             "Kết nối bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-009] Truy cập từ localhost",
@@ -75,7 +75,7 @@
             "Dashboard hiển thị, không có màn hình đăng nhập"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -83,7 +83,7 @@
     "category": "usability",
     "feature": "NFR Usability",
     "description": "Thao tác nhanh, minh bạch số liệu",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-005] Hoàn thành Task ≤ 2 thao tác",
@@ -99,7 +99,7 @@
             "Số thao tác ≤ 2 và T COMPLETED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-005] Tạo Task trên một form",
@@ -115,7 +115,7 @@
             "Task được tạo mà không cần chuyển màn hình khác"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[4.3] Truy vết số liệu",
@@ -131,7 +131,7 @@
             "Mở danh sách giao dịch có tổng bằng số hiển thị"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-011] Dark Mode (Could)",
@@ -147,7 +147,7 @@
             "Toàn bộ màn hình chuyển sang giao diện tối và đọc được"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -155,7 +155,7 @@
     "category": "compatibility",
     "feature": "NFR Compatibility",
     "description": "Laptop Windows, trình duyệt Chrome/Edge, 1366×768",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-006] Màn hình 1366×768",
@@ -172,7 +172,7 @@
             "Mọi thao tác đều truy cập được"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -180,7 +180,7 @@
     "category": "reliability",
     "feature": "NFR Reliability & Data",
     "description": "Bền vững, nguyên tử, đối soát, backup",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-001] Restart không mất dữ liệu",
@@ -197,7 +197,7 @@
             "Giao dịch TASK_REWARD và REDEEM vẫn tồn tại"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-002] Đối soát",
@@ -214,7 +214,7 @@
             "Kết quả hiển thị sai lệch = 0"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-003] Idempotency tổng quát",
@@ -230,7 +230,7 @@
             "Chỉ có 1 TASK_REWARD (hoặc POOL_ADD) cho T và 1 REDEEM cho I"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-008] Backup và khôi phục",
@@ -247,7 +247,7 @@
             "Dữ liệu mất không quá 24 giờ"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-007] Múi giờ",
@@ -263,7 +263,7 @@
             "Task được tính cho ngày 06/11 trong Today, Streak và XP hôm nay"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

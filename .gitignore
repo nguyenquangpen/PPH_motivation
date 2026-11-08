@@ -1,5 +1,11 @@
-node_modules/
-dist/
-data/
-.vitest-results.json
 *.log
+.vitest-results.json
+apps/desktop/.cache/
+apps/desktop/.run-data-packaged/
+apps/desktop/.run-data/
+apps/desktop/.stage/
+apps/desktop/release/
+data/
+dist/
+e2e/.shots/
+node_modules/

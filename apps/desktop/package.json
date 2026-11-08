@@ -1,0 +1,23 @@
+{
+  "name": "@pph/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal Productivity Hub — desktop app (Electron)",
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "dist": "tsx scripts/build.ts --pack",
+    "start": "tsx scripts/run.ts",
+    "smoke": "tsx scripts/run.ts --smoke",
+    "icons": "tsx scripts/make-icons.ts"
+  },
+  "dependencies": {
+    "@pph/server": "*",
+    "@pph/shared": "*"
+  },
+  "devDependencies": {
+    "electron": "^42.11.18",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.28.2"
+  }
+}

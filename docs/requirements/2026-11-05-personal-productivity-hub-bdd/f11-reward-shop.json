@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-11 Reward Shop",
     "description": "Owner định nghĩa phần thưởng đời thực có giá XP và đổi bằng Spendable XP",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-11] Tạo Reward Item",
@@ -19,7 +19,7 @@
             "Item hiển thị trong Shop"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Giá XP ngoài phạm vi",
@@ -38,7 +38,7 @@
             "1000001 bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Đổi thưởng thành công",
@@ -58,7 +58,7 @@
             "Activity ghi đổi thưởng"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Spendable bằng giá",
@@ -76,7 +76,7 @@
             "Spendable = 0"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Không đủ XP",
@@ -94,7 +94,7 @@
             "Không có giao dịch REDEEM"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Spendable âm",
@@ -111,14 +111,14 @@
             "Hệ thống từ chối và hiển thị 'Còn thiếu 60 XP'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Item bị khóa theo Level",
         "description": "Chưa đạt Level không đổi được",
         "steps": {
           "given": [
-            "Level hiện tại 2, Spendable 5000",
+            "Level hiện tại 2 (Lifetime 1999), Spendable 1999, Item giá 100",
             "Item điều kiện LEVEL ≥ 3"
           ],
           "when": [
@@ -129,7 +129,7 @@
             "Item hiển thị 'Bị khóa: cần Level 3'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Mở khóa khi đạt Level",
@@ -147,7 +147,7 @@
             "Đổi Item thành công"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Khóa lại khi mất điều kiện",
@@ -164,7 +164,7 @@
             "Owner không đổi được Item"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Đổi lặp",
@@ -181,7 +181,7 @@
             "Spendable = 700"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Hoàn tác đổi thưởng",
@@ -199,7 +199,7 @@
             "R được đánh dấu đã hoàn tác"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Hoàn tác đổi thưởng hai lần",
@@ -216,7 +216,7 @@
             "Không có giao dịch mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Sửa giá không ảnh hưởng lịch sử",
@@ -232,7 +232,7 @@
             "Lịch sử Redemption cũ vẫn hiển thị giá 300"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Item đã xóa",
@@ -248,7 +248,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-11] Không giới hạn số lần đổi",
@@ -265,7 +265,7 @@
             "Spendable = 0"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

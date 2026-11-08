@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-14 Check-in Journal (Could)",
     "description": "Nhật ký hằng ngày, tối đa 1 entry/ngày, không ảnh hưởng Streak/XP",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-14] Tạo Check-in",
@@ -19,7 +19,7 @@
             "Có 1 entry hôm nay với mood 4 và note 'Học tốt'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-14] Tối đa 1 entry mỗi ngày",
@@ -36,7 +36,7 @@
             "Entry có mood 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-14] Note quá dài",
@@ -52,7 +52,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-14] Không ảnh hưởng Streak và XP",
@@ -69,7 +69,7 @@
             "Không có giao dịch XP"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-14] Không sửa ngày cũ",
@@ -85,7 +85,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

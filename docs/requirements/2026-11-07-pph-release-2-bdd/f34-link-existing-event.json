@@ -1,0 +1,62 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-34 Link Existing Google Event (Could)",
+    "description": "Dùng Event có sẵn làm phiên",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-34] Liên kết Event có sẵn",
+        "description": "Phiên lấy giờ Event, Event không bị sửa",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Primary có Event 'Học N3' Thứ Ba 19:00–21:00 do Owner tạo"
+          ],
+          "when": [
+            "Owner liên kết Event đó vào Task T"
+          ],
+          "then": [
+            "T có phiên 19:00–21:00",
+            "Tiêu đề/mô tả Event không đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-34] Gỡ liên kết không xóa Event",
+        "description": "Event của Owner được giữ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có phiên liên kết Event 'Học N3'"
+          ],
+          "when": [
+            "Owner xóa phiên đó"
+          ],
+          "then": [
+            "Event 'Học N3' còn trên Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-34] Google thắng với Event liên kết",
+        "description": "Đổi giờ trên Google cập nhật phiên",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có phiên liên kết Event 'Học N3'"
+          ],
+          "when": [
+            "Owner dời Event sang 20:00–22:00, Hub đọc thay đổi"
+          ],
+          "then": [
+            "Phiên của T là 20:00–22:00"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

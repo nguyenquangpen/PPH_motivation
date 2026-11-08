@@ -1,0 +1,130 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-25 Busy Time",
+    "description": "Giờ bận từ lịch đã chọn",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-25] Event thường là bận",
+        "description": "Event có thời gian tính bận",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Primary có 'Họp' Thứ Ba 14:00–15:00"
+          ],
+          "when": [
+            "Hub tính giờ bận Thứ Ba"
+          ],
+          "then": [
+            "14:00–15:00 là bận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Loại trừ Free, từ chối, cả ngày",
+        "description": "Theo ngữ nghĩa free/busy",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Thứ Ba có: Event 'Rảnh' 09:00–10:00, Event đã từ chối 10:00–11:00, Event cả ngày 'Sinh nhật'"
+          ],
+          "when": [
+            "Hub tính giờ bận Thứ Ba"
+          ],
+          "then": [
+            "Không có khoảng bận nào"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Không tính Event của Hub",
+        "description": "Phiên Task không bị đếm hai lần",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Phiên Task 19:00–20:00 có Event của Hub"
+          ],
+          "when": [
+            "Hub tính giờ bận"
+          ],
+          "then": [
+            "19:00–20:00 không nằm trong giờ bận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Event lặp lại",
+        "description": "Mỗi lần xuất hiện là một khoảng bận",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Primary có 'Học lái xe' lặp hằng ngày 07:00–08:00"
+          ],
+          "when": [
+            "Hub tính giờ bận 3 ngày tới"
+          ],
+          "then": [
+            "Mỗi ngày có khoảng bận 07:00–08:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Gộp khoảng chồng",
+        "description": "Khoảng bận chồng nhau được gộp",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Event 14:00–15:00 và 14:30–16:00"
+          ],
+          "when": [
+            "Hub tính giờ bận"
+          ],
+          "then": [
+            "Một khoảng bận 14:00–16:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Chọn lịch",
+        "description": "Chỉ lịch được chọn mới tính",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Lịch 'Công ty' có Event 09:00–17:00; mặc định chỉ chọn primary"
+          ],
+          "when": [
+            "Owner chọn thêm lịch 'Công ty'"
+          ],
+          "then": [
+            "Trước khi chọn: 09:00–17:00 không bận",
+            "Sau khi chọn: 09:00–17:00 là bận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-25] Chưa kết nối",
+        "description": "Giờ bận rỗng, có ghi chú",
+        "steps": {
+          "given": [
+            "Chưa kết nối Google"
+          ],
+          "when": [
+            "Owner mở gợi ý lịch cho một Task"
+          ],
+          "then": [
+            "Gợi ý chỉ dựa trên giờ làm việc và phiên Task",
+            "Hiển thị 'Chưa có dữ liệu lịch Google'"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

@@ -1,0 +1,178 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-21 Task Work Sessions",
+    "description": "Task có 0..n phiên làm việc",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-21] Thêm phiên hợp lệ",
+        "description": "Phiên được lưu và tính vào thời lượng đã xếp",
+        "steps": {
+          "given": [
+            "Task T estimated 120 phút, chưa có phiên"
+          ],
+          "when": [
+            "Owner thêm phiên 2026-11-10 19:00–20:00"
+          ],
+          "then": [
+            "T có 1 phiên 19:00–20:00",
+            "scheduled_minutes của T = 60",
+            "Activity ghi thêm phiên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Nhiều phiên",
+        "description": "Một Task có thể có nhiều phiên",
+        "steps": {
+          "given": [
+            "Task T có phiên Thứ Ba 19:00–20:00"
+          ],
+          "when": [
+            "Owner thêm phiên Thứ Tư 19:00–20:30"
+          ],
+          "then": [
+            "T có 2 phiên",
+            "scheduled_minutes = 150"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Kết thúc trước bắt đầu",
+        "description": "end ≤ start bị từ chối",
+        "steps": {
+          "given": [
+            "Task T"
+          ],
+          "when": [
+            "Owner thêm phiên 20:00–19:00"
+          ],
+          "then": [
+            "Hệ thống từ chối (400)",
+            "T không có phiên mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Biên độ dài phiên",
+        "description": "Tối đa 1.440 phút",
+        "steps": {
+          "given": [
+            "Task T"
+          ],
+          "when": [
+            "Owner lần lượt thêm phiên dài 1.440 phút và 1.441 phút"
+          ],
+          "then": [
+            "Phiên 1.440 phút được chấp nhận",
+            "Phiên 1.441 phút bị từ chối (400)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Chồng phiên cùng Task",
+        "description": "Các phiên của một Task không chồng nhau",
+        "steps": {
+          "given": [
+            "Task T có phiên 19:00–20:00"
+          ],
+          "when": [
+            "Owner thêm phiên 19:30–20:30 cho T"
+          ],
+          "then": [
+            "Hệ thống từ chối (422 CONFLICT)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Chạm đầu mút",
+        "description": "Phiên nối tiếp nhau được phép",
+        "steps": {
+          "given": [
+            "Task T có phiên 10:00–11:00"
+          ],
+          "when": [
+            "Owner thêm phiên 11:00–12:00 cho T"
+          ],
+          "then": [
+            "Phiên được chấp nhận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Chồng phiên khác Task",
+        "description": "Phiên của Task khác nhau được chồng",
+        "steps": {
+          "given": [
+            "Task A có phiên 19:00–20:00"
+          ],
+          "when": [
+            "Owner thêm phiên 19:00–20:00 cho Task B"
+          ],
+          "then": [
+            "Phiên của B được chấp nhận"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Task đã khóa",
+        "description": "Task COMPLETED/CANCELLED không sửa phiên",
+        "steps": {
+          "given": [
+            "Task T đã COMPLETED"
+          ],
+          "when": [
+            "Owner thêm phiên cho T"
+          ],
+          "then": [
+            "Hệ thống từ chối (422 TASK_LOCKED)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Phiên trong quá khứ",
+        "description": "Ghi lại việc đã làm được phép",
+        "steps": {
+          "given": [
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)",
+            "Task T"
+          ],
+          "when": [
+            "Owner thêm phiên 2026-11-08 19:00–20:00"
+          ],
+          "then": [
+            "Phiên được lưu",
+            "Không có Event nào được tạo trên Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-21] Phiên không đổi Deadline",
+        "description": "Phiên độc lập với Deadline",
+        "steps": {
+          "given": [
+            "Task T deadline 2026-11-12 23:59"
+          ],
+          "when": [
+            "Owner thêm phiên 2026-11-13 19:00–20:00"
+          ],
+          "then": [
+            "Phiên được lưu",
+            "Deadline của T không đổi"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

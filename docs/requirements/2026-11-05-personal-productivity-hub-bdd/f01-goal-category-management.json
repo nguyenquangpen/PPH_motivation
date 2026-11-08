@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-01 Goal & Category Management",
     "description": "Tạo, sửa, xóa (soft) Goal và Goal Category; đổi trạng thái Goal thủ công",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-01] Tạo Goal hợp lệ",
@@ -21,7 +21,7 @@
             "Activity ghi 'Tạo Goal'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Thiếu title",
@@ -38,7 +38,7 @@
             "Không có Goal nào được tạo"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Title đúng 200 ký tự",
@@ -54,7 +54,7 @@
             "Goal được tạo thành công"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Title 201 ký tự",
@@ -70,7 +70,7 @@
             "Hệ thống từ chối, không tạo Goal"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] target_contribution ngoài phạm vi",
@@ -89,7 +89,7 @@
             "Giá trị 1000001 bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] target_date trước start_date",
@@ -105,7 +105,7 @@
             "Hệ thống từ chối với thông báo lỗi ngày"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] start_date bằng target_date",
@@ -121,7 +121,7 @@
             "Goal được tạo thành công"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Đổi trạng thái thủ công",
@@ -138,7 +138,7 @@
             "Activity ghi 'Active → Paused'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Không đặt Completed trực tiếp",
@@ -155,7 +155,7 @@
             "G vẫn ở trạng thái 'Active'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Category mặc định",
@@ -172,7 +172,7 @@
             "Mỗi Category có thao tác Sửa và Xóa"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Category trùng tên",
@@ -188,7 +188,7 @@
             "Hệ thống từ chối do trùng tên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Xóa Category đang dùng",
@@ -205,7 +205,7 @@
             "Category vẫn tồn tại"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Xóa Goal (soft)",
@@ -223,7 +223,7 @@
             "Giao dịch Contribution 100 của G vẫn tồn tại"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-01] Mở lại Goal Completed",
@@ -241,7 +241,7 @@
             "Lifetime XP không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

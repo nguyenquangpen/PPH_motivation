@@ -1,0 +1,288 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-32 Event Mapping & Processing",
+    "description": "Ánh xạ sự kiện thành Contribution/XP/Streak như Task hoàn thành",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-32] Ví dụ học 20 từ",
+        "description": "Contribution + XP theo F-07",
+        "steps": {
+          "given": [
+            "Settings mặc định",
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Goal G completed 0"
+          ],
+          "when": [
+            "App gửi vocabulary.learned count 20 (không có duration_minutes)"
+          ],
+          "then": [
+            "≤ 5 giây sau sự kiện PROCESSED",
+            "G completed_contribution = 20",
+            "Có giao dịch thưởng +10 XP với nguồn INTEGRATION_EVENT",
+            "Activity 'Học 20 từ vựng — Japanese Learning App (+20 vào Học 1000 từ)'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Sự kiện nhỏ vào Pool",
+        "description": "Contribution < SmallThreshold",
+        "steps": {
+          "given": [
+            "Settings mặc định, Pool 0",
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20"
+          ],
+          "when": [
+            "App gửi vocabulary.learned count 5"
+          ],
+          "then": [
+            "G +5 Contribution",
+            "Pool = 5",
+            "Không có XP ngay"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Dùng duration_minutes của sự kiện",
+        "description": "Thời lượng XP lấy từ sự kiện nếu có",
+        "steps": {
+          "given": [
+            "Settings mặc định",
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc learning.session.completed → G, PER_UNIT duration_minutes × 1, default 20"
+          ],
+          "when": [
+            "App gửi learning.session.completed duration_minutes 60"
+          ],
+          "then": [
+            "Contribution 60",
+            "XP = 60"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Hệ số thập phân làm tròn",
+        "description": "round half up",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc PER_UNIT duration_minutes × 0,5"
+          ],
+          "when": [
+            "App gửi duration_minutes 45"
+          ],
+          "then": [
+            "Contribution = 23"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Quy tắc FIXED",
+        "description": "Giá trị cố định mỗi sự kiện",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc lesson.completed → G, FIXED 30"
+          ],
+          "when": [
+            "App gửi lesson.completed"
+          ],
+          "then": [
+            "Contribution 30"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Không có quy tắc",
+        "description": "IGNORED",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Không có quy tắc cho lesson.completed"
+          ],
+          "when": [
+            "App gửi lesson.completed"
+          ],
+          "then": [
+            "Sự kiện IGNORED với lý do 'Chưa có quy tắc ánh xạ'",
+            "Không có thay đổi Contribution/XP"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Goal đã xóa",
+        "description": "IGNORED",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Goal G đã bị xóa"
+          ],
+          "when": [
+            "App gửi vocabulary.learned count 20"
+          ],
+          "then": [
+            "Sự kiện IGNORED với lý do Goal đã xóa"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Streak theo occurred_at",
+        "description": "Sự kiện trễ tính đúng ngày",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Hôm nay 2026-11-09; không có hoạt động ngày 2026-11-07"
+          ],
+          "when": [
+            "App gửi sự kiện occurred_at 2026-11-07 21:00 (+07:00)"
+          ],
+          "then": [
+            "Ngày 2026-11-07 trở thành ngày hoạt động trong lịch Streak",
+            "XP được ghi tại thời điểm xử lý"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Không cộng trùng khi thử lại",
+        "description": "Retry thủ công FAILED không cộng hai lần",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Sự kiện E bị FAILED do lỗi giả lập khi xử lý (không có thay đổi nào được lưu)"
+          ],
+          "when": [
+            "Owner bấm 'Thử lại' cho E hai lần"
+          ],
+          "then": [
+            "E PROCESSED",
+            "Contribution chỉ tăng 1 lần"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Nguyên tử khi lỗi",
+        "description": "Lỗi xử lý không để lại thay đổi dở",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Lỗi giả lập xảy ra sau khi cộng Contribution nhưng trước khi ghi XP"
+          ],
+          "when": [
+            "App gửi vocabulary.learned count 20"
+          ],
+          "then": [
+            "Sự kiện FAILED kèm lý do",
+            "Contribution và XP không đổi"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Contribution 0",
+        "description": "PROCESSED, không giao dịch",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc FIXED 0"
+          ],
+          "when": [
+            "App gửi sự kiện"
+          ],
+          "then": [
+            "Sự kiện PROCESSED",
+            "Không có giao dịch Contribution/XP"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Quy tắc không hồi tố",
+        "description": "Thêm quy tắc không xử lý lại sự kiện cũ",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Có 3 sự kiện lesson.completed IGNORED"
+          ],
+          "when": [
+            "Owner thêm quy tắc lesson.completed → G FIXED 30"
+          ],
+          "then": [
+            "3 sự kiện cũ vẫn IGNORED",
+            "Sự kiện lesson.completed mới được xử lý theo quy tắc"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Áp dụng cho IGNORED (Could)",
+        "description": "Xử lý lại thủ công",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "3 sự kiện lesson.completed IGNORED, vừa thêm quy tắc FIXED 30"
+          ],
+          "when": [
+            "Owner bấm 'Áp dụng cho các sự kiện IGNORED'"
+          ],
+          "then": [
+            "3 sự kiện PROCESSED",
+            "G +90 Contribution"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Trùng quy tắc",
+        "description": "Tối đa 1 quy tắc / (app, event_type)",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20"
+          ],
+          "when": [
+            "Owner thêm quy tắc thứ hai cho vocabulary.learned"
+          ],
+          "then": [
+            "Hệ thống từ chối (409)"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-32] Milestone và Goal 100%",
+        "description": "Đánh giá như Task hoàn thành",
+        "steps": {
+          "given": [
+            "App 'Japanese Learning App' (app_id japanese-learning-app) đã đăng ký, có API key K hợp lệ",
+            "Quy tắc: vocabulary.learned → Goal G 'Học 1000 từ', PER_UNIT count × 1, defaultDurationMinutes 20",
+            "Goal G target 1000 completed 990; Milestone M ngưỡng 1000"
+          ],
+          "when": [
+            "App gửi vocabulary.learned count 10"
+          ],
+          "then": [
+            "M Completed với MILESTONE_REWARD",
+            "Có Notification gợi ý hoàn thành Goal G"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

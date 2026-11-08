@@ -1,0 +1,232 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-27 Schedule Suggestions",
+    "description": "Gợi ý phiên trong giờ làm việc, tránh giờ bận",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-27] Ví dụ spec §7.3",
+        "description": "1 phương án liền + 1 phương án chia từ khoảng chưa dùng",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T 120 phút, Deadline Thứ Sáu 23:59, chưa có phiên",
+            "Khoảng trống (sau khi trừ giờ bận) trước Deadline chỉ gồm: Thứ Tư 14:00–16:00, Thứ Năm 09:00–10:00, Thứ Năm 14:00–15:00"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch cho T"
+          ],
+          "then": [
+            "Phương án 1: Thứ Tư 14:00–16:00",
+            "Phương án 2: Thứ Năm 09:00–10:00 + Thứ Năm 14:00–15:00",
+            "Không có phương án thứ 3"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Tối đa 3 phương án liền sớm nhất",
+        "description": "Mỗi phương án ở một khoảng trống khác nhau",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh",
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)",
+            "Task T 60 phút, không Deadline, không có giờ bận"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch cho T"
+          ],
+          "then": [
+            "Có đúng 3 phương án, mỗi phương án 1 phiên 60 phút",
+            "Phương án 1 bắt đầu 08:00 Thứ Hai",
+            "Các phương án nằm ở 3 khoảng trống khác nhau, sớm nhất trước"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Làm tròn 15 phút",
+        "description": "Bắt đầu từ now làm tròn lên",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh",
+            "Hiện tại 09:07",
+            "Task T 30 phút"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Phương án sớm nhất bắt đầu 09:15"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Tránh giờ bận và phiên khác",
+        "description": "Không đề xuất trùng",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh",
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)",
+            "Giờ bận 08:00–12:00 hôm nay; Task khác có phiên 12:00–13:00",
+            "Task T 60 phút"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Phương án 1 bắt đầu 13:00"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Chỉ thời lượng còn thiếu",
+        "description": "remaining = estimated − đã xếp",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Giờ làm việc mặc định mọi ngày 08:00–22:00, múi giờ Asia/Ho_Chi_Minh",
+            "Task T 120 phút đã có phiên 60 phút"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Các phương án dài tổng 60 phút"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Đã đủ thời gian",
+        "description": "Không gợi ý",
+        "steps": {
+          "given": [
+            "Task T 60 phút đã có phiên 60 phút"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Hiển thị 'Task đã đủ thời gian'",
+            "Không có phương án"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Phiên chia ≥ 30 phút",
+        "description": "Phiên ngắn hơn 30 phút không được dùng (trừ phần cuối)",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T 90 phút, Deadline hôm nay 23:59",
+            "Khoảng trống hôm nay: 10:00–10:20, 13:00–14:00, 16:00–16:30"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Có phương án chia: 13:00–14:00 + 16:00–16:30",
+            "Khoảng 10:00–10:20 không được dùng"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Không đủ chỗ",
+        "description": "Báo thiếu và đưa phương án phủ tối đa",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T 180 phút, tổng khoảng trống trước Deadline là 100 phút"
+          ],
+          "when": [
+            "Owner mở Gợi ý lịch"
+          ],
+          "then": [
+            "Hiển thị 'Không đủ thời gian trống trước Deadline: thiếu 80 phút'",
+            "Có một phương án chia tổng 100 phút đánh dấu 'chưa đủ'"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Chọn phương án",
+        "description": "Tạo phiên (và Event) trong một thao tác",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Gợi ý cho Task T có Phương án 2 gồm 2 phiên"
+          ],
+          "when": [
+            "Owner chọn Phương án 2"
+          ],
+          "then": [
+            "T có 2 phiên tương ứng",
+            "2 Event được tạo trên Google"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Khung bị chiếm khi chọn",
+        "description": "Gợi ý cũ → 409",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Owner đang xem gợi ý cho T có Phương án 1 lúc 14:00–16:00",
+            "Một Task khác vừa được xếp 14:00–15:00"
+          ],
+          "when": [
+            "Owner chọn Phương án 1"
+          ],
+          "then": [
+            "Hệ thống từ chối (409) và yêu cầu tải lại gợi ý",
+            "T không có phiên mới"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Không tự xếp lịch",
+        "description": "Không có phiên nào khi chưa chọn",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có Deadline gần, chưa có phiên"
+          ],
+          "when": [
+            "Owner mở rồi đóng Gợi ý lịch không chọn"
+          ],
+          "then": [
+            "T vẫn không có phiên"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-27] Task đã xong",
+        "description": "Không gợi ý cho Task COMPLETED/CANCELLED",
+        "steps": {
+          "given": [
+            "Task T COMPLETED"
+          ],
+          "when": [
+            "Owner yêu cầu gợi ý cho T"
+          ],
+          "then": [
+            "Hệ thống từ chối (422)"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]

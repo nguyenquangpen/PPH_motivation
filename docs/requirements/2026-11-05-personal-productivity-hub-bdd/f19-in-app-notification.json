@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-19 In-app Notification",
     "description": "Thông báo trong ứng dụng, chống trùng, đánh dấu đã đọc",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-19] Đánh dấu đã đọc",
@@ -20,7 +20,7 @@
             "Sau bước 2 còn 0 chưa đọc"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Chống trùng",
@@ -36,7 +36,7 @@
             "Vẫn chỉ có 1 Notification TASK_MISSED cho T"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Nhắc trước deadline 24 giờ",
@@ -52,7 +52,7 @@
             "Có đúng 1 Notification TASK_DEADLINE_SOON cho T"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Đổi deadline tạo nhắc mới",
@@ -68,7 +68,7 @@
             "Có Notification TASK_DEADLINE_SOON thứ hai cho deadline mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Không nhắc Task đã hoàn thành",
@@ -85,7 +85,7 @@
             "T không nhận TASK_MISSED khi qua deadline"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Thông báo thành tựu",
@@ -103,7 +103,7 @@
             "Có Notification LEVEL_UP 'Lên Level 2'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-19] Lưu trữ 90 ngày",
@@ -119,7 +119,7 @@
             "Notification 89 ngày trước vẫn hiển thị"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

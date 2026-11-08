@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-08 Accumulation Pool",
     "description": "Một Pool chung tích lũy Contribution của Task nhỏ, trả Pool Reward khi đủ ngưỡng",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-08] Task nhỏ cộng vào Pool",
@@ -23,7 +23,7 @@
             "Không có POOL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Đạt đúng ngưỡng",
@@ -44,7 +44,7 @@
             "Có Notification POOL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Phần dư giữ lại",
@@ -63,7 +63,7 @@
             "Pool = 5"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Vượt nhiều ngưỡng một lần",
@@ -82,7 +82,7 @@
             "Pool = 10"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Hoàn tác Task nhỏ làm Pool âm",
@@ -102,7 +102,7 @@
             "Không có REWARD_REVERSAL cho POOL_REWARD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Task nhỏ không gắn Goal",
@@ -120,7 +120,7 @@
             "Pool = 15"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Tắt Pool",
@@ -138,7 +138,7 @@
             "Không có POOL_ADD"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Pool bền vững",
@@ -155,7 +155,7 @@
             "Pool bằng tổng POOL_ADD + POOL_DEDUCT + POOL_PAYOUT"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-08] Hiển thị Pool trên Dashboard",
@@ -172,7 +172,7 @@
             "Phần Reward hiển thị 'Pool 35/100'"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

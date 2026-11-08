@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-16 Missed Reason Tags",
     "description": "Owner quản lý lý do bỏ lỡ, mỗi lý do có cờ miễn trừ phạt",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-16] Tag mặc định",
@@ -19,7 +19,7 @@
             "Bất khả kháng (miễn), Lỗi hệ thống/đồng bộ (miễn), Goal đang Paused (miễn), Lịch quá tải/Assistant đề xuất sai (miễn), Ước lượng sai (không miễn), Trì hoãn (không miễn)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Tạo tag mới",
@@ -35,7 +35,7 @@
             "Tag 'Đi công tác' có thể chọn khi review Missed"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Tên trùng",
@@ -51,7 +51,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Tên quá dài",
@@ -67,7 +67,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Tag hệ thống không xóa được",
@@ -83,7 +83,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Đổi cờ miễn trừ không hồi tố",
@@ -100,7 +100,7 @@
             "Task Missed mới dùng tag này không bị phạt"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-16] Xóa tag đang dùng",
@@ -117,7 +117,7 @@
             "Lịch sử của T vẫn hiển thị 'Đi công tác'"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

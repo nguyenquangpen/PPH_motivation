@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-05 Task Management",
     "description": "Tạo, sửa, xóa (soft) Task với Priority, Contribution, thời lượng, deadline",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-05] Tạo Task hợp lệ",
@@ -22,7 +22,7 @@
             "Task xuất hiện trong danh sách Task"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Thiếu trường bắt buộc",
@@ -38,7 +38,7 @@
             "Hệ thống từ chối và chỉ rõ trường priority và estimated_duration"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Biên Contribution",
@@ -57,7 +57,7 @@
             "10001 bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Biên Estimated Duration",
@@ -76,7 +76,7 @@
             "1441 bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Preset Contribution",
@@ -92,7 +92,7 @@
             "Task được lưu với contribution 80"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Task không gắn Goal",
@@ -108,7 +108,7 @@
             "Task được tạo với goal trống"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Goal không hợp lệ",
@@ -124,7 +124,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Milestone khác Goal",
@@ -141,7 +141,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Priority không ảnh hưởng XP",
@@ -157,7 +157,7 @@
             "XP dự kiến của A và B đều là 50"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Deadline chỉ chọn ngày",
@@ -174,7 +174,7 @@
             "Deadline của Task là 2026-11-10 23:59 (+07:00)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Deadline trong quá khứ",
@@ -190,7 +190,7 @@
             "Hệ thống từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Xóa Task chưa hoàn thành",
@@ -207,7 +207,7 @@
             "Không có giao dịch XP hay Contribution mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Xóa Task COMPLETED",
@@ -226,7 +226,7 @@
             "Giao dịch PENALTY của T vẫn giữ nguyên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-05] Hủy xác nhận xóa Task COMPLETED",
@@ -243,7 +243,7 @@
             "Không có giao dịch mới"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

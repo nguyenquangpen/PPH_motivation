@@ -1,0 +1,139 @@
+[
+  {
+    "category": "functional",
+    "feature": "F-22 Calendar Connection",
+    "description": "Kết nối, trạng thái, ngắt/kết nối lại Google Calendar",
+    "overallPass": false,
+    "bdd": [
+      {
+        "scenario": "[F-22] Kết nối lần đầu đẩy phiên tương lai",
+        "description": "Phiên có end ≥ now của Task chưa xong được đẩy",
+        "steps": {
+          "given": [
+            "Hiện tại là Thứ Hai 2026-11-09 08:00 (+07:00)",
+            "Chưa kết nối",
+            "Task A (TODO) có phiên ngày mai 19:00–20:00",
+            "Task B (TODO) có phiên hôm qua",
+            "Task C (COMPLETED) có phiên ngày mai"
+          ],
+          "when": [
+            "Owner kết nối Google Calendar giả lập thành công"
+          ],
+          "then": [
+            "Trạng thái ACTIVE",
+            "Có đúng 1 Event trên primary cho phiên của A",
+            "Không có Event cho B và C"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Trạng thái hiển thị",
+        "description": "Settings hiển thị trạng thái và lần đồng bộ gần nhất",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống"
+          ],
+          "when": [
+            "Owner mở Settings > Google Calendar"
+          ],
+          "then": [
+            "Hiển thị 'Đang hoạt động' và thời điểm đồng bộ thành công gần nhất"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Token bị thu hồi",
+        "description": "Lỗi xác thực → ERROR, dừng đồng bộ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Google giả lập trả lỗi xác thực cho mọi request"
+          ],
+          "when": [
+            "Owner thêm phiên cho một Task"
+          ],
+          "then": [
+            "Trạng thái ERROR với lý do 'Cần kết nối lại'",
+            "Phiên vẫn được lưu trong Hub",
+            "Dashboard hiển thị cảnh báo kết nối lịch"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Ngắt kết nối",
+        "description": "Dừng đồng bộ, giữ Event trên Google",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống",
+            "Task T có phiên đã đồng bộ thành Event E"
+          ],
+          "when": [
+            "Owner ngắt kết nối"
+          ],
+          "then": [
+            "Trạng thái NOT_CONNECTED",
+            "Event E vẫn còn trên Google",
+            "Mapping của phiên chuyển INACTIVE",
+            "Thông tin xác thực Google bị xóa khỏi Hub"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Kết nối lại cùng tài khoản",
+        "description": "Không tạo Event trùng, đẩy bù thay đổi",
+        "steps": {
+          "given": [
+            "Đã ngắt kết nối; phiên P có Event E (INACTIVE)",
+            "Trong lúc ngắt, Owner đổi P sang 21:00–22:00"
+          ],
+          "when": [
+            "Owner kết nối lại cùng tài khoản"
+          ],
+          "then": [
+            "Event E được cập nhật 21:00–22:00",
+            "Không có Event mới cho P"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Kết nối tài khoản khác",
+        "description": "Mapping cũ giữ INACTIVE, đẩy mới",
+        "steps": {
+          "given": [
+            "Đã ngắt kết nối khỏi tài khoản X; phiên P (tương lai) có Event trên X"
+          ],
+          "when": [
+            "Owner kết nối tài khoản Y"
+          ],
+          "then": [
+            "Một Event mới cho P được tạo trên primary của Y",
+            "Event trên X không bị sửa/xóa"
+          ]
+        },
+        "passes": false
+      },
+      {
+        "scenario": "[F-22] Bảo mật token",
+        "description": "Token Google không lộ",
+        "steps": {
+          "given": [
+            "Google Calendar giả lập đang kết nối (ACTIVE), lịch primary trống"
+          ],
+          "when": [
+            "Kiểm tra API settings, Activity, log và file database"
+          ],
+          "then": [
+            "Không response API, Activity hay log nào chứa token",
+            "Token lưu trong database ở dạng mã hóa"
+          ]
+        },
+        "passes": false
+      }
+    ]
+  }
+]
