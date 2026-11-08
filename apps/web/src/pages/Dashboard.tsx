@@ -1,3 +1,4 @@
+import { CalendarErrorBanner, ScheduleWarningsCard } from '../components/ScheduleWarningsCard';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -158,6 +159,7 @@ export function DashboardBody({ d, tz }: { d: DashboardDto; tz: string }) {
       <div className="flex min-w-0 flex-col gap-4">
         <RewardSection r={d.reward} tz={tz} />
         <StreakSection s={d.streak} />
+        <ScheduleWarningsCard />
         <section className="card" aria-labelledby="alerts-h">
           <h2 id="alerts-h" className="card-title">Cảnh báo</h2>
           <ul className="flex flex-col gap-1 text-sm">
@@ -193,6 +195,7 @@ export function DashboardPage() {
   return (
     <div>
       <h1 className="mb-4 text-2xl font-bold">Tổng quan</h1>
+      <CalendarErrorBanner />
       <QueryView q={q} unavailable="Dashboard chưa sẵn sàng.">{(d) => <DashboardBody d={d} tz={tz} />}</QueryView>
     </div>
   );

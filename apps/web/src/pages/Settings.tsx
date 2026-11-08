@@ -6,10 +6,11 @@ import { qk, useCategories, useInvalidate, useReasons, useSettings, useTimezone 
 import { errorMessage } from '../api/client';
 import { Badge, Empty, ErrorText, QueryView, useToast } from '../components/ui';
 import { todayIn } from '../lib/format';
+import { CalendarSection, WorkingHoursSection } from '../components/SettingsRelease2';
 
 const GROUP_LABEL: Record<string, string> = {
   xp: 'XP', pool: 'Pool', reward: 'Thưởng', level: 'Level', penalty: 'Phạt', streak: 'Chuỗi ngày',
-  goalWarning: 'Cảnh báo Goal', preset: 'Preset đóng góp', general: 'Chung',
+  goalWarning: 'Cảnh báo Goal', preset: 'Preset đóng góp', general: 'Chung', scheduling: 'Ngưỡng cảnh báo lịch',
 };
 
 const KEY_LABEL: Record<keyof Settings, string> = {
@@ -20,7 +21,10 @@ const KEY_LABEL: Record<keyof Settings, string> = {
   gracePeriodHours: 'Thời gian ân hạn (giờ)', freezesPerMonth: 'Số Freeze mỗi tháng', behindMargin: 'Biên chậm tiến độ (%)',
   nearDueDays: 'Số ngày gần hạn', presetMajor: 'Major', presetMedium: 'Medium', presetMinor: 'Minor',
   timezone: 'Múi giờ (IANA)',
+  workingHours: 'Giờ làm việc', insufficientMinMinutes: 'Thiếu tối thiểu (phút)', insufficientMinPercent: 'Thiếu tối thiểu (% ước tính)',
+  overloadPercent: 'Ngưỡng quá tải ngày (% sức chứa)',
 };
+const THRESHOLD_KEYS: (keyof Settings)[] = ['insufficientMinMinutes', 'insufficientMinPercent', 'overloadPercent'];
 
 function SettingsGroup({ group, keys, settings }: { group: string; keys: (keyof Settings)[]; settings: Settings }) {
   const inv = useInvalidate();
@@ -88,7 +92,8 @@ function SettingsSection() {
       <QueryView q={q} unavailable="Cài đặt chưa sẵn sàng.">
         {(s) => (
           <div className="grid grid-cols-2 gap-3">
-            {Object.entries(SETTINGS_GROUPS).map(([g, keys]) => <SettingsGroup key={g} group={g} keys={keys} settings={s} />)}
+            {Object.entries(SETTINGS_GROUPS).map(([g, keys]) =>
+              <SettingsGroup key={g} group={g} keys={g === 'scheduling' ? THRESHOLD_KEYS : keys} settings={s} />)}
           </div>
         )}
       </QueryView>
@@ -259,6 +264,8 @@ export function SettingsPage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Cài đặt</h1>
+      <CalendarSection />
+      <WorkingHoursSection />
       <SettingsSection />
       <div className="grid grid-cols-2 gap-4">
         <ReasonsSection />

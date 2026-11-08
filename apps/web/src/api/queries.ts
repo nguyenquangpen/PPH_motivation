@@ -19,6 +19,10 @@ export const qk = {
   notifications: ['notifications'] as const,
   activity: ['activity'] as const,
   dashboard: ['dashboard'] as const,
+  sessions: ['sessions'] as const,
+  warnings: ['scheduling-warnings'] as const,
+  calendar: ['calendar'] as const,
+  integrations: ['integrations'] as const,
 };
 
 type Root = keyof typeof qk;
@@ -31,6 +35,8 @@ export function invalidate(qc: QueryClient, roots: Root[]): Promise<void> {
 export const TASK_CHANGE: Root[] = [
   'tasks', 'task', 'goals', 'goal', 'milestones', 'xp', 'shop', 'streak', 'notifications', 'activity', 'dashboard',
 ];
+/** Anything that changes sessions changes warnings, the task and calendar sync state. */
+export const SESSION_CHANGE: Root[] = ['sessions', 'warnings', 'task', 'tasks', 'calendar', 'dashboard'];
 export const GOAL_CHANGE: Root[] = ['goals', 'goal', 'milestones', 'tasks', 'xp', 'shop', 'notifications', 'activity', 'dashboard', 'categories'];
 export const XP_CHANGE: Root[] = ['xp', 'shop', 'notifications', 'activity', 'dashboard'];
 

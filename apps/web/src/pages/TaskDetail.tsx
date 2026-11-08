@@ -7,6 +7,7 @@ import { qk, TASK_CHANGE, useGoals, useInvalidate, useReasons, useTimezone } fro
 import { errorMessage, isApiError } from '../api/client';
 import { TaskForm } from '../components/TaskForm';
 import { CancelDialog, MissedReviewDialog, useTaskActions } from '../components/taskActions';
+import { TaskSessions } from '../components/TaskSessions';
 import { Badge, ErrorText, Modal, QueryView, useToast } from '../components/ui';
 import { fmtDateTime, PRIORITY_LABEL, TASK_STATUS_LABEL } from '../lib/format';
 import { expectedXpLabel } from '../lib/xp';
@@ -135,6 +136,8 @@ function TaskBody({ t }: { t: TaskDetail }) {
         </dl>
         {t.description && <p className="mt-3 whitespace-pre-wrap text-sm">{t.description}</p>}
       </section>
+
+      <TaskSessions taskId={t.id} estimated={t.estimatedDuration} locked={t.status === 'COMPLETED' || t.status === 'CANCELLED'} />
 
       <section className="card">
         <h2 className="card-title">Lịch sử trạng thái</h2>

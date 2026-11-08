@@ -9,6 +9,10 @@ import { fmtDateTime, NOTIF_TYPE_LABEL } from '../lib/format';
 import { useToast } from './ui';
 
 function linkFor(n: NotificationDto): string | null {
+  if (n.type === 'CALENDAR_SYNC_ERROR') return '/settings#calendar';
+  if (n.type === 'EXTERNAL_APP_INACTIVE') return '/integrations';
+  if (n.type === 'CALENDAR_EVENT_DELETED' && n.objectId && n.objectType !== 'SESSION') return `/tasks/${n.objectId}`;
+  if (n.type === 'CALENDAR_EVENT_DELETED') return '/tasks';
   if (!n.objectId) return null;
   switch (n.objectType) {
     case 'TASK': return `/tasks/${n.objectId}`;

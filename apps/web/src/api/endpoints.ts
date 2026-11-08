@@ -3,6 +3,8 @@ import type {
   CreateTaskInput, DashboardDto, GoalDetailDto, GoalDto, GoalStatus, MilestoneDto, MilestoneStatus, MissedReviewAction,
   NotificationDto, NotificationListDto, Page, ReasonTagDto, ReconciliationDto, RedemptionDto, RewardItemDto, Settings, StreakDto,
   TaskDto, TaskHistoryDto, TaskStatus, UpdateGoalInput, UpdateTaskInput, XpSummaryDto, XpTransactionDto,
+  SessionDto, SessionInput, CalendarStatusDto, CalendarListItemDto, SuggestionsDto, ScheduleWarningsDto, WorkingHours,
+  IntegrationAppDto, CreatedKeyDto, RuleDto, IntegrationEventDto,
 } from '@pph/shared';
 import { request, toArray, toPage } from './client';
 
@@ -10,6 +12,11 @@ export type TaskDetail = TaskDto & { history: TaskHistoryDto[] };
 
 export type TaskFilters = { status?: TaskStatus; goalId?: string; missed?: boolean; due?: 'today' };
 export type XpTxFilters = { type?: string; sourceType?: string; from?: string; to?: string; page?: number };
+export type IntegrationEventFilters = { appRef?: string; status?: string; eventType?: string; from?: string; to?: string; page?: number };
+export type RuleInput = {
+  appRef: string; eventType: string; goalId: string; mode: 'PER_UNIT' | 'FIXED'; field?: string | null; factor?: number | null;
+  fixed?: number | null; defaultDurationMinutes: number; enabled?: boolean;
+};
 export type ActivityFilters = { from?: string; to?: string; goalId?: string; taskId?: string; type?: string; page?: number };
 
 const enc = encodeURIComponent;
@@ -124,6 +131,52 @@ export const api = {
   // ---------- Activity ----------
   activity: async (f: ActivityFilters = {}) =>
     toPage(await request<ActivityPageDto | ActivityItemDto[]>('/activity', { query: f }), f.page ?? 1),
+
+  // ---------- Release 2: Sessions ----------
+  listSessions: async (taskId: string) => toArray(await request<SessionDto[] | Page<SessionDto>>(`/tasks/${enc(taskId)}/sessions`)),
+  createSession: (taskId: string, b: SessionInput) => request<SessionDto>(`/tasks/${enc(taskId)}/sessions`, { method: 'POST', body: b }),
+  updateSession: (id: string, b: SessionInput) => request<SessionDto>(`/sessions/${enc(id)}`, { method: 'PATCH', body: b }),
+  deleteSession: (id: string) => request<unknown>(`/sessions/${enc(id)}`, { method: 'DELETE' }),
+
+  // ---------- Release 2: Scheduling ----------
+  getWorkingHours: () => request<WorkingHours>('/scheduling/working-hours'),
+  putWorkingHours: (b: WorkingHours) => request<WorkingHours>('/scheduling/working-hours', { method: 'PUT', body: b }),
+  suggestions: (taskId: string) => request<SuggestionsDto>(`/tasks/${enc(taskId)}/suggestions`),
+  applySuggestion: (taskId: string, sessions: { start: string; end: string }[]) =>
+    request<unknown>(`/tasks/${enc(taskId)}/suggestions/apply`, { method: 'POST', body: { sessions }, idempotent: true }),
+  warnings: () => request<ScheduleWarningsDto>('/scheduling/warnings'),
+  acceptWarning: (kind: 'TASK' | 'DAY', ref: string) => request<unknown>('/scheduling/accept', { method: 'POST', body: { kind, ref } }),
+
+  // ---------- Release 2: Calendar ----------
+  calendarStatus: () => request<CalendarStatusDto>('/calendar/status'),
+  calendarConnect: () => request<{ authUrl: string }>('/calendar/connect', { method: 'POST', body: {} }),
+  calendarDisconnect: () => request<unknown>('/calendar/disconnect', { method: 'POST', body: {} }),
+  calendarSync: () => request<unknown>('/calendar/sync', { method: 'POST', body: {} }),
+  calendarList: async () => toArray(await request<CalendarListItemDto[] | Page<CalendarListItemDto>>('/calendar/calendars')),
+  setBusyCalendars: (calendarIds: string[]) => request<unknown>('/calendar/busy-calendars', { method: 'PUT', body: { calendarIds } }),
+  getOauthClient: () => request<{ clientId: string | null; hasSecret: boolean }>('/calendar/oauth-client'),
+  putOauthClient: (b: { clientId: string; clientSecret: string }) => request<unknown>('/calendar/oauth-client', { method: 'PUT', body: b }),
+
+  // ---------- Release 2: Integrations ----------
+  listApps: async () => toArray(await request<IntegrationAppDto[] | Page<IntegrationAppDto>>('/integrations/apps')),
+  createApp: (b: { name: string; appId: string }) => request<IntegrationAppDto>('/integrations/apps', { method: 'POST', body: b }),
+  updateApp: (id: string, b: { name?: string; expectedFrequency?: 'DAILY' | 'WEEKLY' | 'NONE' }) =>
+    request<IntegrationAppDto>(`/integrations/apps/${enc(id)}`, { method: 'PATCH', body: b }),
+  deleteApp: (id: string) => request<unknown>(`/integrations/apps/${enc(id)}`, { method: 'DELETE' }),
+  createKey: (appId: string, name: string) => request<CreatedKeyDto>(`/integrations/apps/${enc(appId)}/keys`, { method: 'POST', body: { name } }),
+  revokeKey: (id: string) => request<unknown>(`/integrations/keys/${enc(id)}`, { method: 'DELETE' }),
+  listRules: async () => toArray(await request<RuleDto[] | Page<RuleDto>>('/integrations/rules')),
+  createRule: (b: RuleInput) => request<RuleDto>('/integrations/rules', { method: 'POST', body: b }),
+  updateRule: (id: string, b: Partial<RuleInput>) => request<RuleDto>(`/integrations/rules/${enc(id)}`, { method: 'PATCH', body: b }),
+  deleteRule: (id: string) => request<unknown>(`/integrations/rules/${enc(id)}`, { method: 'DELETE' }),
+  listEvents: async (f: IntegrationEventFilters = {}): Promise<Page<IntegrationEventDto>> => {
+    const r = await request<Partial<Page<IntegrationEventDto>> | IntegrationEventDto[]>('/integrations/events', { query: f });
+    if (Array.isArray(r)) return toPage(r, f.page ?? 1);
+    const items = r?.items ?? [];
+    return { items, page: r?.page ?? 1, pageSize: r?.pageSize ?? Math.max(items.length, 1), total: r?.total ?? items.length };
+  },
+  retryEvent: (eventId: string) =>
+    request<unknown>(`/integrations/events/${enc(eventId)}/retry`, { method: 'POST', body: {}, idempotent: true }),
 
   // ---------- Dashboard ----------
   dashboard: () => request<DashboardDto>('/dashboard'),

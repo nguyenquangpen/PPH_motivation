@@ -71,12 +71,13 @@ export const XP_TYPE_LABEL: Record<XpTxType, string> = {
   PENALTY_REVERSAL: 'Hoàn phạt',
 };
 export const XP_SOURCE_LABEL: Record<XpSourceType, string> = {
-  TASK: 'Task', POOL: 'Pool', MILESTONE: 'Milestone', GOAL: 'Goal', REDEMPTION: 'Đổi quà',
+  TASK: 'Task', POOL: 'Pool', MILESTONE: 'Milestone', GOAL: 'Goal', REDEMPTION: 'Đổi quà', INTEGRATION_EVENT: 'Sự kiện tích hợp',
 };
 export const NOTIF_TYPE_LABEL: Record<NotificationType, string> = {
   TASK_MISSED: 'Task quá hạn', TASK_DEADLINE_SOON: 'Sắp đến hạn', GOAL_REACHED_100: 'Goal đạt 100%',
   GOAL_BEHIND: 'Goal chậm tiến độ', GOAL_NEAR_DUE: 'Goal gần hạn', MILESTONE_COMPLETED: 'Milestone hoàn thành',
   LEVEL_UP: 'Lên level', POOL_REWARD: 'Thưởng Pool',
+  CALENDAR_SYNC_ERROR: 'Lỗi đồng bộ lịch', CALENDAR_EVENT_DELETED: 'Lịch bị xóa trên Google', EXTERNAL_APP_INACTIVE: 'App ngoài không hoạt động',
 };
 export const WARNING_LABEL: Record<string, string> = { BEHIND: 'Chậm tiến độ', NEAR_DUE: 'Gần hạn' };
 
@@ -97,6 +98,7 @@ export const ACTIVITY_TYPE_LABEL: Record<ActivityType, string> = {
   REDEMPTION_CREATED: 'Đổi thưởng', REDEMPTION_REVERSED: 'Hoàn tác đổi thưởng',
   STREAK_FREEZE_USED: 'Dùng Streak Freeze', CHECKIN_CREATED: 'Check-in', CHECKIN_UPDATED: 'Sửa check-in',
   SETTINGS_CHANGED: 'Đổi cài đặt',
+  INTEGRATION_EVENT_PROCESSED: 'Hoạt động từ app ngoài',
 };
 /** Vietnamese label for an activity type; unknown types fall back to the raw code. */
 export const activityTypeLabel = (type: string): string => (ACTIVITY_TYPE_LABEL as Record<string, string>)[type] ?? type;

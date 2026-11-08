@@ -11,6 +11,7 @@ import { TaskDetailPage } from './pages/TaskDetail';
 import { RewardsPage } from './pages/Rewards';
 import { ActivityPage } from './pages/Activity';
 import { SettingsPage } from './pages/Settings';
+import { IntegrationsPage } from './pages/Integrations';
 
 export function createQueryClient(): QueryClient {
   return new QueryClient({
@@ -37,6 +38,7 @@ export function AppRoutes() {
         <Route path="tasks/:id" element={<TaskDetailPage />} />
         <Route path="rewards" element={<RewardsPage />} />
         <Route path="activity" element={<ActivityPage />} />
+        <Route path="integrations" element={<IntegrationsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<p className="muted">Không tìm thấy trang.</p>} />
       </Route>

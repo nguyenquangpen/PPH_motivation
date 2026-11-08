@@ -9,6 +9,7 @@ const NAV = [
   { to: '/tasks', label: 'Công việc' },
   { to: '/rewards', label: 'Phần thưởng' },
   { to: '/activity', label: 'Hoạt động' },
+  { to: '/integrations', label: 'Tích hợp' },
   { to: '/settings', label: 'Cài đặt' },
 ];
 
