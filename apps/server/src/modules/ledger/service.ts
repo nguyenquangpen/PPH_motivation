@@ -254,8 +254,12 @@ export class LedgerService {
     for (const g of goals) {
       const stored = this.goalContribution(g.goal_id);
       const re = db
-        .prepare('SELECT COALESCE(SUM(contribution),0) s FROM task_completions WHERE goal_id = ? AND undone_at IS NULL')
-        .get(g.goal_id) as { s: number };
+        .prepare(
+          `SELECT (SELECT COALESCE(SUM(contribution),0) FROM task_completions WHERE goal_id = ? AND undone_at IS NULL)
+                + (SELECT COALESCE(SUM(contribution),0) FROM integration_events
+                   WHERE goal_id = ? AND status = 'PROCESSED' AND contribution_entry_id IS NOT NULL) AS s`,
+        )
+        .get(g.goal_id, g.goal_id) as { s: number };
       checks.push({ name: `goal:${g.goal_id}`, stored, recomputed: re.s, diff: stored - re.s });
     }
     return { ok: checks.every((c) => c.diff === 0), checks };
