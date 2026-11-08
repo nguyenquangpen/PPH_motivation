@@ -66,6 +66,7 @@ export async function startHub(opts: HubOptions): Promise<Hub> {
   const log = opts.log ?? ((m: string) => console.log(m));
   const db = openDb(join(opts.dataDir, 'hub.db'), { migrationsDir: opts.migrationsDir });
   const { app, ctx } = buildApp(db, opts.clock ?? new SystemClock(), { dataDir: opts.dataDir, calendarProvider: opts.calendarProvider, secretStore: opts.secretStore });
+  ctx.services.calendar.startBackground(); // Release 2: worker đẩy lịch ~10 giây + đẩy ngay sau mỗi thay đổi
   const backupDir = join(opts.dataDir, 'backups');
 
   if (opts.onNotification) {
@@ -111,6 +112,7 @@ export async function startHub(opts: HubOptions): Promise<Hub> {
     stop: async () => {
       clearInterval(tick);
       clearInterval(backup);
+      ctx.services.calendar.stopBackground();
       await app.close();
       db.close();
     },

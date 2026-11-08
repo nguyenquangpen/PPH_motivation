@@ -24,11 +24,14 @@ export type ProviderEvent = {
   hubSessionId: string | null;
 };
 
+/** onAuthUrl: được gọi khi đã có URL đăng nhập (UI mở trình duyệt); connect() chỉ xong khi Google redirect về. */
+export type ConnectOptions = { onAuthUrl?: (url: string) => void };
+
 export type ProviderChanges = { events: ProviderEvent[]; nextSyncToken: string; fullResync: boolean };
 
 export interface CalendarProvider {
   /** Đăng nhập (OAuth loopback). Trả email tài khoản + token (chuỗi JSON, Hub sẽ mã hóa khi lưu). */
-  connect(): Promise<{ accountEmail: string; tokens: string }>;
+  connect(opts?: ConnectOptions): Promise<{ accountEmail: string; tokens: string }>;
   /** Nạp token đã lưu (null = đăng xuất). */
   useTokens(tokens: string | null): void;
   /** Token mới nếu thư viện đã tự làm mới (để Hub lưu lại); null nếu không đổi. */
