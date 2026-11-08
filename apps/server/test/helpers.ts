@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { it } from 'vitest';
@@ -10,14 +10,18 @@ import { openDb } from '../src/core/db.js';
 import { newId } from '../src/core/ids.js';
 import { normName } from '../src/core/seed.js';
 
-const BDD_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'docs', 'requirements', '2026-11-05-personal-productivity-hub-bdd');
+const REQ_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'docs', 'requirements');
+/** Các thư mục BDD theo release; file được tìm lần lượt. */
+const BDD_DIRS = ['2026-11-05-personal-productivity-hub-bdd', '2026-11-07-pph-release-2-bdd'].map((d) => join(REQ_DIR, d));
 
 /**
  * scenario(name, fn): như it(), nhưng tên PHẢI tồn tại chính xác trong file BDD JSON
  * (bdd-report khớp theo tên). Sai tên → test fail ngay khi load.
  */
 export function bdd(file: string) {
-  const data = JSON.parse(readFileSync(join(BDD_DIR, file), 'utf8')) as { bdd: { scenario: string }[] }[];
+  const dir = BDD_DIRS.find((d) => existsSync(join(d, file)));
+  if (!dir) throw new Error(`Không tìm thấy file BDD ${file}`);
+  const data = JSON.parse(readFileSync(join(dir, file), 'utf8')) as { bdd: { scenario: string }[] }[];
   const names = new Set(data.flatMap((f) => f.bdd.map((s) => s.scenario)));
   return (name: string, fn: () => void | Promise<void>, timeoutMs?: number) => {
     if (!names.has(name)) throw new Error(`Scenario không có trong ${file}: "${name}"`);

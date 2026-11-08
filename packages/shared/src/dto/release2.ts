@@ -15,6 +15,12 @@ export type CalendarStatus = 'NOT_CONNECTED' | 'ACTIVE' | 'ERROR';
 export type CalendarStatusDto = {
   status: CalendarStatus; accountEmail: string | null; error: string | null;
   lastSuccessAt: string | null; lastPullAt: string | null; busyCalendarIds: string[]; pendingChanges: number;
+  /** Đang chờ người dùng đăng nhập Google (OAuth) */
+  connecting?: boolean;
+  authUrl?: string | null;
+  /** Lỗi của lần kết nối gần nhất (đăng nhập bị hủy, hết thời gian...) */
+  connectError?: string | null;
+  oauthClientConfigured?: boolean;
 };
 export type CalendarListItemDto = { id: string; name: string; primary: boolean; selectedForBusy: boolean };
 export const BusyCalendarsSchema = z.object({ calendarIds: z.array(z.string().min(1)).min(1) });

@@ -16,5 +16,6 @@ export const ErrorCode = {
   ALREADY_REVERSED: 'ALREADY_REVERSED',
   SYSTEM_TAG: 'SYSTEM_TAG',
   FORBIDDEN: 'FORBIDDEN',
+  UNAUTHORIZED: 'UNAUTHORIZED',
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
