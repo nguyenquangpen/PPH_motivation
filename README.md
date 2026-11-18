@@ -68,4 +68,4 @@ npm run typecheck
 
 ## Cấu hình nghiệp vụ
 
-Mọi tham số XP, Pool, Level, Penalty, Streak, preset Contribution, múi giờ chỉnh trong màn hình **Settings** (không cần sửa code). Danh mục Goal, lý do bỏ lỡ và phần thưởng đều do người dùng thêm/sửa/xóa.
+Nguyên tắc: **dễ dùng trước hết** — chỉ những gì phụ thuộc thói quen cá nhân mới hiện trong **Cài đặt**: giờ làm việc theo từng thứ, bật/tắt trừ XP khi bỏ lỡ việc, Google Calendar, lý do bỏ lỡ, danh mục mục tiêu; múi giờ tự lấy theo máy ở lần chạy đầu. Các hệ số XP, Pool, Level, mức phạt, Freeze, ngưỡng cảnh báo dùng bộ mặc định cố định (giá trị trong `packages/shared/src/dto/settings.ts` → `DEFAULT_SETTINGS`; backend vẫn hỗ trợ đổi qua API nếu cần). Danh mục Goal, lý do bỏ lỡ và phần thưởng do người dùng thêm/sửa/xóa.

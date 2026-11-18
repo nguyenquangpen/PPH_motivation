@@ -50,7 +50,7 @@ Chuỗi 5 Whys:
 | ID | Nguyên tắc |
 |---|---|
 | P-01 | **Không hardcode dữ liệu nghiệp vụ.** Mọi danh mục (Goal Category, Reward Shop item, Missed Reason tag, Contribution preset, External App, Event Type, Event → Goal mapping) đều do người dùng thêm/sửa/xóa. Hệ thống chỉ cung cấp dữ liệu mẫu (seed) có thể xóa. Các ví dụ trong spec (JLPT, Upwork, Japanese Learning App...) chỉ là demo. |
-| P-02 | **Mọi tham số Reward/Penalty/Streak đều cấu hình được** qua giao diện Settings, không cần sửa code. |
+| P-02 | ~~Mọi tham số Reward/Penalty/Streak đều cấu hình được qua giao diện Settings.~~ **Thay thế 2026-11-18:** dễ dùng trước hết — chỉ để ra giao diện các tham số phụ thuộc thói quen cá nhân (giờ làm việc, bật/tắt trừ XP, múi giờ); các hệ số còn lại cố định theo D-18 (backend vẫn lưu, không hardcode trong logic). |
 | P-03 | **Ledger trước, tổng sau.** Contribution và XP chỉ thay đổi qua giao dịch có lịch sử; mọi giá trị tổng hợp phải tính lại được từ giao dịch gốc. Không xóa giao dịch — điều chỉnh bằng giao dịch đảo ngược. |
 | P-04 | **Idempotent.** Cùng một thao tác/sự kiện gửi lại nhiều lần chỉ tạo hiệu lực một lần. |
 | P-05 | **Công bằng.** Không phạt khi nguyên nhân thuộc danh sách miễn trừ. |
