@@ -15,10 +15,13 @@ const TAGS: { name: string; exempt: boolean; system?: string }[] = [
 export const normName = (s: string): string => s.trim().toLocaleLowerCase('vi');
 
 /** Seed dữ liệu mẫu đúng một lần (khi DB mới). */
-export function seedIfEmpty(db: DB, nowIso: string): void {
+export function seedIfEmpty(db: DB, nowIso: string, opts: { timezone?: string } = {}): void {
   const done = db.prepare("SELECT 1 FROM settings WHERE key = '__seeded'").get();
   if (done) return;
   db.transaction(() => {
+    if (opts.timezone) {
+      db.prepare("INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('timezone', ?, ?)").run(JSON.stringify(opts.timezone), nowIso);
+    }
     const insCat = db.prepare('INSERT INTO goal_categories (id, name, name_norm, created_at) VALUES (?, ?, ?, ?)');
     for (const c of CATEGORIES) insCat.run(newId(), c, normName(c), nowIso);
     const insTag = db.prepare(

@@ -8,6 +8,7 @@ import { SystemClock, type Clock } from './core/clock.js';
 import type { AppContext } from './core/context.js';
 import { openDb, type DB } from './core/db.js';
 import { localDate } from './core/time.js';
+import { detectTimezone } from './core/detect-timezone.js';
 
 export type HubNotification = {
   id: string; type: NotificationType; objectType: string | null; objectId: string | null; title: string; body: string | null;
@@ -65,7 +66,7 @@ function serveWeb(app: FastifyInstance, webDist: string): void {
 export async function startHub(opts: HubOptions): Promise<Hub> {
   const log = opts.log ?? ((m: string) => console.log(m));
   const db = openDb(join(opts.dataDir, 'hub.db'), { migrationsDir: opts.migrationsDir });
-  const { app, ctx } = buildApp(db, opts.clock ?? new SystemClock(), { dataDir: opts.dataDir, calendarProvider: opts.calendarProvider, secretStore: opts.secretStore });
+  const { app, ctx } = buildApp(db, opts.clock ?? new SystemClock(), { dataDir: opts.dataDir, calendarProvider: opts.calendarProvider, secretStore: opts.secretStore, initialTimezone: detectTimezone() });
   ctx.services.calendar.startBackground(); // Release 2: worker đẩy lịch ~10 giây + đẩy ngay sau mỗi thay đổi
   const backupDir = join(opts.dataDir, 'backups');
 
