@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-33 External App Inactivity (Should)",
     "description": "Cảnh báo app ngoài lâu không hoạt động",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-33] Quá 3 ngày",
@@ -20,7 +20,7 @@
             "Có Notification 'Bạn chưa ghi nhận hoạt động từ Japanese Learning App trong 3 ngày'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-33] Chưa tới ngưỡng",
@@ -37,7 +37,7 @@
             "Không có Notification EXTERNAL_APP_INACTIVE"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-33] Heartbeat không tính",
@@ -54,7 +54,7 @@
             "Có Notification EXTERNAL_APP_INACTIVE"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-33] Một lần mỗi đợt",
@@ -72,7 +72,7 @@
             "Sau đợt im lặng mới có thêm đúng 1 Notification"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-33] Tần suất WEEKLY và NONE",
@@ -90,7 +90,7 @@
             "NONE: không cảnh báo"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-33] App chưa từng hoạt động",
@@ -107,7 +107,7 @@
             "Không có Notification EXTERNAL_APP_INACTIVE"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-26 Working Hours",
     "description": "Giờ làm việc theo từng thứ",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-26] Mặc định",
@@ -19,7 +19,7 @@
             "Mỗi thứ có 1 khung 08:00–22:00"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-26] Nhiều khung một ngày",
@@ -36,7 +36,7 @@
             "Activity ghi thay đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-26] Ngày nghỉ",
@@ -53,7 +53,7 @@
             "Gợi ý lịch không đề xuất giờ nào vào Chủ Nhật"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-26] Khung không hợp lệ",
@@ -70,7 +70,7 @@
             "Giờ làm việc giữ nguyên như trước"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-26] Biên 24:00",
@@ -86,7 +86,7 @@
             "Được chấp nhận"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

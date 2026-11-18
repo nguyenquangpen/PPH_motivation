@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-29 Penalty Fairness for Infeasible Schedules",
     "description": "Không phạt khi lịch không khả thi",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-29] Thiếu thời gian → miễn phạt",
@@ -21,7 +21,7 @@
             "T có lý do 'Lịch quá tải/Assistant đề xuất sai'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Ngày quá tải → miễn phạt",
@@ -37,7 +37,7 @@
             "Không phạt, T được gán lý do hệ thống"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Đã chấp nhận vẫn miễn",
@@ -53,7 +53,7 @@
             "Không phạt"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Hủy Task Missed có lịch không khả thi",
@@ -70,7 +70,7 @@
             "Lý do của T là 'Lịch quá tải/Assistant đề xuất sai'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Không có phiên → quy tắc cũ",
@@ -86,7 +86,7 @@
             "Có PENALTY −100"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Lịch đủ, ngày không quá tải → phạt",
@@ -102,7 +102,7 @@
             "Có giao dịch PENALTY"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-29] Tag hệ thống",
@@ -118,7 +118,7 @@
             "Hệ thống từ chối (422 SYSTEM_TAG)"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

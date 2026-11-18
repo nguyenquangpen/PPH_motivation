@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-28 Feasibility Warnings",
     "description": "Thiếu thời gian, Task lớn chưa đủ giờ, ngày quá tải",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-28] Thiếu thời gian",
@@ -20,7 +20,7 @@
             "Cảnh báo cũng xuất hiện trên Dashboard"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Biên thiếu 15 phút",
@@ -38,7 +38,7 @@
             "B không có"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Biên phần trăm",
@@ -54,7 +54,7 @@
             "Không có cảnh báo thiếu thời gian"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Chưa có phiên",
@@ -70,7 +70,7 @@
             "Không có cảnh báo thiếu thời gian"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Task lớn chưa đủ giờ (Should)",
@@ -87,7 +87,7 @@
             "Dashboard cảnh báo T chưa được xếp đủ thời gian"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Ngày quá tải",
@@ -106,7 +106,7 @@
             "Thứ Ba được đánh dấu quá tải (270 > 240)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Biên quá tải",
@@ -123,7 +123,7 @@
             "Thứ Ba không bị đánh dấu quá tải"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Ngày nghỉ có phiên",
@@ -140,7 +140,7 @@
             "Chủ Nhật được đánh dấu quá tải"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Cảnh báo khi xếp vào ngày quá tải",
@@ -157,7 +157,7 @@
             "Màn hình hiển thị cảnh báo Thứ Ba quá tải"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Chấp nhận lịch",
@@ -174,7 +174,7 @@
             "Sau khi thêm phiên: cảnh báo hiện lại (nếu vẫn thiếu)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Không thông báo đẩy",
@@ -191,7 +191,7 @@
             "Không phiên nào bị tự thay đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-28] Ngưỡng cấu hình được",
@@ -207,7 +207,7 @@
             "T có cảnh báo thiếu thời gian"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

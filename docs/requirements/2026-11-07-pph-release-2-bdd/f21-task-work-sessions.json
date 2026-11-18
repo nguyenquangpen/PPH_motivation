@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-21 Task Work Sessions",
     "description": "Task có 0..n phiên làm việc",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-21] Thêm phiên hợp lệ",
@@ -21,7 +21,7 @@
             "Activity ghi thêm phiên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Nhiều phiên",
@@ -38,7 +38,7 @@
             "scheduled_minutes = 150"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Kết thúc trước bắt đầu",
@@ -55,7 +55,7 @@
             "T không có phiên mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Biên độ dài phiên",
@@ -72,7 +72,7 @@
             "Phiên 1.441 phút bị từ chối (400)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Chồng phiên cùng Task",
@@ -88,7 +88,7 @@
             "Hệ thống từ chối (422 CONFLICT)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Chạm đầu mút",
@@ -104,7 +104,7 @@
             "Phiên được chấp nhận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Chồng phiên khác Task",
@@ -120,7 +120,7 @@
             "Phiên của B được chấp nhận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Task đã khóa",
@@ -136,7 +136,7 @@
             "Hệ thống từ chối (422 TASK_LOCKED)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Phiên trong quá khứ",
@@ -154,7 +154,7 @@
             "Không có Event nào được tạo trên Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-21] Phiên không đổi Deadline",
@@ -171,7 +171,7 @@
             "Deadline của T không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

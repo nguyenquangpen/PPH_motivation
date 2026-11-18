@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-31 Integration Apps & API Keys",
     "description": "Đăng ký app, API key, danh sách, lịch sử",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-31] Đăng ký app",
@@ -19,7 +19,7 @@
             "App xuất hiện trong danh sách với trạng thái 'Chưa có dữ liệu'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] app_id không hợp lệ hoặc trùng",
@@ -35,7 +35,7 @@
             "Cả hai bị từ chối"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] Key hiển thị một lần",
@@ -53,7 +53,7 @@
             "Database không chứa key dạng gốc"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] Nhiều key",
@@ -71,7 +71,7 @@
             "Request bằng K2 vẫn được nhận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] Xóa app",
@@ -89,7 +89,7 @@
             "10 sự kiện vẫn xem được trong lịch sử"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] Danh sách app",
@@ -106,7 +106,7 @@
             "Hiển thị trạng thái 'Đang hoạt động', hoạt động gần nhất, heartbeat gần nhất, tổng 50, lỗi 2"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-31] Lịch sử sự kiện có lọc",
@@ -124,7 +124,7 @@
             "Chi tiết hiển thị payload và lý do lỗi"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

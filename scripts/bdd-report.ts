@@ -1,13 +1,13 @@
 /**
  * Đọc kết quả Vitest JSON (.vitest-results.json) và cập nhật `passes` / `overallPass`
- * trong docs/requirements/2026-11-05-personal-productivity-hub-bdd/*.json.
+ * trong các thư mục BDD của Release 1 và Release 2 (docs/requirements/*-bdd/*.json).
  * Scenario khớp theo tên test (title) == trường `scenario`. Không có test → false.
  */
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOT = process.cwd();
-const BDD_DIR = join(ROOT, 'docs', 'requirements', '2026-11-05-personal-productivity-hub-bdd');
+const BDD_DIRS = ['2026-11-05-personal-productivity-hub-bdd', '2026-11-07-pph-release-2-bdd'].map((d) => join(ROOT, 'docs', 'requirements', d));
 const RESULTS = join(ROOT, '.vitest-results.json');
 
 type Assertion = { title: string; status: string };
@@ -32,8 +32,8 @@ let total = 0;
 let passed = 0;
 const missing: string[] = [];
 const lines: string[] = [];
-for (const file of readdirSync(BDD_DIR).filter((f) => f.endsWith('.json')).sort()) {
-  const path = join(BDD_DIR, file);
+for (const [dir, file] of BDD_DIRS.flatMap((d) => readdirSync(d).filter((f) => f.endsWith('.json')).sort().map((f) => [d, f] as const))) {
+  const path = join(dir, file);
   const data = JSON.parse(readFileSync(path, 'utf8')) as { feature: string; overallPass: boolean; bdd: { scenario: string; passes: boolean }[] }[];
   let fp = 0;
   let ft = 0;

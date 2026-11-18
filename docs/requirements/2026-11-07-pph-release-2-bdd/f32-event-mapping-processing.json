@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-32 Event Mapping & Processing",
     "description": "Ánh xạ sự kiện thành Contribution/XP/Streak như Task hoàn thành",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-32] Ví dụ học 20 từ",
@@ -25,7 +25,7 @@
             "Activity 'Học 20 từ vựng — Japanese Learning App (+20 vào Học 1000 từ)'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Sự kiện nhỏ vào Pool",
@@ -45,7 +45,7 @@
             "Không có XP ngay"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Dùng duration_minutes của sự kiện",
@@ -64,7 +64,7 @@
             "XP = 60"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Hệ số thập phân làm tròn",
@@ -81,7 +81,7 @@
             "Contribution = 23"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Quy tắc FIXED",
@@ -98,7 +98,7 @@
             "Contribution 30"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Không có quy tắc",
@@ -116,7 +116,7 @@
             "Không có thay đổi Contribution/XP"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Goal đã xóa",
@@ -134,7 +134,7 @@
             "Sự kiện IGNORED với lý do Goal đã xóa"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Streak theo occurred_at",
@@ -153,7 +153,7 @@
             "XP được ghi tại thời điểm xử lý"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Không cộng trùng khi thử lại",
@@ -172,7 +172,7 @@
             "Contribution chỉ tăng 1 lần"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Nguyên tử khi lỗi",
@@ -191,7 +191,7 @@
             "Contribution và XP không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Contribution 0",
@@ -209,7 +209,7 @@
             "Không có giao dịch Contribution/XP"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Quy tắc không hồi tố",
@@ -227,7 +227,7 @@
             "Sự kiện lesson.completed mới được xử lý theo quy tắc"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Áp dụng cho IGNORED (Could)",
@@ -245,7 +245,7 @@
             "G +90 Contribution"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Trùng quy tắc",
@@ -262,7 +262,7 @@
             "Hệ thống từ chối (409)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-32] Milestone và Goal 100%",
@@ -281,7 +281,7 @@
             "Có Notification gợi ý hoàn thành Goal G"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

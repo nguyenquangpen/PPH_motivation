@@ -3,7 +3,7 @@
     "category": "performance",
     "feature": "NFR-R2 Performance",
     "description": "Độ trễ đồng bộ và tiếp nhận sự kiện",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-R2] Đẩy lên Google ≤ 60 giây",
@@ -19,7 +19,7 @@
             "Mỗi Event xuất hiện trên Calendar giả lập ≤ 60 giây sau khi tạo phiên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-R2] Đọc từ Google ≤ 5 phút",
@@ -36,7 +36,7 @@
             "≤ 5 phút sau phiên P có giờ mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-R2] Tiếp nhận sự kiện",
@@ -54,7 +54,7 @@
             "Mọi sự kiện PROCESSED ≤ 5 giây sau khi nhận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[NFR-R2] UI không chờ Google",
@@ -71,7 +71,7 @@
             "Cả hai thao tác phản hồi nhanh như khi chưa kết nối (≤ 500 ms)"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -79,7 +79,7 @@
     "category": "reliability",
     "feature": "NFR-R2 Reliability",
     "description": "Không trùng, không mất",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-R2] Không trùng Event",
@@ -96,7 +96,7 @@
             "Không có Event mồ côi của Hub"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   },
@@ -104,7 +104,7 @@
     "category": "security",
     "feature": "NFR-R2 Security",
     "description": "Token và API key",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[NFR-R2] Bí mật không lộ",
@@ -121,7 +121,7 @@
             "Không nơi nào chứa token Google hoặc API key dạng gốc"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

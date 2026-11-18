@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-22 Calendar Connection",
     "description": "Kết nối, trạng thái, ngắt/kết nối lại Google Calendar",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-22] Kết nối lần đầu đẩy phiên tương lai",
@@ -25,7 +25,7 @@
             "Không có Event cho B và C"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Trạng thái hiển thị",
@@ -41,7 +41,7 @@
             "Hiển thị 'Đang hoạt động' và thời điểm đồng bộ thành công gần nhất"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Token bị thu hồi",
@@ -60,7 +60,7 @@
             "Dashboard hiển thị cảnh báo kết nối lịch"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Ngắt kết nối",
@@ -80,7 +80,7 @@
             "Thông tin xác thực Google bị xóa khỏi Hub"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Kết nối lại cùng tài khoản",
@@ -98,7 +98,7 @@
             "Không có Event mới cho P"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Kết nối tài khoản khác",
@@ -115,7 +115,7 @@
             "Event trên X không bị sửa/xóa"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-22] Bảo mật token",
@@ -132,7 +132,7 @@
             "Token lưu trong database ở dạng mã hóa"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }
