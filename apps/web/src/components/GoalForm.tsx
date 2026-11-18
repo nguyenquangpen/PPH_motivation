@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateGoalInput, GoalDto, GoalStatus, UpdateGoalInput } from '@pph/shared';
 import { api } from '../api/endpoints';
-import { GOAL_CHANGE, useCategories, useInvalidate, useSettings } from '../api/queries';
+import { GOAL_CHANGE, useCategories, useInvalidate } from '../api/queries';
 import { GOAL_STATUS_LABEL } from '../lib/format';
 import { ErrorText, Field, useToast } from './ui';
 
@@ -11,7 +11,6 @@ const MANUAL_STATUSES: GoalStatus[] = ['NOT_STARTED', 'ACTIVE', 'PAUSED', 'ARCHI
 
 export function GoalForm({ goal, onDone, onCancel }: { goal?: GoalDto; onDone?: (g: GoalDto) => void; onCancel?: () => void }) {
   const cats = useCategories();
-  const { settings } = useSettings();
   const inv = useInvalidate();
   const toast = useToast();
   const [title, setTitle] = useState(goal?.title ?? '');
@@ -20,7 +19,6 @@ export function GoalForm({ goal, onDone, onCancel }: { goal?: GoalDto; onDone?: 
   const [startDate, setStartDate] = useState(goal?.startDate ?? '');
   const [targetDate, setTargetDate] = useState(goal?.targetDate ?? '');
   const [target, setTarget] = useState(goal ? String(goal.targetContribution) : '');
-  const [rewardXp, setRewardXp] = useState(goal?.goalRewardXp != null ? String(goal.goalRewardXp) : '');
   const [icon, setIcon] = useState(goal?.icon ?? '');
   const [color, setColor] = useState(goal?.color ?? '');
   const [status, setStatus] = useState<GoalStatus>(goal?.status ?? 'NOT_STARTED');
@@ -34,7 +32,6 @@ export function GoalForm({ goal, onDone, onCancel }: { goal?: GoalDto; onDone?: 
         startDate: startDate || null,
         targetDate: targetDate || null,
         targetContribution: Number(target),
-        goalRewardXp: rewardXp.trim() === '' ? null : Number(rewardXp),
         icon: icon.trim() || null,
         color: color.trim() || null,
       };
@@ -83,9 +80,6 @@ export function GoalForm({ goal, onDone, onCancel }: { goal?: GoalDto; onDone?: 
       </Field>
       <Field label="Ngày đích" className="col-span-6">
         <input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
-      </Field>
-      <Field label="XP thưởng khi hoàn thành" className="col-span-6" hint={`Để trống = mặc định (${settings.defaultGoalXp})`}>
-        <input type="number" min={0} value={rewardXp} onChange={(e) => setRewardXp(e.target.value)} />
       </Field>
       {goal && (
         <Field label="Trạng thái" className="col-span-6" hint="Hoàn thành chỉ qua nút “Đánh dấu hoàn thành”">
