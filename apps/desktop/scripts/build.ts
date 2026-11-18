@@ -93,9 +93,20 @@ if (pack) {
       electronVersion,
       npmRebuild: false, // đã rebuild ở bước trên
       directories: { app: STAGE, output: RELEASE, buildResources: join(DESKTOP, 'assets') },
-      files: ['**/*'],
+      // Bỏ phần thừa của better-sqlite3: mã nguồn C của SQLite (~10 MB), source C++, file build trung gian.
+      // Chỉ cần lib/ (JS) + build/Release/better_sqlite3.node.
+      files: [
+        '**/*',
+        '!**/node_modules/better-sqlite3/{deps,src}/**',
+        '!**/node_modules/better-sqlite3/binding.gyp',
+        '!**/node_modules/better-sqlite3/build/Release/{obj,deps,test_extension*}/**',
+        '!**/node_modules/better-sqlite3/build/Release/test_extension*',
+        '!**/node_modules/**/*.{md,map,ts}',
+      ],
       asar: true,
       asarUnpack: ['**/*.node'],
+      // Chỉ giữ gói ngôn ngữ Chromium cần thiết (55 → 2 ngôn ngữ, ~47 MB)
+      electronLanguages: ['vi', 'en-US'],
       win: { icon: join(DESKTOP, 'assets', 'icon.ico'), artifactName: 'PPH-Setup-${version}.${ext}' },
       nsis: {
         oneClick: false,
