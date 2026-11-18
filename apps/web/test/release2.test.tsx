@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DEFAULT_SETTINGS, type SuggestionsDto } from '@pph/shared';
-import { SuggestionsDialog } from '../src/components/TaskSessions';
+import { LinkEventDialog, SuggestionsDialog } from '../src/components/TaskSessions';
 import { WorkingHoursEditor } from '../src/components/SettingsRelease2';
 import { KeyCreatedDialog } from '../src/pages/Integrations';
 import { mockFetch, renderWithProviders, settingsHandler } from './helpers';
@@ -43,6 +43,26 @@ describe('Release 2 UI', () => {
     renderWithProviders(<SuggestionsDialog taskId="t-1" onClose={() => {}} />);
     await userEvent.click((await screen.findAllByRole('button', { name: 'Chọn' }))[0]!);
     expect(await screen.findByText(/Lịch đã thay đổi, tải lại gợi ý/)).toBeInTheDocument();
+  });
+
+  it('link event dialog lists Owner events and links the chosen one', async () => {
+    const calls = mockFetch(
+      settingsHandler,
+      (c) => (c.method === 'GET' && c.url.startsWith('/api/v1/calendar/events?') ? { body: [
+        { eventId: 'ev-1', calendarId: 'primary', title: 'Học N3', start: '2026-11-10T12:00:00.000Z', end: '2026-11-10T14:00:00.000Z' },
+        { eventId: 'ev-2', calendarId: 'primary', title: 'Gym', start: '2026-11-11T11:00:00.000Z', end: '2026-11-11T12:00:00.000Z' },
+      ] } : undefined),
+      (c) => (c.method === 'POST' && c.url === '/api/v1/tasks/t-1/sessions/link' ? { status: 201, body: { id: 's-1' } } : undefined),
+    );
+    renderWithProviders(<LinkEventDialog taskId="t-1" onClose={() => {}} />);
+    expect(await screen.findAllByTestId('link-event-option')).toHaveLength(2);
+    expect(screen.getByText('Học N3')).toBeInTheDocument();
+    const get = calls.find((c) => c.url.startsWith('/api/v1/calendar/events?'))!;
+    const u = new URL(get.url, 'http://x');
+    expect(Date.parse(u.searchParams.get('to')!) - Date.parse(u.searchParams.get('from')!)).toBe(30 * 86_400_000);
+    await userEvent.click(screen.getAllByRole('button', { name: 'Chọn' })[0]!);
+    await waitFor(() => expect(calls.some((c) => c.url.endsWith('/sessions/link'))).toBe(true));
+    expect(calls.find((c) => c.url.endsWith('/sessions/link'))!.body).toEqual({ eventId: 'ev-1' });
   });
 
   it('key created dialog shows the full key with the one-time warning', async () => {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import type { CalendarSyncState, SessionDto, SuggestionOptionDto, TaskWarningDto } from '@pph/shared';
+import type { CalendarSyncState, ExternalEventDto, SessionDto, SuggestionOptionDto, TaskWarningDto } from '@pph/shared';
 import { api } from '../api/endpoints';
 import { qk, SESSION_CHANGE, useInvalidate, useTimezone } from '../api/queries';
 import { errorMessage, isApiError, isNotFound } from '../api/client';
@@ -74,7 +74,7 @@ export function SuggestionsDialog({ taskId, onClose }: { taskId: string; onClose
                 {d.options.slice(0, 3).map((o) => (
                   <li key={o.index} className="rounded-md border border-slate-200 p-3 dark:border-slate-700" data-testid="suggestion-option">
                     <div className="mb-1 flex items-center gap-2">
-                      <strong>Phương án {o.index + 1}</strong>
+                      <strong>Phương án {o.index}</strong>
                       <Badge color="blue">{o.kind === 'CONTIGUOUS' ? 'Liền mạch' : 'Chia nhỏ'}</Badge>
                       <span className="text-sm">{o.totalMinutes} phút</span>
                       {!o.complete && <Badge color="amber">Chưa đủ</Badge>}
@@ -96,6 +96,46 @@ export function SuggestionsDialog({ taskId, onClose }: { taskId: string; onClose
           </div>
         )}
       </QueryView>
+    </Modal>
+  );
+}
+
+const DAY_MS = 86_400_000;
+
+/** F-34: chọn một Event có sẵn (primary, 30 ngày tới) làm phiên của Task. */
+export function LinkEventDialog({ taskId, onClose }: { taskId: string; onClose: () => void }) {
+  const tz = useTimezone();
+  const inv = useInvalidate();
+  const toast = useToast();
+  const [range] = useState(() => {
+    const now = Date.now();
+    return { from: new Date(now).toISOString(), to: new Date(now + 30 * DAY_MS).toISOString() };
+  });
+  const q = useQuery({ queryKey: [...qk.calendar, 'events', range.from], queryFn: () => api.calendarEvents(range.from, range.to), staleTime: 0 });
+  const link = useMutation({
+    mutationFn: (e: ExternalEventDto) => api.linkEvent(taskId, e.eventId),
+    onSuccess: async () => { toast('Đã liên kết sự kiện'); await inv(SESSION_CHANGE); onClose(); },
+  });
+  return (
+    <Modal title="Liên kết sự kiện có sẵn" onClose={onClose} width="max-w-xl">
+      <p className="mb-2 text-xs muted">Sự kiện trên lịch chính trong 30 ngày tới. Tiêu đề và mô tả trên Google được giữ nguyên; giờ phiên theo Google.</p>
+      <QueryView q={q} unavailable="Chức năng liên kết sự kiện chưa sẵn sàng.">
+        {(list) => list.length === 0 ? <Empty>Không có sự kiện nào trong 30 ngày tới.</Empty> : (
+          <ul className="flex max-h-96 flex-col gap-2 overflow-y-auto">
+            {list.map((e) => (
+              <li key={e.eventId} data-testid="link-event-option"
+                className="flex items-center gap-2 rounded-md border border-slate-200 p-2 dark:border-slate-700">
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{e.title || '(Không có tiêu đề)'}</div>
+                  <div className="text-xs muted">{fmtDateTime(e.start, tz)} – {fmtDateTime(e.end, tz).slice(11)}</div>
+                </div>
+                <button className="btn-primary btn-sm" disabled={link.isPending} onClick={() => link.mutate(e)}>Chọn</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </QueryView>
+      <ErrorText error={link.error} />
     </Modal>
   );
 }
@@ -122,6 +162,9 @@ export function TaskSessions({ taskId, estimated, locked }: { taskId: string; es
   const [adding, setAdding] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [suggest, setSuggest] = useState(false);
+  const [linking, setLinking] = useState(false);
+  const cal = useQuery({ queryKey: [...qk.calendar, 'status'], queryFn: api.calendarStatus, retry: false });
+  const calActive = cal.data?.status === 'ACTIVE';
   const q = useQuery({ queryKey: [...qk.sessions, taskId], queryFn: () => api.listSessions(taskId) });
   const w = useScheduleWarnings();
   const del = useMutation({
@@ -140,6 +183,7 @@ export function TaskSessions({ taskId, estimated, locked }: { taskId: string; es
         <span className="text-sm muted">Ước tính {estimated} · Đã xếp {scheduled} phút</span>
         {!locked && (
           <div className="ml-auto flex gap-2">
+            {calActive && <button className="btn-ghost btn-sm" onClick={() => setLinking(true)}>Liên kết sự kiện có sẵn</button>}
             <button className="btn-ghost btn-sm" onClick={() => setSuggest(true)}>Gợi ý lịch</button>
             <button className="btn-primary btn-sm" onClick={() => { setAdding(true); setEditId(null); }}>+ Thêm phiên</button>
           </div>
@@ -164,14 +208,14 @@ export function TaskSessions({ taskId, estimated, locked }: { taskId: string; es
                 <tr key={s.id}><td colSpan={4}><SessionForm taskId={taskId} s={s} onDone={() => setEditId(null)} /></td></tr>
               ) : (
                 <tr key={s.id}>
-                  <td>{fmtDateTime(s.start, tz)} – {fmtDateTime(s.end, tz)}{s.source === 'LINKED' && <span className="ml-1 text-xs muted">(liên kết)</span>}</td>
+                  <td>{fmtDateTime(s.start, tz)} – {fmtDateTime(s.end, tz)}{s.source === 'LINKED' && <span className="ml-2"><Badge color="blue" title="Sự kiện có sẵn trên Google Calendar, Hub không sửa tiêu đề/mô tả">Sự kiện của bạn</Badge></span>}</td>
                   <td className="tabular-nums">{s.minutes}</td>
                   <td><Badge color={SYNC_BADGE[s.calendar]?.color}>{SYNC_BADGE[s.calendar]?.label ?? s.calendar}</Badge></td>
                   <td className="text-right">
                     {!locked && (
                       <>
-                        <button className="btn-ghost btn-sm mr-1" onClick={() => { setEditId(s.id); setAdding(false); }}>Sửa</button>
-                        <button className="btn-ghost btn-sm text-rose-600" disabled={del.isPending} onClick={() => window.confirm('Xóa phiên này?') && del.mutate(s.id)}>Xóa</button>
+                        {s.source !== 'LINKED' && <button className="btn-ghost btn-sm mr-1" onClick={() => { setEditId(s.id); setAdding(false); }}>Sửa</button>}
+                        <button className="btn-ghost btn-sm text-rose-600" disabled={del.isPending} onClick={() => window.confirm(s.source === 'LINKED' ? 'Chỉ gỡ liên kết, sự kiện trên Google được giữ nguyên' : 'Xóa phiên này?') && del.mutate(s.id)}>Xóa</button>
                       </>
                     )}
                   </td>
@@ -182,6 +226,7 @@ export function TaskSessions({ taskId, estimated, locked }: { taskId: string; es
         )}
       </QueryView>
       {w.isError && !isNotFound(w.error) && <ErrorText error={w.error} />}
+      {linking && <LinkEventDialog taskId={taskId} onClose={() => setLinking(false)} />}
       {suggest && <SuggestionsDialog taskId={taskId} onClose={() => setSuggest(false)} />}
     </section>
   );
