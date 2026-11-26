@@ -301,38 +301,6 @@ function Transactions() {
   );
 }
 
-function Reconciliation() {
-  const q = useQuery({ queryKey: [...qk.xp, 'reconciliation'], queryFn: api.reconciliation, enabled: false, retry: false });
-  return (
-    <section className="card">
-      <div className="flex items-center justify-between">
-        <h2 className="card-title mb-0">Đối soát số dư</h2>
-        <button className="btn-ghost" disabled={q.isFetching} onClick={() => q.refetch()}>{q.isFetching ? 'Đang kiểm tra…' : 'Kiểm tra đối soát'}</button>
-      </div>
-      {q.isError && <div className="mt-2"><ErrorText error={q.error} /></div>}
-      {q.data && (
-        <div className="mt-3">
-          <p className={`mb-2 font-semibold ${q.data.ok ? 'text-emerald-600' : 'text-rose-600'}`}>
-            {q.data.ok ? '✓ Số dư khớp' : '✗ Phát hiện chênh lệch'}
-          </p>
-          <table className="tbl">
-            <thead><tr><th>Kiểm tra</th><th>Lưu trữ</th><th>Tính lại</th><th>Chênh lệch</th></tr></thead>
-            <tbody>
-              {q.data.checks.map((c) => (
-                <tr key={c.name}>
-                  <td>{c.name}</td><td className="tabular-nums">{fmtNum(c.stored)}</td>
-                  <td className="tabular-nums">{fmtNum(c.recomputed)}</td>
-                  <td className={`tabular-nums ${c.diff !== 0 ? 'font-semibold text-rose-600' : ''}`}>{fmtNum(c.diff)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </section>
-  );
-}
-
 export function RewardsPage() {
   return (
     <div className="flex flex-col gap-4">
@@ -341,7 +309,6 @@ export function RewardsPage() {
       <Shop />
       <Redemptions />
       <Transactions />
-      <Reconciliation />
     </div>
   );
 }

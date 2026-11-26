@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-27 Schedule Suggestions",
     "description": "Gợi ý phiên trong giờ làm việc, tránh giờ bận",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-27] Ví dụ spec §7.3",
@@ -23,7 +23,7 @@
             "Không có phương án thứ 3"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Tối đa 3 phương án liền sớm nhất",
@@ -44,7 +44,7 @@
             "Các phương án nằm ở 3 khoảng trống khác nhau, sớm nhất trước"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Làm tròn 15 phút",
@@ -63,7 +63,7 @@
             "Phương án sớm nhất bắt đầu 09:15"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Tránh giờ bận và phiên khác",
@@ -83,7 +83,7 @@
             "Phương án 1 bắt đầu 13:00"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Chỉ thời lượng còn thiếu",
@@ -101,7 +101,7 @@
             "Các phương án dài tổng 60 phút"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Đã đủ thời gian",
@@ -118,7 +118,7 @@
             "Không có phương án"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Phiên chia ≥ 30 phút",
@@ -137,7 +137,7 @@
             "Khoảng 10:00–10:20 không được dùng"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Không đủ chỗ",
@@ -155,7 +155,7 @@
             "Có một phương án chia tổng 100 phút đánh dấu 'chưa đủ'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Chọn phương án",
@@ -173,7 +173,7 @@
             "2 Event được tạo trên Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Khung bị chiếm khi chọn",
@@ -192,7 +192,7 @@
             "T không có phiên mới"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Không tự xếp lịch",
@@ -209,7 +209,7 @@
             "T vẫn không có phiên"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-27] Task đã xong",
@@ -225,7 +225,7 @@
             "Hệ thống từ chối (422)"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

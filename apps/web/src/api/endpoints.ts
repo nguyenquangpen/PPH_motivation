@@ -4,7 +4,7 @@ import type {
   NotificationDto, NotificationListDto, Page, ReasonTagDto, ReconciliationDto, RedemptionDto, RewardItemDto, Settings, StreakDto,
   TaskDto, TaskHistoryDto, TaskStatus, UpdateGoalInput, UpdateTaskInput, XpSummaryDto, XpTransactionDto,
   SessionDto, SessionInput, CalendarStatusDto, CalendarListItemDto, SuggestionsDto, ScheduleWarningsDto, WorkingHours,
-  IntegrationAppDto, CreatedKeyDto, RuleDto, IntegrationEventDto,
+  IntegrationAppDto, CreatedKeyDto, RuleDto, IntegrationEventDto, ExternalEventDto,
 } from '@pph/shared';
 import { request, toArray, toPage } from './client';
 
@@ -156,6 +156,10 @@ export const api = {
   setBusyCalendars: (calendarIds: string[]) => request<unknown>('/calendar/busy-calendars', { method: 'PUT', body: { calendarIds } }),
   getOauthClient: () => request<{ clientId: string | null; hasSecret: boolean }>('/calendar/oauth-client'),
   putOauthClient: (b: { clientId: string; clientSecret: string }) => request<unknown>('/calendar/oauth-client', { method: 'PUT', body: b }),
+  calendarEvents: async (from: string, to: string) =>
+    toArray(await request<ExternalEventDto[] | Page<ExternalEventDto>>(`/calendar/events?from=${enc(from)}&to=${enc(to)}`)),
+  linkEvent: (taskId: string, eventId: string) =>
+    request<SessionDto>(`/tasks/${enc(taskId)}/sessions/link`, { method: 'POST', body: { eventId }, idempotent: true }),
 
   // ---------- Release 2: Integrations ----------
   listApps: async () => toArray(await request<IntegrationAppDto[] | Page<IntegrationAppDto>>('/integrations/apps')),

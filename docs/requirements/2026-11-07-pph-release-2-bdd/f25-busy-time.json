@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-25 Busy Time",
     "description": "Giờ bận từ lịch đã chọn",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-25] Event thường là bận",
@@ -20,7 +20,7 @@
             "14:00–15:00 là bận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Loại trừ Free, từ chối, cả ngày",
@@ -37,7 +37,7 @@
             "Không có khoảng bận nào"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Không tính Event của Hub",
@@ -54,7 +54,7 @@
             "19:00–20:00 không nằm trong giờ bận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Event lặp lại",
@@ -71,7 +71,7 @@
             "Mỗi ngày có khoảng bận 07:00–08:00"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Gộp khoảng chồng",
@@ -88,7 +88,7 @@
             "Một khoảng bận 14:00–16:00"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Chọn lịch",
@@ -106,7 +106,7 @@
             "Sau khi chọn: 09:00–17:00 là bận"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-25] Chưa kết nối",
@@ -123,7 +123,7 @@
             "Hiển thị 'Chưa có dữ liệu lịch Google'"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

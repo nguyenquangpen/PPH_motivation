@@ -8,4 +8,5 @@ apps/desktop/release/
 data/
 dist/
 e2e/.shots/
+e2e/.tmp/
 node_modules/

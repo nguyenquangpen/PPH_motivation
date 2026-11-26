@@ -47,6 +47,8 @@ export interface AppOptions {
   secretStore?: SecretStore;
   /** Thư mục dữ liệu (để module tự tạo file key khi cần); undefined khi DB :memory: */
   dataDir?: string;
+  /** Múi giờ ghi vào Settings ở lần chạy đầu (app thật: lấy theo máy). Test để trống → mặc định. */
+  initialTimezone?: string;
 }
 
 export interface AppContext {

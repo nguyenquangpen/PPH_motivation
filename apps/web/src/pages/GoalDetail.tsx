@@ -5,7 +5,7 @@ import {
   ErrorCode, MilestoneCondition, TaskStatus, type CreateMilestoneInput, type GoalDetailDto, type MilestoneDto,
 } from '@pph/shared';
 import { api } from '../api/endpoints';
-import { GOAL_CHANGE, qk, useInvalidate, useSettings, useTimezone } from '../api/queries';
+import { GOAL_CHANGE, qk, useInvalidate, useTimezone } from '../api/queries';
 import { errorMessage, isApiError } from '../api/client';
 import { ActivityList } from '../components/ActivityList';
 import { GoalForm } from '../components/GoalForm';
@@ -22,13 +22,11 @@ const COND_LABEL: Record<MilestoneCondition, string> = {
 function MilestoneForm({ goalId, ms, onDone }: { goalId: string; ms?: MilestoneDto; onDone: () => void }) {
   const inv = useInvalidate();
   const toast = useToast();
-  const { settings } = useSettings();
   const [title, setTitle] = useState(ms?.title ?? '');
   const [description, setDescription] = useState(ms?.description ?? '');
   const [targetDate, setTargetDate] = useState(ms?.targetDate ?? '');
   const [cond, setCond] = useState<MilestoneCondition>(ms?.conditionType ?? 'CONTRIBUTION_THRESHOLD');
   const [threshold, setThreshold] = useState(ms?.threshold != null ? String(ms.threshold) : '');
-  const [rewardXp, setRewardXp] = useState(ms?.rewardXp != null ? String(ms.rewardXp) : '');
   const m = useMutation({
     mutationFn: () => {
       const body: CreateMilestoneInput = {
@@ -37,7 +35,6 @@ function MilestoneForm({ goalId, ms, onDone }: { goalId: string; ms?: MilestoneD
         targetDate: targetDate || null,
         conditionType: cond,
         threshold: cond === 'CONTRIBUTION_THRESHOLD' ? Number(threshold) : null,
-        rewardXp: rewardXp.trim() === '' ? null : Number(rewardXp),
       };
       return ms ? api.updateMilestone(ms.id, body) : api.createMilestone(goalId, body);
     },
@@ -59,9 +56,6 @@ function MilestoneForm({ goalId, ms, onDone }: { goalId: string; ms?: MilestoneD
       ) : (
         <p className="col-span-6 self-end text-xs muted">Gắn Task vào Milestone trong form Task. Hoàn thành khi mọi Task liên kết (trừ đã hủy) hoàn thành.</p>
       )}
-      <Field label="XP thưởng" className="col-span-6" hint={`Để trống = mặc định (${settings.defaultMilestoneXp})`}>
-        <input type="number" min={0} value={rewardXp} onChange={(e) => setRewardXp(e.target.value)} />
-      </Field>
       <Field label="Ngày đích" className="col-span-6"><input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} /></Field>
       <Field label="Mô tả" className="col-span-12"><textarea rows={2} value={description} onChange={(e) => setDescription(e.target.value)} /></Field>
       <div className="col-span-12"><ErrorText error={m.error} /></div>

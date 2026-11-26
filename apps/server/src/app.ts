@@ -23,7 +23,7 @@ export function buildContext(db: DB, clock: Clock, options: AppOptions = {}): Ap
     nowIso: () => clock.now().toISOString(),
     tz: () => ctx.services.settings.get().timezone,
   };
-  seedIfEmpty(db, ctx.nowIso());
+  seedIfEmpty(db, ctx.nowIso(), { timezone: options.initialTimezone });
   for (const m of MODULES) m.init(ctx);
   for (const m of MODULES) m.wire?.(ctx);
   return ctx;

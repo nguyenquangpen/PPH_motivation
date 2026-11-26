@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-30 Integration Event API",
     "description": "Tiếp nhận sự kiện theo hợp đồng v1",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-30] Nhận sự kiện mới",
@@ -20,7 +20,7 @@
             "Sự kiện E1 được lưu trước khi xử lý nghiệp vụ"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Trùng y hệt",
@@ -38,7 +38,7 @@
             "Contribution/XP không thay đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Trùng id khác nội dung",
@@ -55,7 +55,7 @@
             "Phản hồi 409 CONFLICT"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Thiếu hoặc sai key",
@@ -72,7 +72,7 @@
             "Không sự kiện nào được lưu"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] app_id không khớp key",
@@ -88,7 +88,7 @@
             "Phản hồi 403 FORBIDDEN"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Envelope sai",
@@ -104,7 +104,7 @@
             "Mỗi request phản hồi 400 VALIDATION kèm trường lỗi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] data sai đặc tả",
@@ -120,7 +120,7 @@
             "Phản hồi 400"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] occurred_at ở tương lai",
@@ -138,7 +138,7 @@
             "10:06 bị từ chối (400)"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Body quá lớn",
@@ -154,7 +154,7 @@
             "Phản hồi 413"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Loại sự kiện mới",
@@ -171,7 +171,7 @@
             "Sự kiện được lưu và xử lý theo F-32"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Heartbeat",
@@ -190,7 +190,7 @@
             "Heartbeat không hiện trong lịch sử sự kiện mặc định"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-30] Key bị thu hồi",
@@ -206,7 +206,7 @@
             "Phản hồi 401"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

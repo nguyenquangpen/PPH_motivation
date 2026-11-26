@@ -2,7 +2,12 @@
 
 > **Dành cho:** Agent/dev đang làm việc trong codebase của **app học tiếng Nhật** (desktop, chạy cùng laptop với Hub).
 > **Phiên bản hợp đồng:** v1 — 2026-11-07. Nguồn: Product Spec §12 của Hub.
-> **Trạng thái phía Hub:** endpoint nhận sự kiện **chưa được triển khai** (thuộc Release 2 của Hub). Hãy xây phía app theo đúng hợp đồng này và kiểm thử bằng Hub giả lập (mục 9). Trong lúc Hub chưa sẵn sàng, app phải tự giữ sự kiện và gửi lại sau — không mất dữ liệu.
+> **Trạng thái phía Hub (cập nhật 2026-11-18):** endpoint nhận sự kiện **đã hoạt động** từ Hub 0.2.x, đúng hợp đồng v1 này. Vẫn nên kiểm thử bằng Hub giả lập (mục 9) cho các tình huống lỗi; khi Hub đang tắt, app phải tự giữ sự kiện và gửi lại sau — không mất dữ liệu.
+>
+> **Để kết nối thật, app cần 3 giá trị** (chủ sở hữu lấy trong Hub → trang **Tích hợp**):
+> - `HUB_URL` = `http://127.0.0.1:4317`
+> - `source.app_id` = `japanese-learning-app` (phải đúng chuỗi này — đã đăng ký trong Hub)
+> - `HUB_API_KEY` = key tạo ở trang Tích hợp (dạng `pph_…`, chỉ hiển thị một lần)
 
 ---
 
@@ -183,7 +188,7 @@ Gửi khi app khởi động và tối đa **1 lần / 6 giờ** khi app đang m
 |---|---|---|
 | `HUB_INTEGRATION_ENABLED` | `false` | Chỉ gửi khi `true` **và** có API key. Khi tắt, app **vẫn** ghi sự kiện vào outbox (để bật lên sau không mất lịch sử) — trừ khi người dùng chọn xóa. |
 | `HUB_URL` | `http://127.0.0.1:4317` | Chỉ chấp nhận `http://127.0.0.1:<port>`. |
-| `HUB_API_KEY` | (trống) | Người dùng lấy từ màn hình **Integrations** của Hub (sẽ có ở Release 2) và dán vào app. Lưu bằng cơ chế lưu bí mật của app/OS nếu có; **không** đưa vào source code, log, hay thông báo lỗi. |
+| `HUB_API_KEY` | (trống) | Người dùng lấy từ trang **Tích hợp** của Hub (đăng ký app `japanese-learning-app` → **Tạo key**) và dán vào app. Key có dạng `pph_` + 32 ký tự. Lưu bằng cơ chế lưu bí mật của app/OS nếu có; **không** đưa vào source code, log, hay thông báo lỗi. |
 
 ---
 
@@ -229,10 +234,11 @@ curl -i -X POST http://127.0.0.1:4317/api/v1/integrations/events \
 
 ---
 
-## 11. Các điểm phía Hub sẽ hoàn thiện (app không cần chờ)
+## 11. Phía Hub đã có (để app biết sự kiện được dùng thế nào)
 
-- Endpoint `POST /api/v1/integrations/events` và màn hình Integrations (tạo/thu hồi API key, xem lịch sử sự kiện, trạng thái kết nối).
-- Ánh xạ sự kiện → Goal/Contribution (ví dụ mỗi từ trong `vocabulary.learned.count` = 1 Contribution cho Goal "Học 1000 từ"), do người dùng cấu hình trong Hub.
-- Cảnh báo khi app tiếng Nhật không gửi hoạt động trong thời gian dài (dựa trên sự kiện và heartbeat).
+- Endpoint `POST /api/v1/integrations/events` và trang **Tích hợp** (tạo/thu hồi API key, lịch sử sự kiện với trạng thái PROCESSED / IGNORED / FAILED, thử lại).
+- Ánh xạ sự kiện → Goal do chủ sở hữu cấu hình trong Hub, ví dụ "mỗi từ trong `vocabulary.learned.count` = 1 đóng góp cho Goal Học 1000 từ". Sự kiện chưa có quy tắc được lưu với trạng thái IGNORED (không lỗi) và có thể áp dụng lại sau.
+- Sự kiện được xử lý **như một việc đã hoàn thành**: cộng tiến độ Goal, XP và tính ngày hoạt động (Streak) theo `occurred_at`.
+- Cảnh báo khi app không gửi sự kiện hoạt động quá 3 ngày (heartbeat không tính là hoạt động).
 
 Nếu phát hiện hợp đồng này thiếu thông tin cho một tình huống thực tế của app, **đừng tự mở rộng định dạng** — ghi lại câu hỏi để chủ sở hữu hai app thống nhất và nâng `schema_version`.

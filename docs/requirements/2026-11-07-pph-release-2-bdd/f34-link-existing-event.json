@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-34 Link Existing Google Event (Could)",
     "description": "Dùng Event có sẵn làm phiên",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-34] Liên kết Event có sẵn",
@@ -21,7 +21,7 @@
             "Tiêu đề/mô tả Event không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-34] Gỡ liên kết không xóa Event",
@@ -38,7 +38,7 @@
             "Event 'Học N3' còn trên Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-34] Google thắng với Event liên kết",
@@ -55,7 +55,7 @@
             "Phiên của T là 20:00–22:00"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

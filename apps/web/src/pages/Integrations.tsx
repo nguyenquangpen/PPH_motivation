@@ -18,9 +18,29 @@ const EVENT_STATUS: Record<IntegrationEventStatus, { label: string; color: strin
   IGNORED: { label: 'Bỏ qua', color: 'gray' },
   FAILED: { label: 'Lỗi', color: 'red' },
 };
-const FREQ_LABEL = { DAILY: 'Hằng ngày', WEEKLY: 'Hằng tuần', NONE: 'Không theo dõi' } as const;
 const EVENT_TYPES = ['vocabulary.learned', 'lesson.completed', 'learning.session.completed'];
-const FIELDS = ['count', 'duration_minutes', 'items_reviewed'] as const;
+/** Fixed (hidden) session length used when an event carries no duration. */
+const DEFAULT_DURATION_MINUTES = 20;
+
+type RuleUnit = { mode: 'PER_UNIT'; field: 'count' | 'duration_minutes'; unit: string } | { mode: 'FIXED'; unit: string };
+/** The event type decides how a rule counts: per word, per minute, or a fixed value per event. */
+export function unitFor(eventType: string): RuleUnit {
+  switch (eventType.trim()) {
+    case 'vocabulary.learned': return { mode: 'PER_UNIT', field: 'count', unit: 'từ' };
+    case 'learning.session.completed': return { mode: 'PER_UNIT', field: 'duration_minutes', unit: 'phút' };
+    case 'lesson.completed': return { mode: 'FIXED', unit: 'bài' };
+    default: return { mode: 'FIXED', unit: 'sự kiện' };
+  }
+}
+
+/** "Khi app X gửi Y, mỗi <đơn vị> = N đóng góp cho mục tiêu Z" */
+export function RuleSentence({ r }: { r: Pick<RuleDto, 'appName' | 'eventType' | 'goalTitle' | 'mode' | 'factor' | 'fixed'> }) {
+  const u = unitFor(r.eventType);
+  const x = r.mode === 'PER_UNIT' ? r.factor ?? 1 : r.fixed ?? 0;
+  return (
+    <>Khi app <strong>{r.appName}</strong> gửi <strong className="font-mono text-xs">{r.eventType}</strong>, mỗi <strong>{u.unit}</strong> = <strong>{x}</strong> đóng góp cho mục tiêu <strong>{r.goalTitle}</strong></>
+  );
+}
 
 const useApps = () => useQuery({ queryKey: [...qk.integrations, 'apps'], queryFn: api.listApps });
 
@@ -53,7 +73,6 @@ function AppCard({ app }: { app: IntegrationAppDto }) {
   const [created, setCreated] = useState<string | null>(null);
   const onError = (e: unknown) => toast(errorMessage(e), 'error');
   const refresh = () => inv(['integrations']);
-  const upd = useMutation({ mutationFn: (f: 'DAILY' | 'WEEKLY' | 'NONE') => api.updateApp(app.id, { expectedFrequency: f }), onSuccess: refresh, onError });
   const del = useMutation({ mutationFn: () => api.deleteApp(app.id), onSuccess: () => { toast('Đã xóa app'); return refresh(); }, onError });
   const createKey = useMutation({
     mutationFn: () => api.createKey(app.id, keyName.trim()),
@@ -67,13 +86,7 @@ function AppCard({ app }: { app: IntegrationAppDto }) {
         <strong>{app.name}</strong>
         <code className="text-xs muted">{app.appId}</code>
         <Badge color={st.color}>{st.label}</Badge>
-        <label className="ml-auto flex items-center gap-1 text-xs">
-          Tần suất mong đợi
-          <select value={app.expectedFrequency} onChange={(e) => upd.mutate(e.target.value as 'DAILY' | 'WEEKLY' | 'NONE')} aria-label={`Tần suất ${app.name}`}>
-            {Object.entries(FREQ_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-          </select>
-        </label>
-        <button className="btn-ghost btn-sm text-rose-600" onClick={() => window.confirm(`Xóa app “${app.name}”?`) && del.mutate()}>Xóa</button>
+        <button className="btn-ghost btn-sm ml-auto text-rose-600" onClick={() => window.confirm(`Xóa app “${app.name}”?`) && del.mutate()}>Xóa</button>
       </div>
       <div className="mt-1 flex flex-wrap gap-4 text-xs muted">
         <span>Hoạt động cuối: {fmtDateTime(app.lastActivityAt, tz)}</span>
@@ -139,68 +152,55 @@ function AppsSection() {
 }
 
 // ================= Rules =================
-type RuleDraft = { appRef: string; eventType: string; goalId: string; mode: 'PER_UNIT' | 'FIXED'; field: string; factor: string; fixed: string; duration: string; enabled: boolean };
-const emptyDraft = (): RuleDraft => ({ appRef: '', eventType: '', goalId: '', mode: 'PER_UNIT', field: 'count', factor: '1', fixed: '10', duration: '15', enabled: true });
+type RuleDraft = { appRef: string; eventType: string; goalId: string; amount: string; enabled: boolean };
+const emptyDraft = (): RuleDraft => ({ appRef: '', eventType: '', goalId: '', amount: '1', enabled: true });
 const toDraft = (r: RuleDto): RuleDraft => ({
-  appRef: r.appRef, eventType: r.eventType, goalId: r.goalId, mode: r.mode, field: r.field ?? 'count',
-  factor: String(r.factor ?? 1), fixed: String(r.fixed ?? 0), duration: String(r.defaultDurationMinutes), enabled: r.enabled,
+  appRef: r.appRef, eventType: r.eventType, goalId: r.goalId,
+  amount: String(r.mode === 'PER_UNIT' ? r.factor ?? 1 : r.fixed ?? 0), enabled: r.enabled,
 });
 
-function RuleForm({ rule, onDone }: { rule?: RuleDto; onDone: () => void }) {
+export function RuleForm({ rule, onDone }: { rule?: RuleDto; onDone: () => void }) {
   const apps = useApps();
   const goals = useGoals();
   const inv = useInvalidate();
   const toast = useToast();
   const [d, setD] = useState<RuleDraft>(rule ? toDraft(rule) : emptyDraft());
   const set = (p: Partial<RuleDraft>) => setD((x) => ({ ...x, ...p }));
+  const u = unitFor(d.eventType);
   const save = useMutation({
     mutationFn: () => {
+      const x = Number(d.amount);
       const b: RuleInput = {
-        appRef: d.appRef, eventType: d.eventType.trim(), goalId: d.goalId, mode: d.mode,
-        field: d.mode === 'PER_UNIT' ? d.field : null, factor: d.mode === 'PER_UNIT' ? Number(d.factor) : null,
-        fixed: d.mode === 'FIXED' ? Number(d.fixed) : null, defaultDurationMinutes: Number(d.duration), enabled: d.enabled,
+        appRef: d.appRef, eventType: d.eventType.trim(), goalId: d.goalId, mode: u.mode,
+        field: u.mode === 'PER_UNIT' ? u.field : null, factor: u.mode === 'PER_UNIT' ? x : null,
+        fixed: u.mode === 'FIXED' ? x : null, defaultDurationMinutes: DEFAULT_DURATION_MINUTES, enabled: d.enabled,
       };
       return rule ? api.updateRule(rule.id, b) : api.createRule(b);
     },
     onSuccess: async () => { toast(rule ? 'Đã lưu quy tắc' : 'Đã thêm quy tắc'); await inv(['integrations']); onDone(); },
   });
   return (
-    <form className="flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
-      <div className="grid grid-cols-4 gap-2">
-        <Field label="App">
-          <select value={d.appRef} onChange={(e) => set({ appRef: e.target.value })} required>
-            <option value="">— Chọn —</option>
-            {(apps.data ?? []).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-          </select>
-        </Field>
-        <Field label="Loại sự kiện">
-          <input list="event-types" value={d.eventType} onChange={(e) => set({ eventType: e.target.value })} required />
-        </Field>
-        <Field label="Goal">
-          <select value={d.goalId} onChange={(e) => set({ goalId: e.target.value })} required>
-            <option value="">— Chọn —</option>
-            {(goals.data ?? []).map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
-          </select>
-        </Field>
-        <Field label="Cách tính">
-          <select value={d.mode} onChange={(e) => set({ mode: e.target.value as RuleDraft['mode'] })}>
-            <option value="PER_UNIT">Theo đơn vị</option>
-            <option value="FIXED">Cố định</option>
-          </select>
-        </Field>
-        {d.mode === 'PER_UNIT' ? (
-          <>
-            <Field label="Trường">
-              <select value={d.field} onChange={(e) => set({ field: e.target.value })}>{FIELDS.map((f) => <option key={f} value={f}>{f}</option>)}</select>
-            </Field>
-            <Field label="Hệ số"><input type="number" step="any" min={0} value={d.factor} onChange={(e) => set({ factor: e.target.value })} /></Field>
-          </>
-        ) : (
-          <Field label="Đóng góp cố định"><input type="number" min={0} value={d.fixed} onChange={(e) => set({ fixed: e.target.value })} /></Field>
-        )}
-        <Field label="Thời lượng mặc định (phút)"><input type="number" min={1} max={1440} value={d.duration} onChange={(e) => set({ duration: e.target.value })} /></Field>
-        <label className="flex items-center gap-2 self-end pb-2"><input type="checkbox" checked={d.enabled} onChange={(e) => set({ enabled: e.target.checked })} />Bật</label>
-      </div>
+    <form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); save.mutate(); }}>
+      <p className="flex flex-wrap items-center gap-x-2 gap-y-2 leading-9">
+        <span>Khi app</span>
+        <select className="w-48" value={d.appRef} onChange={(e) => set({ appRef: e.target.value })} required aria-label="App">
+          <option value="">— Chọn app —</option>
+          {(apps.data ?? []).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+        </select>
+        <span>gửi</span>
+        <input className="w-60" list="event-types" value={d.eventType} onChange={(e) => set({ eventType: e.target.value })} required aria-label="Loại sự kiện" placeholder="vocabulary.learned" />
+        <span>, mỗi <strong>{u.unit}</strong> =</span>
+        <input
+          className="w-24" type="number" min={u.mode === 'PER_UNIT' ? 0.01 : 0} step={u.mode === 'PER_UNIT' ? 'any' : 1}
+          value={d.amount} onChange={(e) => set({ amount: e.target.value })} required aria-label="Số đóng góp"
+        />
+        <span>đóng góp cho mục tiêu</span>
+        <select className="w-56" value={d.goalId} onChange={(e) => set({ goalId: e.target.value })} required aria-label="Goal">
+          <option value="">— Chọn mục tiêu —</option>
+          {(goals.data ?? []).map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
+        </select>
+      </p>
+      <label className="flex items-center gap-2"><input type="checkbox" checked={d.enabled} onChange={(e) => set({ enabled: e.target.checked })} />Bật</label>
       <datalist id="event-types">{EVENT_TYPES.map((t) => <option key={t} value={t} />)}</datalist>
       <ErrorText error={save.error} />
       <div className="flex justify-end gap-2">
@@ -230,16 +230,12 @@ function RulesSection() {
       <QueryView q={q} unavailable="Chức năng quy tắc chưa sẵn sàng.">
         {(rules) => rules.length === 0 ? <Empty>Chưa có quy tắc.</Empty> : (
           <table className="tbl">
-            <colgroup><col className="w-32" /><col className="w-48" /><col /><col className="w-44" /><col className="w-20" /><col className="w-20" /><col className="w-32" /></colgroup>
-            <thead><tr><th>App</th><th>Loại sự kiện</th><th>Goal</th><th>Cách tính</th><th>Phút</th><th>Bật</th><th></th></tr></thead>
+            <colgroup><col /><col className="w-20" /><col className="w-32" /></colgroup>
+            <thead><tr><th>Quy tắc</th><th>Bật</th><th></th></tr></thead>
             <tbody>
               {rules.map((r) => (
                 <tr key={r.id}>
-                  <td className="truncate">{r.appName}</td>
-                  <td className="truncate font-mono text-xs">{r.eventType}</td>
-                  <td className="truncate">{r.goalTitle}</td>
-                  <td className="text-xs">{r.mode === 'PER_UNIT' ? `${r.field} × ${r.factor}` : `Cố định ${r.fixed}`}</td>
-                  <td>{r.defaultDurationMinutes}</td>
+                  <td className="text-sm" data-testid="rule-sentence"><RuleSentence r={r} /></td>
                   <td>{r.enabled ? <Badge color="green">Bật</Badge> : <Badge>Tắt</Badge>}</td>
                   <td className="text-right">
                     <button className="btn-ghost btn-sm mr-1" onClick={() => setEdit(r)}>Sửa</button>

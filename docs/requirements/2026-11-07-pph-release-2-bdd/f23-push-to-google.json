@@ -3,7 +3,7 @@
     "category": "functional",
     "feature": "F-23 Push Hub → Google",
     "description": "Đẩy phiên/Task lên lịch primary",
-    "overallPass": false,
+    "overallPass": true,
     "bdd": [
       {
         "scenario": "[F-23] Tạo phiên tạo Event",
@@ -23,7 +23,7 @@
             "Mapping SYNCED"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Sửa giờ phiên",
@@ -41,7 +41,7 @@
             "Tổng số Event của Hub không đổi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Xóa phiên",
@@ -58,7 +58,7 @@
             "E bị xóa khỏi Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Đổi tiêu đề Task",
@@ -75,7 +75,7 @@
             "Cả 2 Event có tiêu đề 'Báo cáo v2'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Hoàn thành Task",
@@ -92,7 +92,7 @@
             "Event còn trên Google với tiêu đề '✓ Viết báo cáo'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Hoàn tác Task",
@@ -109,7 +109,7 @@
             "Tiêu đề Event là 'Viết báo cáo'"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Hủy hoặc xóa Task",
@@ -126,7 +126,7 @@
             "4 Event của A và B bị xóa khỏi Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Không chờ Google",
@@ -144,7 +144,7 @@
             "Event được tạo sau khi Google phản hồi"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Gộp thay đổi liên tiếp",
@@ -161,7 +161,7 @@
             "Có đúng 1 Event 21:00–22:00"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Hàng đợi bền qua khởi động lại",
@@ -179,7 +179,7 @@
             "Event cho P được tạo đúng 1 lần"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Retry lỗi tạm thời",
@@ -198,7 +198,7 @@
             "Không có Notification CALENDAR_SYNC_ERROR"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Lỗi kéo dài",
@@ -217,7 +217,7 @@
             "Các chức năng khác của Hub vẫn hoạt động"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Không trùng khi mất phản hồi",
@@ -234,7 +234,7 @@
             "Trên Google chỉ có 1 Event cho P"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Phiên quá khứ không đẩy",
@@ -251,7 +251,7 @@
             "Không có Event mới trên Google"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Không đụng Event của Owner",
@@ -270,7 +270,7 @@
             "Event của T bị xóa"
           ]
         },
-        "passes": false
+        "passes": true
       },
       {
         "scenario": "[F-23] Cập nhật Event đã bị xóa trên Google",
@@ -289,7 +289,7 @@
             "Không tạo lại Event"
           ]
         },
-        "passes": false
+        "passes": true
       }
     ]
   }

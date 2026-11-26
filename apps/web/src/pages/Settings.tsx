@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { SETTINGS_GROUPS, type CategoryDto, type ReasonTagDto, type Settings } from '@pph/shared';
+import { type CategoryDto, type ReasonTagDto, type Settings } from '@pph/shared';
 import { api } from '../api/endpoints';
 import { qk, useCategories, useInvalidate, useReasons, useSettings, useTimezone } from '../api/queries';
 import { errorMessage } from '../api/client';
@@ -8,92 +8,88 @@ import { Badge, Empty, ErrorText, QueryView, useToast } from '../components/ui';
 import { todayIn } from '../lib/format';
 import { CalendarSection, WorkingHoursSection } from '../components/SettingsRelease2';
 
-const GROUP_LABEL: Record<string, string> = {
-  xp: 'XP', pool: 'Pool', reward: 'Thưởng', level: 'Level', penalty: 'Phạt', streak: 'Chuỗi ngày',
-  goalWarning: 'Cảnh báo Goal', preset: 'Preset đóng góp', general: 'Chung', scheduling: 'Ngưỡng cảnh báo lịch',
-};
+/** IANA time zones offered by the runtime, with the current value kept even if missing from the list. */
+function timeZones(current: string): string[] {
+  let list: string[] = [];
+  try {
+    list = (Intl as unknown as { supportedValuesOf?: (k: string) => string[] }).supportedValuesOf?.('timeZone') ?? [];
+  } catch { list = []; }
+  return list.includes(current) ? list : [current, ...list];
+}
 
-const KEY_LABEL: Record<keyof Settings, string> = {
-  multiplier: 'Hệ số nhân (Multiplier)', refDuration: 'Thời lượng tham chiếu (phút)', minFactor: 'Hệ số tối thiểu',
-  maxFactor: 'Hệ số tối đa', smallThreshold: 'Ngưỡng Task nhỏ (0 = tắt Pool)', poolTarget: 'Mục tiêu Pool',
-  poolRewardXp: 'XP thưởng Pool', defaultMilestoneXp: 'XP mặc định Milestone', defaultGoalXp: 'XP mặc định hoàn thành Goal',
-  xpPerLevel: 'XP mỗi Level', penaltyEnabled: 'Bật phạt', penaltyPercent: 'Phần trăm phạt (%)',
-  gracePeriodHours: 'Thời gian ân hạn (giờ)', freezesPerMonth: 'Số Freeze mỗi tháng', behindMargin: 'Biên chậm tiến độ (%)',
-  nearDueDays: 'Số ngày gần hạn', presetMajor: 'Major', presetMedium: 'Medium', presetMinor: 'Minor',
-  timezone: 'Múi giờ (IANA)',
-  workingHours: 'Giờ làm việc', insufficientMinMinutes: 'Thiếu tối thiểu (phút)', insufficientMinPercent: 'Thiếu tối thiểu (% ước tính)',
-  overloadPercent: 'Ngưỡng quá tải ngày (% sức chứa)',
-};
-const THRESHOLD_KEYS: (keyof Settings)[] = ['insufficientMinMinutes', 'insufficientMinPercent', 'overloadPercent'];
-
-function SettingsGroup({ group, keys, settings }: { group: string; keys: (keyof Settings)[]; settings: Settings }) {
+function TimezoneRow({ settings }: { settings: Settings }) {
   const inv = useInvalidate();
   const toast = useToast();
-  const [draft, setDraft] = useState<Record<string, string | boolean>>({});
-  useEffect(() => {
-    setDraft(Object.fromEntries(keys.map((k) => [k, typeof settings[k] === 'boolean' ? settings[k] : String(settings[k])])));
-  }, [settings, keys]);
-
+  const [editing, setEditing] = useState(false);
+  const [tz, setTz] = useState(settings.timezone);
+  useEffect(() => setTz(settings.timezone), [settings.timezone]);
+  const zones = timeZones(settings.timezone);
   const save = useMutation({
-    mutationFn: () => {
-      const patch: Record<string, unknown> = {};
-      for (const k of keys) {
-        const v = draft[k];
-        patch[k] = typeof settings[k] === 'boolean' ? v : typeof settings[k] === 'number' ? Number(v) : v;
-      }
-      return api.updateSettings(patch as Partial<Settings>);
-    },
-    onSuccess: () => { toast(`Đã lưu nhóm ${GROUP_LABEL[group] ?? group}`); return inv(['settings', 'dashboard', 'tasks', 'task', 'goals', 'goal', 'xp', 'activity']); },
+    mutationFn: () => api.updateSettings({ timezone: tz.trim() }),
+    onSuccess: () => { setEditing(false); toast('Đã lưu múi giờ'); return inv(['settings', 'dashboard', 'tasks', 'task', 'goals', 'goal', 'xp', 'activity', 'warnings']); },
   });
-  const reset = useMutation({
-    mutationFn: () => api.resetSettingsGroup(group),
-    onSuccess: () => { toast('Đã khôi phục mặc định'); return inv(['settings', 'dashboard', 'tasks', 'task', 'goals', 'goal', 'xp', 'activity']); },
-  });
-
   return (
-    <div className="rounded-md border border-slate-200 p-3 dark:border-slate-700">
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="font-semibold">{GROUP_LABEL[group] ?? group}</h3>
-        <button
-          className="btn-ghost btn-sm" disabled={reset.isPending}
-          onClick={() => window.confirm(`Khôi phục mặc định nhóm ${GROUP_LABEL[group] ?? group}?`) && reset.mutate()}
-        >
-          Khôi phục mặc định
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        {keys.map((k) => (
-          <label key={k} className="flex flex-col gap-1">
-            <span className="text-sm">{KEY_LABEL[k] ?? k}</span>
-            {typeof settings[k] === 'boolean' ? (
-              <input type="checkbox" checked={!!draft[k]} onChange={(e) => setDraft((d) => ({ ...d, [k]: e.target.checked }))} />
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="w-48 text-sm font-medium">Múi giờ</span>
+        {!editing ? (
+          <>
+            <span data-testid="timezone-value">{settings.timezone}</span>
+            <button type="button" className="link text-sm" onClick={() => setEditing(true)}>Đổi</button>
+          </>
+        ) : (
+          <>
+            {zones.length > 1 ? (
+              <select value={tz} onChange={(e) => setTz(e.target.value)} aria-label="Múi giờ">
+                {zones.map((z) => <option key={z} value={z}>{z}</option>)}
+              </select>
             ) : (
-              <input
-                type={typeof settings[k] === 'number' ? 'number' : 'text'} step="any"
-                value={String(draft[k] ?? '')} onChange={(e) => setDraft((d) => ({ ...d, [k]: e.target.value }))}
-              />
+              <input value={tz} onChange={(e) => setTz(e.target.value)} aria-label="Múi giờ" placeholder="Asia/Ho_Chi_Minh" />
             )}
-          </label>
-        ))}
+            <button className="btn-primary btn-sm" disabled={!tz.trim() || save.isPending} onClick={() => save.mutate()}>Lưu</button>
+            <button className="btn-ghost btn-sm" onClick={() => { setTz(settings.timezone); setEditing(false); }}>Hủy</button>
+          </>
+        )}
       </div>
-      <div className="mt-2"><ErrorText error={save.error ?? reset.error} /></div>
-      <div className="mt-2 flex justify-end">
-        <button className="btn-primary btn-sm" disabled={save.isPending} onClick={() => save.mutate()}>Lưu</button>
-      </div>
+      <p className="text-xs muted">Tự nhận theo máy tính khi mở app lần đầu.</p>
+      <ErrorText error={save.error} />
     </div>
   );
 }
 
-function SettingsSection() {
+function PenaltyRow({ settings }: { settings: Settings }) {
+  const inv = useInvalidate();
+  const toast = useToast();
+  const save = useMutation({
+    mutationFn: (on: boolean) => api.updateSettings({ penaltyEnabled: on }),
+    onSuccess: (_d, on) => { toast(on ? 'Đã bật trừ XP khi bỏ lỡ' : 'Đã tắt trừ XP khi bỏ lỡ'); return inv(['settings', 'dashboard', 'tasks', 'task', 'xp', 'activity']); },
+  });
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="flex items-center gap-2">
+        <span className="w-48 text-sm font-medium">Trừ XP khi bỏ lỡ việc</span>
+        <input
+          type="checkbox" role="switch" aria-checked={settings.penaltyEnabled} checked={settings.penaltyEnabled}
+          disabled={save.isPending} onChange={(e) => save.mutate(e.target.checked)} aria-label="Trừ XP khi bỏ lỡ việc"
+        />
+        <span className="text-sm muted">{settings.penaltyEnabled ? 'Bật' : 'Tắt'}</span>
+      </label>
+      <p className="text-xs muted">Bỏ lỡ việc quá hạn 24 giờ sẽ bị trừ một nửa XP của việc đó, trừ khi bạn chọn lý do được miễn</p>
+      <ErrorText error={save.error} />
+    </div>
+  );
+}
+
+export function GeneralSection() {
   const q = useQuery({ queryKey: qk.settings, queryFn: api.getSettings });
   return (
-    <section className="card">
-      <h2 className="card-title">Tham số</h2>
+    <section className="card" id="general">
+      <h2 className="card-title">Chung</h2>
       <QueryView q={q} unavailable="Cài đặt chưa sẵn sàng.">
         {(s) => (
-          <div className="grid grid-cols-2 gap-3">
-            {Object.entries(SETTINGS_GROUPS).map(([g, keys]) =>
-              <SettingsGroup key={g} group={g} keys={g === 'scheduling' ? THRESHOLD_KEYS : keys} settings={s} />)}
+          <div className="flex flex-col gap-4">
+            <TimezoneRow settings={s} />
+            <PenaltyRow settings={s} />
           </div>
         )}
       </QueryView>
@@ -144,7 +140,7 @@ function ReasonsSection() {
   });
   return (
     <section className="card">
-      <h2 className="card-title">Lý do bỏ lỡ (Missed reason)</h2>
+      <h2 className="card-title">Lý do bỏ lỡ</h2>
       <QueryView q={q} unavailable="Danh sách lý do chưa sẵn sàng.">
         {(rs) => rs.length === 0 ? <Empty>Chưa có lý do.</Empty> : (
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">{rs.map((r) => <ReasonRow key={`${r.id}:${r.name}`} r={r} />)}</ul>
@@ -203,7 +199,7 @@ function CategoriesSection() {
   });
   return (
     <section className="card" id="categories">
-      <h2 className="card-title">Danh mục Goal</h2>
+      <h2 className="card-title">Danh mục mục tiêu</h2>
       <QueryView q={q} unavailable="Danh mục chưa sẵn sàng.">
         {(cs) => cs.length === 0 ? <Empty>Chưa có danh mục.</Empty> : (
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">{cs.map((c) => <CategoryRow key={`${c.id}:${c.name}:${c.color}`} c={c} />)}</ul>
@@ -264,13 +260,11 @@ export function SettingsPage() {
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Cài đặt</h1>
-      <CalendarSection />
+      <GeneralSection />
       <WorkingHoursSection />
-      <SettingsSection />
-      <div className="grid grid-cols-2 gap-4">
-        <ReasonsSection />
-        <CategoriesSection />
-      </div>
+      <CalendarSection />
+      <ReasonsSection />
+      <CategoriesSection />
       <CheckinSection />
     </div>
   );
