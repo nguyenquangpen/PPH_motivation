@@ -2,15 +2,15 @@ import { CalendarErrorBanner, ScheduleWarningsCard } from '../components/Schedul
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import type { DashboardDto, GoalDto, TaskDto } from '@pph/shared';
+import type { DashboardDto, TaskDto } from '@pph/shared';
 import { api } from '../api/endpoints';
 import { qk, useTimezone } from '../api/queries';
 import { Badge, Empty, ProgressBar, QueryView } from '../components/ui';
 import { CompleteButton } from '../components/taskActions';
+import { GoalCard } from '../components/GoalCard';
 import { StreakCalendar } from '../components/StreakCalendar';
 import {
-  daysRemainingLabel, fmtDate, fmtDateTime, fmtNum, fmtXp, GOAL_STATUS_LABEL, PRIORITY_LABEL, TASK_STATUS_LABEL,
-  WARNING_LABEL, XP_TYPE_LABEL,
+  fmtDate, fmtDateTime, fmtNum, fmtXp, PRIORITY_LABEL, TASK_STATUS_LABEL, XP_TYPE_LABEL,
 } from '../lib/format';
 import { expectedXpLabel } from '../lib/xp';
 
@@ -64,23 +64,6 @@ function TodayRow({ t, tz }: { t: TaskDto; tz: string }) {
         </div>
       </div>
       {!done && t.status !== 'CANCELLED' && <CompleteButton task={t} />}
-    </li>
-  );
-}
-
-function GoalRow({ g }: { g: GoalDto }) {
-  const p = g.progress;
-  return (
-    <li className="py-2">
-      <div className="mb-1 flex items-center gap-2">
-        <Link to={`/goals/${g.id}`} className="min-w-0 truncate font-medium hover:underline">{g.icon ? `${g.icon} ` : ''}{g.title}</Link>
-        <Badge>{GOAL_STATUS_LABEL[g.status]}</Badge>
-        {p.warnings.map((w) => <Badge key={w} color="amber">{WARNING_LABEL[w] ?? w}</Badge>)}
-        <span className="ml-auto shrink-0 text-xs muted">
-          {fmtNum(p.completedContribution)}/{fmtNum(p.targetContribution ?? g.targetContribution)} · {daysRemainingLabel(p.daysRemaining)}
-        </span>
-      </div>
-      <ProgressBar percent={p.displayPercent} overflow={p.overflowContribution} warn={p.warnings.length > 0} />
     </li>
   );
 }
@@ -146,13 +129,13 @@ export function DashboardBody({ d, tz }: { d: DashboardDto; tz: string }) {
     <div className="grid grid-cols-3 gap-4">
       <div className="col-span-2 flex min-w-0 flex-col gap-4">
         <TodaySection today={d.today} tz={tz} />
-        <section className="card" aria-labelledby="goals-h">
+        <section aria-labelledby="goals-h">
           <div className="mb-1 flex items-baseline justify-between">
             <h2 id="goals-h" className="card-title mb-0">Mục tiêu</h2>
             <Link to="/goals" className="link text-sm">Tất cả</Link>
           </div>
           {d.goals.length === 0 ? <Empty>Chưa có Goal đang thực hiện.</Empty> : (
-            <ul className="divide-y divide-slate-100 dark:divide-slate-800">{d.goals.map((g) => <GoalRow key={g.id} g={g} />)}</ul>
+            <ul className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">{d.goals.map((g) => <li key={g.id} className="min-w-0"><GoalCard g={g} /></li>)}</ul>
           )}
         </section>
       </div>
