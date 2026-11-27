@@ -5,6 +5,7 @@ import { api } from '../api/endpoints';
 import { qk, useGoals, useTimezone } from '../api/queries';
 import { TaskForm } from './TaskForm';
 import { CancelDialog, MissedReviewDialog, useTaskActions } from './taskActions';
+import { TaskSessions } from './TaskSessions';
 import { Badge, ErrorText, Modal, QueryView } from './ui';
 import { fmtDateTime, PRIORITY_LABEL, TASK_STATUS_LABEL } from '../lib/format';
 import { expectedXpLabel } from '../lib/xp';
@@ -38,7 +39,7 @@ export function TaskDrawer({ id, onClose }: { id: string; onClose: () => void })
     <div className="fixed inset-0 z-30 bg-black/30" onMouseDown={onClose}>
       <aside
         role="dialog" aria-label="Chi tiết Task"
-        className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+        className="absolute right-0 top-0 flex h-full w-full max-w-xl flex-col overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex justify-end">
@@ -81,6 +82,8 @@ export function TaskDrawer({ id, onClose }: { id: string; onClose: () => void })
                   <Row label="XP">{t.xpReceived != null ? `Nhận ${t.xpReceived} XP` : expectedXpLabel(t.expectedXp)}</Row>
                   {t.completedAt && <Row label="Hoàn thành lúc">{fmtDateTime(t.completedAt, tz)}</Row>}
                 </dl>
+
+                <TaskSessions taskId={t.id} estimated={t.estimatedDuration} locked={t.status === 'COMPLETED' || t.status === 'CANCELLED'} />
 
                 <Link to={`/tasks/${t.id}`} className="link text-sm">Mở trang đầy đủ (phiên làm việc, lịch sử) →</Link>
 

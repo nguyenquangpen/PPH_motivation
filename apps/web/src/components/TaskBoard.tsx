@@ -7,7 +7,23 @@ import { qk, useGoals, useTimezone } from '../api/queries';
 import { CancelDialog, useTaskActions } from './taskActions';
 import { QueryView, useToast } from './ui';
 import { byManualOrder, loadOrder, reorderIds, saveOrder } from '../lib/taskOrder';
-import { fmtDue } from '../lib/format';
+import { fmtDue, fmtSession } from '../lib/format';
+
+/** Next upcoming work session of a task (shares the react-query cache with the task's sessions list). */
+function NextSession({ taskId, tz }: { taskId: string; tz: string }) {
+  const q = useQuery({ queryKey: [...qk.sessions, taskId], queryFn: () => api.listSessions(taskId), retry: false });
+  const nowMs = Date.now();
+  const upcoming = (Array.isArray(q.data) ? q.data : [])
+    .filter((x) => typeof x?.start === 'string' && typeof x?.end === 'string' && Date.parse(x.end) > nowMs)
+    .sort((a, b) => a.start.localeCompare(b.start));
+  const first = upcoming[0];
+  if (!first) return null;
+  return (
+    <p className="mt-1.5 text-xs text-indigo-700 dark:text-indigo-300" title="Phiên làm việc đã xếp">
+      📅 {fmtSession(first.start, first.end, tz)}{upcoming.length > 1 ? ` (+${upcoming.length - 1} phiên)` : ''}
+    </p>
+  );
+}
 
 const COLUMNS: { status: TaskStatus; label: string; bar: string; limit?: number }[] = [
   { status: 'TODO', label: 'Cần làm', bar: 'border-t-amber-400' },
@@ -155,6 +171,7 @@ export function TaskBoard({ onOpen, onCreate }: { onOpen: (id: string) => void; 
                             )}
                             {t.status === 'COMPLETED' && t.completedAt && <span className="ml-auto muted">Xong {fmtDue(t.completedAt, tz)}</span>}
                           </div>
+                          {(t.status === 'TODO' || t.status === 'IN_PROGRESS') && <NextSession taskId={t.id} tz={tz} />}
                         </li>
                       );
                     })}

@@ -116,4 +116,36 @@ describe('Tasks list (to-do style)', () => {
     expect(await screen.findByText('Việc không hạn')).toBeInTheDocument();
     expect(screen.getByText('Việc hôm nay')).toBeInTheDocument();
   });
+
+  it('board: card shows the next work session of the task', async () => {
+    const start = DateTime.now().plus({ days: 2 }).set({ hour: 19, minute: 0, second: 0, millisecond: 0 });
+    const session = { id: 's1', taskId: 'a', start: start.toUTC().toISO()!, end: start.plus({ hours: 1 }).toUTC().toISO()!, minutes: 60, source: 'HUB', calendar: 'NONE' };
+    mockFetch(
+      settingsHandler,
+      (c) => (c.method === 'GET' && c.url === '/api/v1/tasks/a/sessions' ? { body: [session] } : undefined),
+      (c) => (c.method === 'GET' && c.url.includes('/sessions') ? { body: [] } : undefined),
+      (c) => (c.method === 'GET' && c.url.startsWith('/api/v1/tasks') ? { body: [tasks[0]] } : undefined),
+      (c) => (c.url.startsWith('/api/v1/goals') ? { body: [] } : undefined),
+    );
+    renderWithProviders(<TasksPage />, '/tasks');
+    await userEvent.click(await screen.findByRole('button', { name: 'Tất cả ngày' }));
+    expect(await screen.findByText(/📅 .*\d\d:\d\d–\d\d:\d\d/)).toBeInTheDocument();
+  });
+
+  it('list: rescheduling warns when a session ends up after the new deadline', async () => {
+    const far = DateTime.now().plus({ days: 5 }).toUTC().toISO()!;
+    const withSession = makeTask({ id: 'q', title: 'Việc có phiên', missed: true });
+    const moved = { ...withSession, deadline: DateTime.now().plus({ days: 1 }).set({ hour: 23, minute: 59 }).toUTC().toISO()!, missed: false };
+    mockFetch(
+      settingsHandler,
+      (c) => (c.method === 'GET' && c.url === '/api/v1/tasks/q/sessions' ? { body: [{ id: 's', taskId: 'q', start: far, end: far, minutes: 60, source: 'HUB', calendar: 'NONE' }] } : undefined),
+      (c) => (c.method === 'PATCH' && c.url === '/api/v1/tasks/q' ? { body: moved } : undefined),
+      (c) => (c.method === 'GET' && c.url.startsWith('/api/v1/tasks') ? { body: [withSession] } : undefined),
+      (c) => (c.url.startsWith('/api/v1/goals') ? { body: [] } : undefined),
+    );
+    renderWithProviders(<TasksPage />, '/tasks?view=list');
+    fireEvent.dragStart((await screen.findByText('Việc có phiên')).closest('li')!);
+    fireEvent.drop(await screen.findByText('Ngày mai'));
+    expect(await screen.findByText(/có 1 phiên nằm sau hạn mới/)).toBeInTheDocument();
+  });
 });

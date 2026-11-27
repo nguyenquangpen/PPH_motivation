@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 import type { Priority, TaskDto } from '@pph/shared';
 import { api } from '../api/endpoints';
@@ -106,6 +106,7 @@ function TaskListView({ onOpen }: { onOpen: (id: string) => void }) {
   const tz = useTimezone();
   const toast = useToast();
   const inv = useInvalidate();
+  const qc = useQueryClient();
   const [sp, setSp] = useSearchParams();
   const [search, setSearch] = useState('');
   const [dragId, setDragId] = useState<string | null>(null);
@@ -129,7 +130,16 @@ function TaskListView({ onOpen }: { onOpen: (id: string) => void }) {
 
   const move = useMutation({
     mutationFn: (v: { id: string; deadline: string | null }) => api.updateTask(v.id, { deadline: v.deadline }),
-    onSuccess: () => inv(TASK_CHANGE),
+    onSuccess: async (t) => {
+      await inv(TASK_CHANGE);
+      // Sessions stay where they are when the deadline moves — tell the user if some now fall after it.
+      if (!t.deadline) return;
+      try {
+        const sessions = await qc.fetchQuery({ queryKey: [...qk.sessions, t.id], queryFn: () => api.listSessions(t.id), staleTime: 0 });
+        const after = (Array.isArray(sessions) ? sessions : []).filter((x) => x?.start && Date.parse(x.start) > Date.parse(t.deadline!)).length;
+        if (after > 0) toast(`“${t.title}” có ${after} phiên nằm sau hạn mới — hãy dời phiên cho kịp`, 'error');
+      } catch { /* sessions unavailable → nothing to warn about */ }
+    },
     onError: (e) => toast(errorMessage(e), 'error'),
   });
 
