@@ -9,6 +9,7 @@ import { TaskSessions } from './TaskSessions';
 import { Badge, ErrorText, Modal, QueryView } from './ui';
 import { fmtDateTime, PRIORITY_LABEL, TASK_STATUS_LABEL } from '../lib/format';
 import { expectedXpLabel } from '../lib/xp';
+import { ResizeHandle, useResizable } from '../lib/useResizable';
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -28,6 +29,7 @@ export function TaskDrawer({ id, onClose }: { id: string; onClose: () => void })
   const [edit, setEdit] = useState(false);
   const [cancel, setCancel] = useState(false);
   const [review, setReview] = useState(false);
+  const rz = useResizable({ storageKey: 'pph.drawerWidth', initial: 576, min: 380, max: 1100, dir: -1 });
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => e.key === 'Escape' && !edit && !cancel && !review && onClose();
@@ -39,9 +41,12 @@ export function TaskDrawer({ id, onClose }: { id: string; onClose: () => void })
     <div className="fixed inset-0 z-30 bg-black/30" onMouseDown={onClose}>
       <aside
         role="dialog" aria-label="Chi tiết Task"
-        className="absolute right-0 top-0 flex h-full w-full max-w-xl flex-col overflow-y-auto border-l border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+        className={`absolute right-0 top-0 h-full max-w-full border-l border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900 ${rz.dragging ? 'select-none' : ''}`}
+        style={{ width: rz.width }}
         onMouseDown={(e) => e.stopPropagation()}
       >
+        <ResizeHandle side="left" dragging={rz.dragging} {...rz.handleProps} />
+        <div className="flex h-full flex-col overflow-y-auto p-5">
         <div className="mb-3 flex justify-end">
           <button className="btn-ghost btn-sm" onClick={onClose} aria-label="Đóng">✕</button>
         </div>
@@ -98,6 +103,7 @@ export function TaskDrawer({ id, onClose }: { id: string; onClose: () => void })
             );
           }}
         </QueryView>
+        </div>
       </aside>
     </div>
   );

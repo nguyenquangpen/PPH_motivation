@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { applyTheme, loadTheme, type Theme } from '../lib/theme';
 import { NotificationBell } from './NotificationBell';
+import { ResizeHandle, useResizable } from '../lib/useResizable';
 
 const NAV = [
   { to: '/', label: 'Tổng quan', end: true },
@@ -17,7 +18,11 @@ export function Layout() {
   const [theme, setTheme] = useState<Theme>(() => loadTheme());
   useEffect(() => applyTheme(theme), [theme]);
 
+  const [menu, setMenu] = useState(false); // mobile off-canvas menu
+  const rz = useResizable({ storageKey: 'pph.sidebarWidth', initial: 208, min: 150, max: 380, dir: 1 });
+
   const { hash, pathname } = useLocation();
+  useEffect(() => setMenu(false), [pathname]);
   useEffect(() => {
     if (!hash) return;
     const t = setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' }), 50);
@@ -26,8 +31,13 @@ export function Layout() {
 
   return (
     <div className="flex min-h-screen min-w-0">
-      <aside className="w-52 shrink-0 border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
-        <div className="sticky top-0 flex h-screen flex-col">
+      {menu && <div className="fixed inset-0 z-30 bg-black/40 md:hidden" onClick={() => setMenu(false)} />}
+      <aside
+        style={{ '--sb': `${rz.width}px` } as React.CSSProperties}
+        className={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-slate-200 bg-white transition-transform dark:border-slate-800 dark:bg-slate-900 md:relative md:inset-auto md:z-auto md:w-[var(--sb)] md:translate-x-0 ${menu ? 'translate-x-0' : '-translate-x-full'} ${rz.dragging ? 'select-none' : ''}`}
+      >
+        <ResizeHandle side="right" from="md" dragging={rz.dragging} {...rz.handleProps} />
+        <div className="sticky top-0 flex h-screen flex-col overflow-y-auto">
           <div className="px-4 py-4 text-lg font-bold text-indigo-600 dark:text-indigo-400">Productivity Hub</div>
           <nav className="flex flex-col gap-0.5 px-2">
             {NAV.map((n) => (
@@ -44,7 +54,8 @@ export function Layout() {
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b border-slate-200 bg-white/90 px-6 py-2 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
+        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b border-slate-200 bg-white/90 px-3 py-2 backdrop-blur sm:px-6 dark:border-slate-800 dark:bg-slate-900/90">
+          <button className="btn-ghost mr-auto md:hidden" onClick={() => setMenu(true)} aria-label="Mở menu">☰ Menu</button>
           <button
             className="btn-ghost" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             aria-label={theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'}
@@ -53,7 +64,7 @@ export function Layout() {
           </button>
           <NotificationBell />
         </header>
-        <main className="min-w-0 flex-1 px-6 py-5">
+        <main className="min-w-0 flex-1 px-3 py-4 sm:px-6 sm:py-5">
           <Outlet />
         </main>
       </div>
