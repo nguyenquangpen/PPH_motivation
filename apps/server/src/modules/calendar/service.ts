@@ -73,6 +73,10 @@ export class CalendarService {
     };
     ev.on('task.content_changed', (p) => touchTask(p.taskId));
     ev.on('task.completed', (p) => touchTask(p.taskId));
+    ev.on('goal.appearance_changed', (p) => {
+      const ids = this.ctx.db.prepare('SELECT id FROM tasks WHERE goal_id = ? AND deleted_at IS NULL').all(p.goalId) as { id: string }[];
+      for (const t of ids) touchTask(t.id);
+    });
     ev.on('task.undone', (p) => touchTask(p.taskId));
     ev.on('task.cancelled', (p) => dropTask(p.taskId));
     ev.on('task.deleted', (p) => dropTask(p.taskId));
