@@ -9,6 +9,7 @@ export type EventInput = {
   start: string;                  // ISO
   end: string;                    // ISO
   hubSessionId: string;           // lưu vào extendedProperties.private.pphSessionId
+  colorId?: string;               // Google event color 1..11 (theo chủ đề/Goal)
 };
 
 export type ProviderEvent = {

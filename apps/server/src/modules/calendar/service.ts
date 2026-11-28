@@ -1,4 +1,5 @@
 import type { BusyIntervalDto, CalendarListItemDto, CalendarStatusDto, ExternalEventDto, SessionDto } from '@pph/shared';
+import { googleColorId } from './colors.js';
 import type { AppContext } from '../../core/context.js';
 import { notFound, validation } from '../../core/errors.js';
 import { GoogleCalendarProvider, type OAuthClientConfig } from './google-provider.js';
@@ -21,7 +22,7 @@ type MapRow = {
 };
 type SessionInfo = {
   id: string; task_id: string; start: string; end: string; source: string; deleted_at: string | null;
-  title: string; task_status: string; priority: string; contribution: number; task_deleted: string | null; goal_title: string | null;
+  title: string; task_status: string; priority: string; contribution: number; task_deleted: string | null; goal_id: string | null; goal_title: string | null; goal_color: string | null; goal_icon: string | null;
 };
 
 export const AUTH_ERROR = 'Cần kết nối lại';
@@ -366,7 +367,7 @@ export class CalendarService {
   private sessionInfo(sessionId: string): SessionInfo | undefined {
     return this.ctx.db.prepare(
       `SELECT s.id, s.task_id, s.start, s.end, s.source, s.deleted_at, t.title, t.status AS task_status, t.priority, t.contribution,
-              t.deleted_at AS task_deleted, g.title AS goal_title
+              t.deleted_at AS task_deleted, g.id AS goal_id, g.title AS goal_title, g.color AS goal_color, g.icon AS goal_icon
        FROM task_sessions s JOIN tasks t ON t.id = s.task_id LEFT JOIN goals g ON g.id = t.goal_id WHERE s.id = ?`,
     ).get(sessionId) as SessionInfo | undefined;
   }
@@ -494,9 +495,9 @@ export class CalendarService {
     ];
     return {
       calendarId: PRIMARY,
-      title: `${s.task_status === 'COMPLETED' ? '✓ ' : ''}${s.title}`,
+      title: `${s.task_status === 'COMPLETED' ? '✓ ' : ''}${s.goal_icon ? `${s.goal_icon} ` : ''}${s.title}`,
       description: lines.join('\n'),
-      start: s.start, end: s.end, hubSessionId: s.id,
+      start: s.start, end: s.end, hubSessionId: s.id, colorId: googleColorId(s.goal_color, s.goal_id),
     };
   }
 

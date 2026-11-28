@@ -8,7 +8,7 @@ import {
  * Hỗ trợ: nhiều lịch, syncToken, Free/transparent, từ chối, cả ngày, lặp lại (đã mở rộng sẵn thành từng lần),
  * tiêm lỗi (failNext) và độ trễ (setLatency). Mọi lời gọi của Hub được ghi vào `calls`.
  */
-export type FakeEvent = ProviderEvent & { description: string; seq: number; recurringInstance: boolean };
+export type FakeEvent = ProviderEvent & { description: string; seq: number; recurringInstance: boolean; colorId?: string };
 export type FailKind = 'auth' | 'transient' | 'lostResponse';
 export type FakeCall = { method: string; calendarId?: string; eventId?: string; hubSessionId?: string };
 
@@ -142,7 +142,7 @@ export class FakeCalendarProvider implements CalendarProvider {
     const lost = await this.enter('createEvent', { calendarId: input.calendarId, hubSessionId: input.hubSessionId }, true);
     const id = `hub_${++this.idSeq}`;
     const e = this.put({
-      id, calendarId: input.calendarId, title: input.title, description: input.description,
+      id, calendarId: input.calendarId, title: input.title, description: input.description, colorId: input.colorId,
       start: new Date(input.start).toISOString(), end: new Date(input.end).toISOString(), allDay: false,
       status: 'confirmed', transparency: 'opaque', declinedBySelf: false, hubSessionId: input.hubSessionId,
       recurringInstance: false, seq: 0,
@@ -155,7 +155,7 @@ export class FakeCalendarProvider implements CalendarProvider {
     const e = this.findIn(input.calendarId, eventId);
     if (!e) throw new ProviderNotFound(`Event ${eventId} không tồn tại`);
     const next = this.put({
-      ...e, title: input.title, description: input.description,
+      ...e, title: input.title, description: input.description, colorId: input.colorId,
       start: new Date(input.start).toISOString(), end: new Date(input.end).toISOString(),
     });
     if (lost) throw new ProviderTransientError('Mất phản hồi (giả lập)');
