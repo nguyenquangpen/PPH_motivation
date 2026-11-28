@@ -13,6 +13,8 @@ export type DomainEvents = {
   'goal.contribution_changed': { goalId: string; before: number; after: number };
   'goal.target_changed': { goalId: string; before: number; after: number };
   'goal.status_changed': { goalId: string; from: string; to: string };
+  /** Đổi tiêu đề/icon/màu Goal — những thứ hiện trên Event Google (tên, icon, màu). */
+  'goal.appearance_changed': { goalId: string };
   'milestone.completed': { milestoneId: string; goalId: string };
   'milestone.reopened': { milestoneId: string; goalId: string };
   'xp.transaction_created': {

@@ -16,7 +16,7 @@ describe('Màu Event Google theo chủ đề (Goal)', () => {
     expect(a).toMatch(/^(11|9|10|6|3|5|7|4)$/);
   });
 
-  it('Push: Event mang màu và icon của Goal; đổi màu Goal → Event cập nhật sau khi sửa phiên', async () => {
+  it('Push: Event mang màu và icon của Goal; đổi màu/icon Goal → Event có sẵn tự cập nhật', async () => {
     const t = await connectedApp();
     const goalId = t.f.goal({ title: 'Tiếng Nhật' });
     expect((await t.api.patch(`/api/v1/goals/${goalId}`, { color: '#dc2127', icon: '🇯🇵' })).status).toBe(200);
@@ -27,5 +27,13 @@ describe('Màu Event Google theo chủ đề (Goal)', () => {
     const e = t.fake.hubEvents()[0]!;
     expect(e.colorId).toBe('11');
     expect(e.title).toBe('🇯🇵 Ôn bài');
+
+    // Đổi màu/icon Goal → Event có sẵn tự cập nhật, không cần sửa phiên
+    expect((await t.api.patch(`/api/v1/goals/${goalId}`, { color: 'green', icon: '🍜' })).status).toBe(200);
+    t.clock.advanceMinutes(0.5);
+    await push(t);
+    const e2 = t.fake.hubEvents()[0]!;
+    expect(e2.colorId).toBe('10');
+    expect(e2.title).toBe('🍜 Ôn bài');
   });
 });

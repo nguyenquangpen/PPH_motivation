@@ -258,6 +258,9 @@ export class GoalService {
         after: { title: next.title, categoryId: next.category_id, startDate: next.start_date, targetDate: next.target_date, goalRewardXp: next.goal_reward_xp },
       });
     }
+    if ((['title', 'icon', 'color'] as const).some((k) => next[k] !== r[k])) {
+      this.ctx.events.emit('goal.appearance_changed', { goalId: id });
+    }
     if (next.target_contribution !== r.target_contribution) {
       const completed = this.ctx.services.ledger.goalContribution(id);
       const before = percentOf(completed, r.target_contribution);
