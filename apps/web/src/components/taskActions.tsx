@@ -1,3 +1,4 @@
+import { DateTimePicker } from './DateTimePicker';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
@@ -139,7 +140,7 @@ export function MissedReviewDialog({ task, onClose }: { task: TaskDto; onClose: 
         </fieldset>
         {action === 'RESCHEDULE' && (
           <Field label="Deadline mới" hint={`Múi giờ ${tz}`}>
-            <input type="datetime-local" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+            <DateTimePicker label="Deadline mới" value={deadline} onChange={setDeadline} />
           </Field>
         )}
         <ErrorText error={m.error} />

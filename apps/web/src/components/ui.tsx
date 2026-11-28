@@ -27,6 +27,27 @@ export function ProgressBar({ percent, overflow = 0, size = 'md', warn = false }
   );
 }
 
+// ---------- Progress ring (goal cards) ----------
+export function ProgressRing({ percent, warn = false, size = 56 }: { percent: number; warn?: boolean; size?: number }) {
+  const p = Math.max(0, Math.min(100, percent));
+  const stroke = 6;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const color = p >= 100 ? 'stroke-emerald-500' : warn ? 'stroke-amber-500' : 'stroke-indigo-500';
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }} role="progressbar" aria-valuenow={p} aria-valuemin={0} aria-valuemax={100}>
+      <svg width={size} height={size} className="-rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-slate-200 dark:stroke-slate-700" />
+        <circle
+          cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} strokeLinecap="round"
+          className={`${color} transition-all`} strokeDasharray={c} strokeDashoffset={c * (1 - p / 100)}
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold tabular-nums">{Math.round(p)}%</span>
+    </div>
+  );
+}
+
 // ---------- Badge ----------
 const BADGE: Record<string, string> = {
   gray: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',

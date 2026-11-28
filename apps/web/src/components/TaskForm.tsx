@@ -1,3 +1,4 @@
+import { DateTimePicker } from './DateTimePicker';
 import { useMemo, useState, type FormEvent } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Priority, type CreateTaskInput, type TaskDto, type UpdateTaskInput } from '@pph/shared';
@@ -170,7 +171,7 @@ export function TaskForm({ task, defaultGoalId, onDone, onCancel }: {
                 <option value="datetime">Ngày giờ</option>
               </select>
               {mode === 'date' && <input type="date" value={deadlineDate} onChange={(e) => setDeadlineDate(e.target.value)} aria-label="Ngày deadline" />}
-              {mode === 'datetime' && <input type="datetime-local" value={deadlineDt} onChange={(e) => setDeadlineDt(e.target.value)} aria-label="Ngày giờ deadline" />}
+              {mode === 'datetime' && <DateTimePicker label="Ngày giờ deadline" value={deadlineDt} onChange={setDeadlineDt} />}
             </div>
             <span className="text-xs muted">Múi giờ {tz}</span>
           </div>

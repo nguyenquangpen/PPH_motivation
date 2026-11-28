@@ -44,6 +44,34 @@ export function isoToLocalInput(iso: string | null | undefined, tz: string): str
   return d.isValid ? d.toFormat("yyyy-MM-dd'T'HH:mm") : '';
 }
 
+/** Short, human deadline: "Hôm nay 17:00", "Ngày mai 09:00", "T5 · 28/11", "28/11/2027". */
+export function fmtDue(iso: string | null | undefined, tz: string): string {
+  if (!iso) return '';
+  const d = DateTime.fromISO(iso, { setZone: true }).setZone(tz);
+  if (!d.isValid) return iso;
+  const now = DateTime.now().setZone(tz);
+  const days = Math.round(d.startOf('day').diff(now.startOf('day'), 'days').days);
+  const hm = d.toFormat('HH:mm');
+  if (days === 0) return `Hôm nay ${hm}`;
+  if (days === 1) return `Ngày mai ${hm}`;
+  if (days === -1) return `Hôm qua ${hm}`;
+  if (days > 1 && days < 7) return `${['', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][d.weekday]} · ${d.toFormat('dd/MM')}`;
+  return d.year === now.year ? d.toFormat('dd/MM') : d.toFormat('dd/MM/yyyy');
+}
+
+/** Work session: "Hôm nay 19:00–20:00", "T5 · 29/11 19:00–20:00". */
+export function fmtSession(startIso: string, endIso: string, tz: string): string {
+  const a = DateTime.fromISO(startIso, { setZone: true }).setZone(tz);
+  const b = DateTime.fromISO(endIso, { setZone: true }).setZone(tz);
+  if (!a.isValid || !b.isValid) return '';
+  const now = DateTime.now().setZone(tz);
+  const days = Math.round(a.startOf('day').diff(now.startOf('day'), 'days').days);
+  const day = days === 0 ? 'Hôm nay' : days === 1 ? 'Ngày mai'
+    : days > 1 && days < 7 ? `${['', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'][a.weekday]} · ${a.toFormat('dd/MM')}`
+      : a.toFormat(a.year === now.year ? 'dd/MM' : 'dd/MM/yyyy');
+  return `${day} ${a.toFormat('HH:mm')}–${b.toFormat('HH:mm')}`;
+}
+
 export function fmtXp(n: number): string {
   return `${n > 0 ? '+' : ''}${n.toLocaleString('vi-VN')}`;
 }

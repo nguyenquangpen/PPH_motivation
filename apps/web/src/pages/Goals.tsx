@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { GoalStatus, type GoalDto } from '@pph/shared';
 import { api } from '../api/endpoints';
 import { GOAL_CHANGE, qk, useCategories, useInvalidate } from '../api/queries';
 import { errorMessage } from '../api/client';
 import { GoalForm } from '../components/GoalForm';
-import { Badge, Empty, Modal, ProgressBar, QueryView, useToast } from '../components/ui';
-import { daysRemainingLabel, fmtDate, fmtNum, GOAL_STATUS_LABEL, WARNING_LABEL } from '../lib/format';
+import { GoalCard } from '../components/GoalCard';
+import { Empty, Modal, QueryView, useToast } from '../components/ui';
 
 export function GoalsPage() {
   const [status, setStatus] = useState<GoalStatus | ''>('');
@@ -36,54 +35,45 @@ export function GoalsPage() {
         <h1 className="text-2xl font-bold">Mục tiêu</h1>
         <button className="btn-primary" onClick={() => setEditing('new')}>+ Tạo Goal</button>
       </div>
-      <div className="card mb-4 flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1">
-          <span className="font-medium">Trạng thái</span>
-          <select value={status} onChange={(e) => setStatus(e.target.value as GoalStatus | '')}>
-            <option value="">Tất cả</option>
-            {GoalStatus.map((s) => <option key={s} value={s}>{GOAL_STATUS_LABEL[s]}</option>)}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="font-medium">Danh mục</span>
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            <option value="">Tất cả</option>
-            {(cats.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1">
-          <span className="font-medium">Tìm kiếm</span>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tên Goal…" />
-        </label>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="flex gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800" role="tablist" aria-label="Trạng thái">
+          {([['', 'Tất cả'], ['ACTIVE', 'Đang làm'], ['COMPLETED', 'Hoàn thành'], ['PAUSED', 'Tạm dừng']] as [GoalStatus | '', string][]).map(([v, label]) => (
+            <button
+              key={v} role="tab" aria-selected={status === v}
+              onClick={() => setStatus(v)}
+              className={`rounded-md px-3 py-1 text-sm font-medium ${status === v ? 'bg-white shadow-sm dark:bg-slate-700' : 'muted hover:text-slate-800 dark:hover:text-slate-100'}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <select aria-label="Danh mục" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+          <option value="">Mọi danh mục</option>
+          {(cats.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <input className="ml-auto w-56" aria-label="Tìm kiếm" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Tìm Goal…" />
       </div>
 
       <QueryView q={q} unavailable="Chưa có Goal.">
         {() =>
           filtered.length === 0 ? <Empty>Không có Goal phù hợp.</Empty> : (
-            <ul className="flex flex-col gap-3">
+            <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
               {filtered.map((g) => (
-                <li key={g.id} className="card">
-                  <div className="mb-2 flex flex-wrap items-center gap-2">
-                    <Link to={`/goals/${g.id}`} className="text-base font-semibold hover:underline">{g.icon ? `${g.icon} ` : ''}{g.title}</Link>
-                    <Badge>{GOAL_STATUS_LABEL[g.status]}</Badge>
-                    <Badge color="blue">{g.categoryName}</Badge>
-                    {g.progress.warnings.map((w) => <Badge key={w} color="amber">{WARNING_LABEL[w] ?? w}</Badge>)}
-                    <div className="ml-auto flex gap-2">
-                      <button className="btn-ghost btn-sm" onClick={() => setEditing(g)}>Sửa</button>
-                      <button
-                        className="btn-ghost btn-sm text-rose-600"
-                        onClick={() => window.confirm(`Xóa Goal “${g.title}”? Task liên kết và lịch sử đóng góp được giữ nguyên.`) && del.mutate(g.id)}
-                      >
-                        Xóa
-                      </button>
-                    </div>
-                  </div>
-                  <ProgressBar percent={g.progress.displayPercent} overflow={g.progress.overflowContribution} warn={g.progress.warnings.length > 0} size="lg" />
-                  <div className="mt-1 flex flex-wrap gap-4 text-xs muted">
-                    <span>{fmtNum(g.progress.completedContribution)}/{fmtNum(g.targetContribution)}</span>
-                    <span>Ngày đích: {fmtDate(g.targetDate)}</span>
-                    <span>{daysRemainingLabel(g.progress.daysRemaining)}</span>
-                  </div>
+                <li key={g.id} className="min-w-0">
+                  <GoalCard
+                    g={g}
+                    actions={
+                      <>
+                        <button className="btn-ghost btn-sm" onClick={() => setEditing(g)}>Sửa</button>
+                        <button
+                          className="btn-ghost btn-sm text-rose-600"
+                          onClick={() => window.confirm(`Xóa Goal “${g.title}”? Task liên kết và lịch sử đóng góp được giữ nguyên.`) && del.mutate(g.id)}
+                        >
+                          Xóa
+                        </button>
+                      </>
+                    }
+                  />
                 </li>
               ))}
             </ul>

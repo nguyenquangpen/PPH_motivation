@@ -139,12 +139,12 @@ function AppsSection() {
           <ul className="flex flex-col gap-3">{apps.map((a) => <AppCard key={a.id} app={a} />)}</ul>
         )}
       </QueryView>
-      <form className="mt-3 flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); add.mutate(); }}>
+      <form className="mt-3 flex flex-wrap items-start gap-2" onSubmit={(e) => { e.preventDefault(); add.mutate(); }}>
         <Field label="Tên app"><input className="w-56" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></Field>
         <Field label="app_id" hint="a-z, 0-9, dấu gạch ngang, 3–50 ký tự">
           <input className="w-56" value={appId} pattern="[a-z0-9\-]{3,50}" onChange={(e) => setAppId(e.target.value)} />
         </Field>
-        <button className="btn-primary btn-sm mb-5" disabled={!name.trim() || !appId.trim() || add.isPending}>Đăng ký app</button>
+        <button className="btn-primary mt-6" disabled={!name.trim() || !appId.trim() || add.isPending}>Đăng ký app</button>
       </form>
       <ErrorText error={add.error} />
     </section>

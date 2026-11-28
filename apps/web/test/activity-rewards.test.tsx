@@ -21,7 +21,7 @@ describe('Activity type filter', () => {
       },
     } : undefined));
     renderWithProviders(<Routes><Route path="/activity" element={<ActivityPage />} /></Routes>, '/activity');
-    const row = (await screen.findByText('Hoàn thành Task X')).closest('tr')!;
+    const row = (await screen.findByText('Hoàn thành Task X')).closest('li')!;
     expect(within(row).getByText('Hoàn thành Task')).toBeInTheDocument();
 
     const picker = screen.getByLabelText('Thêm loại hoạt động');

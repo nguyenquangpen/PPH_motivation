@@ -6,6 +6,10 @@ import { qk, SESSION_CHANGE, useInvalidate, useTimezone } from '../api/queries';
 import { errorMessage, isApiError, isNotFound } from '../api/client';
 import { Badge, Empty, ErrorText, Modal, QueryView, useToast } from './ui';
 import { fmtDateTime, isoToLocalInput, localInputToIso } from '../lib/format';
+import { DateTimePicker } from './DateTimePicker';
+import { DateTime } from 'luxon';
+
+const LOCAL_FMT = "yyyy-MM-dd'T'HH:mm";
 
 export const SYNC_BADGE: Record<CalendarSyncState, { label: string; color: string }> = {
   NONE: { label: 'Chưa đồng bộ', color: 'gray' },
@@ -27,6 +31,15 @@ function SessionForm({ taskId, s, onDone }: { taskId: string; s?: SessionDto; on
   const toast = useToast();
   const [start, setStart] = useState(isoToLocalInput(s?.start, tz));
   const [end, setEnd] = useState(isoToLocalInput(s?.end, tz));
+  // Changing the start keeps the session length (default 60 min), so "end" never needs manual fixing.
+  const changeStart = (v: string) => {
+    const a = DateTime.fromFormat(start, LOCAL_FMT);
+    const b = DateTime.fromFormat(end, LOCAL_FMT);
+    const keep = a.isValid && b.isValid && b > a ? b.diff(a, 'minutes').minutes : 60;
+    const ns = DateTime.fromFormat(v, LOCAL_FMT);
+    setStart(v);
+    if (ns.isValid) setEnd(ns.plus({ minutes: keep }).toFormat(LOCAL_FMT));
+  };
   const m = useMutation({
     mutationFn: () => {
       const b = { start: localInputToIso(start, tz) ?? '', end: localInputToIso(end, tz) ?? '' };
@@ -37,12 +50,12 @@ function SessionForm({ taskId, s, onDone }: { taskId: string; s?: SessionDto; on
   return (
     <form className="flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); m.mutate(); }}>
       <div className="flex flex-wrap items-end gap-2">
-        <label className="flex flex-col gap-1"><span className="text-xs muted">Bắt đầu ({tz})</span>
-          <input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} aria-label="Bắt đầu" required />
-        </label>
-        <label className="flex flex-col gap-1"><span className="text-xs muted">Kết thúc</span>
-          <input type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} aria-label="Kết thúc" required />
-        </label>
+        <div className="flex flex-col gap-1"><span className="text-xs muted">Bắt đầu ({tz})</span>
+          <DateTimePicker label="Bắt đầu" value={start} onChange={changeStart} />
+        </div>
+        <div className="flex flex-col gap-1"><span className="text-xs muted">Kết thúc</span>
+          <DateTimePicker label="Kết thúc" value={end} onChange={setEnd} />
+        </div>
         <button className="btn-primary btn-sm" disabled={!start || !end || m.isPending}>{s ? 'Lưu' : 'Thêm phiên'}</button>
         <button type="button" className="btn-ghost btn-sm" onClick={onDone}>Hủy</button>
       </div>
