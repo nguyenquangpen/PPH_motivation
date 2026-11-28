@@ -205,6 +205,7 @@ function body(input: EventInput): calendar_v3.Schema$Event {
   return {
     summary: input.title,
     description: input.description,
+    colorId: input.colorId,
     start: { dateTime: input.start },
     end: { dateTime: input.end },
     reminders: { useDefault: true },
