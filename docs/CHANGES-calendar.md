@@ -15,6 +15,6 @@
 - Chế độ OAuth **Testing**: phải bấm **Kết nối** lại mỗi 7 ngày (theo tài liệu Google).
 
 ## Build / dữ liệu
-- Desktop 0.2.4 đã build (Kanban, Hoạt động, thẻ Goal). Bản 0.2.5 sẽ gồm cả chip lịch, bộ chọn giờ và layout kéo rộng — **chưa build**.
+- Desktop 0.2.5: gồm Kanban, Hoạt động, thẻ Goal, chip lịch, bộ chọn giờ và layout kéo rộng.
 - Bản dev dùng dữ liệu riêng `data/hub.db` (đã copy từ dữ liệu thật để thử). Không đồng bộ cùng một tài khoản Google ở cả dev và desktop.
 - Thứ tự sắp xếp thủ công của task lưu ở trình duyệt (`pph.taskOrder`), chưa lưu server.
